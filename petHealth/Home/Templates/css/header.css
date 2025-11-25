@@ -1,0 +1,251 @@
+/* RESET */
+* {
+    margin: 0;
+
+    box-sizing: border-box;
+    font-family: Inter, Arial, sans-serif;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    display: contents;
+}
+
+ul {
+    list-style: none;
+}
+
+/* WRAPPER CHUNG */
+.header-wrapper {
+    width: 80%;
+    margin: 0 auto;
+    padding: 0 30px;   /* Lùi 30px mỗi bên */
+}
+
+/* ==== MÀU CHỦ ĐẠO ==== */
+:root {
+    --primary: #234BBB;
+    --primary-light: #3c5ff0;
+    --white: #ffffff;
+}
+
+/* ====================== HEADER TRÊN ====================== */
+.header-bg {
+    background-color: var(--primary);
+    color: white;
+    padding: 12px 0;
+}
+
+.top-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;   /* Lùi 30px mỗi bên */
+}
+
+/* LOGO */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.logo h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: white;
+}
+
+/* THANH TÌM KIẾM */
+.search-bar {
+    position: relative;
+    width: 45%;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 12px 20px 12px 45px;
+    border-radius: 12px;
+    border: none;
+    background: white;
+    font-size: 14px;
+}
+
+.search-bar i {
+    position: absolute;
+    top: 50%;
+    left: 14px;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: var(--primary);
+}
+
+/* HÀNH ĐỘNG HEADER */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+}
+
+.icon-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    font-size: 14px;
+    transition: 0.25s;
+}
+
+.icon-btn i {
+    font-size: 22px;
+}
+
+.icon-btn:hover {
+    opacity: 0.8;
+}
+
+/* ====================== MENU DƯỚI ====================== */
+.menu-bg {
+    background-color: var(--primary);
+    color: white;
+    padding: 10px 0 15px;
+}
+
+.menu-bg .header-wrapper{
+padding: 0 70px;
+
+}
+
+.main-nav {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;  /* Không center nữa */
+    gap: 25px;
+}
+
+/* NÚT MENU */
+.nav-item {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: 0.25s;
+    position: relative;
+
+}
+.nav-item::after {
+    content: "";
+    position: absolute;
+    bottom: -3px;     /* đặt gạch dưới sát mép */
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background: white;
+    border-radius: 5px;
+    transition: width 0.25s ease;
+}
+.nav-item:hover::after {
+    width: 100%;
+}
+.nav-item i {
+    font-size: 18px;
+}
+
+.nav-item:hover {
+    opacity: 0.8;
+}
+
+/* ====================== CHATBOX ====================== */
+
+/* NÚT CHAT */
+.chatbox-btn {
+    position: fixed;
+    bottom: 35px;
+    right: 30px;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    font-size: 28px;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+    cursor: pointer;
+    transition: 0.25s;
+    z-index: 9999;
+}
+
+.chatbox-btn:hover {
+    background: var(--primary-light);
+    transform: scale(1.1);
+}
+
+/* KHUNG CHAT */
+.chatbox-container {
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.chatbox-header {
+    background: var(--primary);
+    color: white;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.chatbox-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.chatbox-body {
+    background: #f0f4ff;
+    height: 350px;
+    padding: 16px;
+    overflow-y: auto;
+}
+
+/* TIN NHẮN */
+.message {
+    padding: 10px 15px;
+    border-radius: 15px;
+    max-width: 80%;
+    margin-bottom: 10px;
+    font-size: 15px;
+}
+
+.bot-msg {
+    background: #dfe7ff;
+    align-self: flex-start;
+}
+
+.user-msg {
+    background: var(--primary);
+    color: white;
+    align-self: flex-end;
+}
+
+.chatbox-footer {
+    background: #eef3fb;
+    padding: 10px;
+}

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>PetRescue Header</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/header.css">
+</head>
+<body>
+
+<!-- ==== HEADER TRÊN ==== -->
+<div class="header-bg">
+    <div class="header-wrapper">
+        <header class="top-header">
+            <!-- LOGO -->
+            <a href="header.html">
+            <div class="logo">
+                <img src="https://res.cloudinary.com/dwnbmfhel/image/upload/v1764038017/z7195574147136_4515011aa6bd8fb3801ff37f93280684_gahjde.jpg" alt="Logo">
+                <h2>PetRescue</h2>
+            </div>
+            </a>
+
+            <!-- THANH TÌM KIẾM -->
+            <div class="search-bar position-relative">
+                <i class="bi bi-search"></i>
+
+                <input id="searchInput" type="text" autocomplete="off">
+
+                <!-- Danh sách gợi ý xổ xuống -->
+                <ul id="suggestList" class="list-group position-absolute w-100 shadow-sm"
+                    style="top: 100%; left: 0; z-index: 1000; display: none;">
+                </ul>
+            </div>
+
+
+            <!-- HÀNH ĐỘNG HEADER -->
+            <div class="header-actions">
+                <a href="wishlist.html">
+                <div class="icon-btn" title="Yêu thích">
+                    <i class="bi bi-heart"></i>
+                    <span>Yêu thích</span>
+                </div>
+                </a>
+
+                <a href="shoppingcart.html"><div class="icon-btn" title="Giỏ hàng">
+                    <i class="bi bi-cart3"></i>
+                    <span>Giỏ hàng</span>
+                </div></a>
+
+                <a href="personal-page.html"><div class="icon-btn" title="Tài khoản">
+                    <i class="bi bi-person-circle"></i>
+                    <span>Tài khoản</span>
+                </div></a>
+            </div>
+        </header>
+    </div>
+</div>
+
+<!-- ==== MENU DƯỚI ==== -->
+<!-- ==== MENU DƯỚI (ĐÃ CHỈNH ICON) ==== -->
+<div class="menu-bg">
+    <div class="header-wrapper">
+        <nav class="main-nav">
+
+            <a href="dogs.html">
+                <button class="nav-item">
+                    <i class="fa-solid fa-dog"></i> Chó
+                </button>
+            </a>
+
+            <a href="cats.html">
+                <button class="nav-item">
+                    <i class="fa-solid fa-cat"></i> Mèo
+                </button>
+            </a>
+
+            <a href="brand.html">
+                <button class="nav-item">
+                    <i class="bi bi-award-fill"></i> Thương hiệu
+                </button>
+            </a>
+
+            <a href="promotion.html">
+                <button class="nav-item"><i class="bi bi-gift"></i> Khuyến mãi</button>
+            </a>
+
+            <a href="support.html">
+                <button class="nav-item"><i class="bi bi-headset"></i> Hỗ trợ</button>
+            </a>
+
+            <a href="policy.html">
+                <button class="nav-item"><i class="bi bi-journal-text"></i> Chính sách mua hàng</button>
+            </a>
+
+        </nav>
+    </div>
+</div>
+
+
+<!-- NÚT CHAT NỔI -->
+<button class="chatbox-btn" data-bs-toggle="modal" data-bs-target="#chatModal">
+    <i class="fa-solid fa-paw"></i>
+</button>
+
+<!-- MODAL CHATBOX -->
+<div class="modal fade" id="chatModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-end">
+        <div class="modal-content chatbox-container">
+
+            <div class="modal-header chatbox-header">
+                <img src="https://res.cloudinary.com/dwnbmfhel/image/upload/v1764038017/z7195574147136_4515011aa6bd8fb3801ff37f93280684_gahjde.jpg"
+                     class="chatbox-logo">
+                <h5 class="modal-title">PetRescue Hỗ trợ</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body chatbox-body">
+                <div class="message bot-msg">
+                    Xin chào! 🐾 PetRescue có thể giúp gì cho bạn?
+                </div>
+            </div>
+
+            <div class="modal-footer chatbox-footer">
+                <input type="text" class="form-control" placeholder="Nhập tin nhắn...">
+                <button class="btn btn-primary">Gửi</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+</body>
+</html>
