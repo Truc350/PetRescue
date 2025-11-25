@@ -1,0 +1,43 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat With AI</title>
+    {% load static %}
+
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/ChatWithAI.css' %}">
+</head>
+<body>
+  <div class="chat-container">
+        <div class="chat-header">
+            <h1>PetCare AI</h1>
+            <p>Trợ lý chẩn đoán sức khỏe thú cưng</p>
+        </div>
+
+        <div class="chat-body" id="chatBody">
+            <div class="welcome">
+                <p>Xin chào! Mình là bác sĩ thú y AI<br>Hãy mô tả triệu chứng của bé cưng nhà bạn nhé!</p>
+            </div>
+
+            <div class="message bot">
+                Chào bạn! Mình có thể giúp gì cho bé cưng hôm nay?<br>
+                Ví dụ bạn có thể nói:<br>
+                “Chó nhà mình 3 tuổi, hôm nay nôn ói và tiêu chảy”<br>
+                hoặc “Mèo con bỏ ăn 2 ngày, mắt có ghèn”
+            </div>
+        </div>
+
+        <div class="chat-footer">
+            <div class="input-area">
+                <span class="paw">Pet</span>
+                <input type="text" id="userInput" placeholder="Nhập triệu chứng của bé cưng..." autocomplete="off">
+               <button id="sendBtn" title="Gửi">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
