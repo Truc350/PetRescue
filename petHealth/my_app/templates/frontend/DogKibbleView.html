@@ -67,108 +67,111 @@
         </div>
 
 
-      <section class="section-spacing">
-          <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="fw-bold mb-0">Sản phẩm nổi bật</h4>
-            <a href="#" class="text-danger fw-medium text-decoration-none">
-              Xem tất cả <i class="bi bi-chevron-right"></i>
-            </a>
-          </div>
-
-          <div class="product-carousel-wrapper position-relative">
-
-            <!-- Nút trái -->
-            <button class="scroll-arrow left" onclick="scrollProduct(this, -1)">
-              <i class="bi bi-chevron-left"></i>
-            </button>
-            <!-- Nút phải -->
-            <button class="scroll-arrow right" onclick="scrollProduct(this, 1)">
-              <i class="bi bi-chevron-right"></i>
-            </button>
-
-            <div class="product-scroll-container">
-
-              <!-- Sản phẩm 1 -->
-              <div class="product-item">
-                <div class="product-card">
-                  <div class="img-wrapper">
-                    <img src="https://paddy.vn/cdn/shop/products/thuc-an-hat-meo-con-royal-canin-kitten-36-paddy-1.jpg?v=1759747164" alt="Royal Canin Kitten">
-                    <div class="weight-badge">400g</div>
-                    <div class="age-badge">Mèo con<br>4 đến 12<br>tháng tuổi</div>
-                  </div>
-                  <div class="product-info">
-                    <p class="brand">Royal Canin</p>
-                    <p class="name">Thức Ăn Hạt Cho Mèo Con Royal Canin Kitten 36</p>
-                    <p class="price">135.000đ</p>
-                    <a href="#" class="btn-buy">
-                      <i class="bi bi-cart-plus"></i> Mua ngay
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Sản phẩm 2 -->
-              <div class="product-item">
-                <div class="product-card">
-                  <div class="img-wrapper">
-                    <img src="https://paddy.vn/cdn/shop/files/ganador-adult-ga-quay-3kg-paddy-pet-shop.jpg" alt="Ganador Adult">
-                    <div class="sale-badge">Giảm giá</div>
-                  </div>
-                  <div class="product-info">
-                    <p class="brand">Ganador</p>
-                    <p class="name">Hạt Ganador Adult Cho Chó Trưởng Thành Vị Gà Quay 3kg</p>
-                    <p class="price">185.000đ</p>
-                    <a href="#" class="btn-buy">
-                      <i class="bi bi-cart-plus"></i> Mua ngay
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Sản phẩm 3 -->
-              <div class="product-item">
-                <div class="product-card">
-                  <div class="img-wrapper">
-                    <img src="https://paddy.vn/cdn/shop/files/anf-6free-salmon-cho-cho.jpg" alt="ANF 6Free">
-                    <div class="soldout-badge">Hết hàng</div>
-                  </div>
-                  <div class="product-info">
-                    <p class="brand">ANF 6Free</p>
-                    <p class="name">Thức Ăn Hạt Hữu Cơ ANF 6Free Salmon Cho Chó Mọi Lứa Tuổi</p>
-                    <p class="price">320.000đ</p>
-                    <a href="#" class="btn-buy disabled">
-                      <i class="bi bi-cart-plus"></i> Hết hàng
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Thêm bao nhiêu cũng được -->
-              <div class="product-item">
-                <div class="product-card">
-                  <div class="img-wrapper">
-                    <img src="https://paddy.vn/cdn/shop/files/smartheart-adult-paddy.jpg" alt="SmartHeart">
-                  </div>
-                  <div class="product-info">
-                    <p class="brand">SmartHeart</p>
-                    <p class="name">Thức Ăn Hạt Cho Chó Trưởng Thành SmartHeart Vị Thịt Bò Nướng</p>
-                    <p class="price">95.000đ</p>
-                    <a href="#" class="btn-buy">
-                      <i class="bi bi-cart-plus"></i> Mua ngay
-                    </a>
-                  </div>
-                </div>
-              </div>
-
+        <section class="section-spacing content-padding">
+            <div class="d-flex justify-content-between align-items-center mb-4 position-relative">
+                <h4 class="fw-bold mb-0">Sản phẩm nổi bật</h4>
             </div>
-          </div>
+
+
+            <!-- Sản phẩm 1 -->
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="product-card bg-white rounded shadow-sm overflow-hidden">
+                    <img src="https://paddy.vn/cdn/shop/files/thuc-an-cho-meo-royal-canin-indoor.jpg?v=1724921575"
+                         class="w-100" style="height: 200px; object-fit: contain;" alt="Royal Canin Indoor 27">
+                    <div class="p-3">
+                        <div class="product-header d-flex justify-content-between align-items-center">
+                                <p class="small text-muted mb-0 brand-name">Royal Canin</p>
+                                <button class="btn-wishlist">
+                                    <i class="bi bi-heart"></i>
+                                </button>
+                            </div>
+                        <p class="fw-medium small line-clamp-2">Thức Ăn Hạt Cho Mèo Trưởng Thành Nuôi Trong Nhà Royal
+                            Canin Indoor 27</p>
+                        <p class="text-danger fw-bold">132.000đ</p>
+                        <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
+                            <i class="bi bi-cart-plus me-1"></i> Mua ngay
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sản phẩm 2 -->
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="product-card bg-white rounded shadow-sm overflow-hidden">
+                    <img src="https://paddy.vn/cdn/shop/products/thuc-an-hat-meo-con-royal-canin-kitten-36-paddy-1.jpg?v=1759747164"
+                         class="w-100" style="height: 200px; object-fit: contain;" alt="Royal Canin Kitten">
+                    <div class="p-3">
+                        <div class="product-header d-flex justify-content-between align-items-center ">
+                                <p class="small text-muted mb-0 brand-name">Royal Canin</p>
+                                <button class="btn-wishlist">
+                                    <i class="bi bi-heart"></i>
+                                </button>
+                            </div>
+                        <p class="fw-medium small line-clamp-2">Thức Ăn Hạt Cho Mèo Con Royal Canin Kitten 36</p>
+                        <p class="text-danger fw-bold">135.000đ</p>
+                        <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
+                            <i class="bi bi-cart-plus me-1"></i> Mua ngay
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sản phẩm 3 -->
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="product-card bg-white rounded shadow-sm overflow-hidden">
+                    <img src="https://paddy.vn/cdn/shop/files/thuc-an-cho-meo-soi-than-royal-canin-urinary-so.jpg?v=1694499674"
+                         class="w-100" style="height: 200px; object-fit: contain;" alt="Urinary S/O">
+                    <div class="p-3">
+                        <div class="product-header d-flex justify-content-between align-items-center ">
+                                <p class="small text-muted mb-0 brand-name">Royal Canin</p>
+                                <button class="btn-wishlist">
+                                    <i class="bi bi-heart"></i>
+                                </button>
+                            </div>
+                        <p class="fw-medium small line-clamp-2">Thức Ăn Hạt Cho Mèo Sỏi Thận Royal Canin Urinary S/O</p>
+                        <p class="text-danger fw-bold">185.000đ</p>
+                        <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
+                            <i class="bi bi-cart-plus me-1"></i> Mua ngay
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!--Sản phẩm 4 -->
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="product-card bg-white rounded shadow-sm overflow-hidden">
+                    <img src="https://paddy.vn/cdn/shop/files/royal-canin_88d0e834-94a8-4917-a074-34fda22ccc82.jpg?v=1730286373"
+                         class="w-100" style="height: 200px; object-fit: contain;" alt="Pate Kitten">
+                    <div class="p-3">
+                        <div class="product-header d-flex justify-content-between align-items-center">
+                                <p class="small text-muted mb-0 brand-name">Royal Canin</p>
+                                <button class="btn-wishlist">
+                                    <i class="bi bi-heart"></i>
+                                </button>
+                            </div>
+                        <p class="fw-medium small line-clamp-2">Pate Cho Mèo Con Royal Canin Kitten Instinctive 85g</p>
+                        <p class="text-danger fw-bold">30.000đ</p>
+                        <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
+                            <i class="bi bi-cart-plus me-1"></i> Mua ngay
+                        </a>
+                    </div>
+                </div>
+            </div>
         </section>
 
-      </div>
     </div>
-  </div>
+</div>
+</div>
 <div class="support-btn">
     <i class="fas fa-comment-dots"></i> Hỗ trợ
 </div>
 </body>
+
+<script>
+document.querySelectorAll('.btn-wishlist').forEach(btn => {
+    btn.addEventListener('click', function() {
+        this.classList.toggle('liked');
+    });
+});
+</script>
 </html>
