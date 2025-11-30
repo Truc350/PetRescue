@@ -36,3 +36,5 @@ def getPersonal(request):
     return render(request, 'frontend/personal-page.html')
 def getHomePage(request):
     return render(request, 'frontend/homePage.html')
+def getDashBoard(request):
+    return render(request, 'frontend/admin/dashboard.html')
