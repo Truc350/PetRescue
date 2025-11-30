@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Trang Quản Trị - SkyDrone</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../../static/css/profileAdmin.css">
+
+
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="main-header">
+    <div class="logo">
+        <img src="/image/logoo2.png" alt="Logo">
+        <h2>SkyDrone Admin</h2>
+    </div>
+    <div class="header-right">
+        <!-- Icon admin + tên -->
+        <a href="profile-admin.html" class="text-decoration-none text-while">
+            <div class="thong-tin-admin d-flex align-items-center gap-2">
+                <i class="bi bi-person-circle fs-4"></i>
+                <span class="fw-semibold">Admin</span>
+            </div>
+        </a>
+
+        <button class="logout-btn" id="logoutBtn" title="Đăng xuất">
+            <i class="bi bi-box-arrow-right"></i>
+        </button>
+    </div>
+    <div class="logout-modal" id="logoutModal">
+        <div class="logout-modal-content">
+            <p>Bạn có chắc muốn đăng xuất không?</p>
+            <div class="logout-actions">
+                <a href="../login.html">
+                    <button id="confirmLogout" class="confirm">Có</button>
+                </a>
+                <button id="cancelLogout" class="cancel">Không</button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- ===== LAYOUT ===== -->
+<div class="layout">
+    <!-- === SIDEBAR === -->
+    <aside class="sidebar">
+        <div class="user-info">
+            <img src="https://res.cloudinary.com/dwnbmfhel/image/upload/v1764476041/z7055808379444_91c23f00777f6dac0cc2baf49e45429a_ipj8go.jpg" alt="Avatar">
+            <h3>Mạc Nguyên</h3>
+            <p>Chào mừng bạn trở lại 👋</p>
+        </div>
+
+        <ul class="menu">
+            <li class="active"><i class="bi bi-speedometer2"></i> Tổng Quan</li>
+            <a href="customer-manage.html"><li><i class="bi bi-person-lines-fill"></i> Quản Lý Tài Khoản</li></a>
+            <a href="product-management.html"><li><i class="bi bi-box-seam"></i> Quản Lý Sản Phẩm</li></a>
+            <a href="category-manage.html"><li><i class="bi bi-tags"></i> Quản Lý Danh Mục</li></a>
+
+            <li class="has-submenu">
+                <div class="menu-item">
+                    <i class="bi bi-truck"></i>
+                    <span>Quản Lý Đơn Hàng</span>
+                    <i class="bi bi-chevron-right arrow"></i>
+                </div>
+                <ul class="submenu">
+                    <a href="uncomfirmed-order-manage.html"><li>Chưa Xác Nhận</li></a>
+                    <a href="comfirmed-order-manage.html"><li>Đã Xác Nhận</li></a>
+                </ul>
+            </li>
+
+            <a href="blog-manage.html"><li><i class="bi bi-journal-text"></i> Quản Lý Blog</li></a>
+            <a href="promotion-manage.html"><li><i class="bi bi-megaphone"></i> Quản Lý Khuyến Mãi</li></a>
+            <a href="statistics.html"><li><i class="bi bi-bar-chart"></i> Báo Cáo & Thống Kê</li></a>
+        </ul>
+    </aside>
+
+
+    <div class="profile-page">
+        <!-- LEFT SIDE -->
+        <div class="profile-left">
+            <div class="avatar-box">
+                <div class="avatar-wrapper">
+                    <img src="https://res.cloudinary.com/dwnbmfhel/image/upload/v1764476041/z7055808379444_91c23f00777f6dac0cc2baf49e45429a_ipj8go.jpg" alt="Avatar" class="avatar-img">
+                    <span class="avatar-camera">
+        <i class="bi bi-camera-fill"></i>
+    </span>
+                </div>
+                <input type="file" id="avatar-upload" accept="image/*" hidden>
+            </div>
+            <h3>Mạc Nguyên</h3>
+        </div>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="profile-right">
+        <!-- Thông tin cơ bản -->
+        <h4>Thông tin cơ bản</h4>
+        <form id="profileForm">
+            <label>Họ tên
+                <input name="fullname" value="Mạc Nguyên">
+            </label>
+            <label>Email
+                <input type="email" name="email" value="macnguyen123@gmail.com">
+            </label>
+            <label>Số điện thoại
+                <input name="phone" value="0123456789">
+            </label>
+            <div class="actions">
+                <button type="submit" class="btn">Lưu thay đổi</button>
+            </div>
+        </form>
+
+        <hr>
+
+        <h4 class="fw-bold">Thông tin ngân hàng</h4>
+        <div class="bank-info" id="bankView">
+            <div class="bank-details"><p><strong>Ngân hàng:</strong> <span id="bankNameText">Vietcombank</span></p>
+                <p><strong>Số tài khoản:</strong> <span id="acctMasked">**** **** 1234</span></p>
+                <p><strong>Chủ tài khoản:</strong> <span id="acctNameText">Mạc Nguyên</span></p></div>
+            <button id="btn-edit-bank" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil-square"></i>
+            </button>
+            <div class="bank-qr"><p><strong>Mã QR thanh toán</strong></p> <img src="https://images.viblo.asia/0998d669-0b87-405f-83ca-956971bf3476.png" alt="QR Code">
+            </div>
+        </div>
+
+        <!-- Bản chỉnh sửa -->
+        <div class="bank-info-edit p-3 border rounded mb-3 d-none" id="bankEdit">
+            <form id="bankForm"><label>Ngân hàng <select name="bankName" id="bankName" class="form-select" required>
+                <option value="">-- Chọn ngân hàng --</option>
+                <option value="Momo">Momo</option>
+                <option value="Vietcombank">Vietcombank</option>
+                <option value="Techcombank">Techcombank</option>
+            </select> </label> <label>Số tài khoản
+                <div class="input-group"><input name="accountNumber" id="accountNumber" value="12341234" required
+                                                class="form-control"> <span class="input-group-text" id="toggleEye"><i
+                        class="bi bi-eye"></i></span></div>
+            </label> <label>Chủ tài khoản <input name="accountHolder" id="accountHolder" value="Mạc Nguyên" required
+                                                 class="form-control"> </label> <label class="mt-2">Mã QR thanh
+                toán</label>
+                <div class="mt-2"><img id="qrPreviewImg" src="" width="140" class="border rounded d-none">
+                    <div class="border rounded p-4 d-inline-block mt-2" id="khungThemQR" style="cursor:pointer;"><i
+                            class="bi bi-plus-lg fs-3"></i></div>
+                    <input type="file" id="qrUpload" accept="image/*" hidden></div>
+                <div class="mt-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                    <button type="button" id="btnCancelBank" class="btn btn-secondary">Hủy</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Đổi mật khẩu -->
+        <h4>Đổi mật khẩu</h4>
+        <form id="changePassForm">
+            <small class="password-hint">
+                Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.
+            </small>
+            <label>Mật khẩu cũ
+                <input type="text" name="oldPassword" required>
+            </label>
+            <label>Mật khẩu mới
+                <input type="text" name="newPassword" required minlength="8">
+            </label>
+            <label>Xác nhận mật khẩu
+                <input type="text" name="confirmPassword" required>
+            </label>
+            <div class="actions">
+                <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
+            </div>
+            <p id="passMsg" class="muted"></p>
+        </form>
+    </div>
+</div>
+
+
+</div>
+</div>
+<script>
+    document.querySelectorAll('.has-submenu .menu-item').forEach(item => {
+        item.addEventListener('click', () => {
+            item.parentElement.classList.toggle('open');
+        });
+    });
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // =============================
+// UPLOAD ẢNH AVATAR
+// =============================
+        const avatarWrapper = document.querySelector(".avatar-wrapper");
+        const avatarUpload = document.getElementById("avatar-upload");
+        const avatarImg = document.querySelector(".avatar-img");
+
+// Khi bấm vào icon camera => mở chọn file
+        avatarWrapper.addEventListener("click", () => {
+            avatarUpload.click();
+        });
+
+// Hiển thị avatar preview sau khi chọn ảnh
+        avatarUpload.addEventListener("change", function () {
+            const file = this.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                avatarImg.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+
+        /* =============================
+           KHỞI TẠO BIẾN
+        ==============================*/
+        const bankView = document.getElementById("bankView");
+        const bankEdit = document.getElementById("bankEdit");
+        const btnEdit = document.getElementById("btn-edit-bank");
+        const btnCancel = document.getElementById("btnCancelBank");
+        const bankForm = document.getElementById("bankForm");
+
+        const accountNumberInput = document.getElementById("accountNumber");
+        const toggleEye = document.getElementById("toggleEye").querySelector("i");
+        const acctMaskedText = document.getElementById("acctMasked");
+
+        const qrUpload = document.getElementById("qrUpload");
+        const qrPreviewImg = document.getElementById("qrPreviewImg");
+        const khungThemQR = document.getElementById("khungThemQR");
+
+        // Dữ liệu thật
+        let actualAcct = accountNumberInput.value || "12341234";
+        let isMasked = true;
+
+
+        /* =============================
+           MASK SỐ TÀI KHOẢN
+        ==============================*/
+        function maskAccount(acct) {
+            const s = acct.toString().replace(/\D/g, "");
+            if (!s) return "----";
+            const last4 = s.slice(-4);
+            const masked = s.slice(0, -4).replace(/\d/g, "*");
+            return (masked + last4).replace(/(.{4})/g, "$1 ").trim();
+        }
+
+        function updateMaskedDisplay() {
+            acctMaskedText.textContent = maskAccount(actualAcct);
+        }
+
+
+        /* =============================
+           TOGGLE EYE HIỆN / ẨN
+        ==============================*/
+        toggleEye.addEventListener("click", () => {
+            isMasked = !isMasked;
+
+            if (isMasked) {
+                accountNumberInput.value = maskAccount(actualAcct);
+                toggleEye.className = "bi bi-eye";      // đang ẩn => eye
+            } else {
+                accountNumberInput.value = actualAcct;
+                toggleEye.className = "bi bi-eye-slash"; // đang hiện => eye slash
+            }
+        });
+
+
+        /* =============================
+           MỞ FORM CHỈNH SỬA
+        ==============================*/
+        btnEdit.addEventListener("click", () => {
+            bankView.classList.add("d-none");
+            bankEdit.classList.remove("d-none");
+
+            // Reset số tài khoản
+            accountNumberInput.value = isMasked ? maskAccount(actualAcct) : actualAcct;
+            toggleEye.className = isMasked ? "bi bi-eye" : "bi bi-eye-slash";
+        });
+
+
+        /* =============================
+           NÚT HỦY
+        ==============================*/
+        btnCancel.addEventListener("click", () => {
+            bankEdit.classList.add("d-none");
+            bankView.classList.remove("d-none");
+
+            // Reset QR preview
+            qrUpload.value = "";
+            qrPreviewImg.classList.add("d-none");
+            qrPreviewImg.src = "";
+        });
+
+
+        /* =============================
+           TẢI ẢNH QR (Preview)
+        ==============================*/
+        khungThemQR.addEventListener("click", () => qrUpload.click());
+
+        qrUpload.addEventListener("change", () => {
+            const file = qrUpload.files[0];
+            if (!file) {
+                qrPreviewImg.classList.add("d-none");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = e => {
+                qrPreviewImg.src = e.target.result;
+                qrPreviewImg.classList.remove("d-none");
+            };
+            reader.readAsDataURL(file);
+        });
+
+
+        /* =============================
+           KHỞI TẠO BAN ĐẦU
+        ==============================*/
+        updateMaskedDisplay();
+
+        // ================== POPUP ĐĂNG XUẤT ==================
+        const logoutBtn = document.getElementById("logoutBtn");
+        const logoutModal = document.getElementById("logoutModal");
+        const cancelLogout = document.getElementById("cancelLogout");
+
+        logoutBtn.onclick = () => logoutModal.style.display = "flex";
+        cancelLogout.onclick = () => logoutModal.style.display = "none";
+    });
+</script>
+
+
+
+</body>
+</html>
