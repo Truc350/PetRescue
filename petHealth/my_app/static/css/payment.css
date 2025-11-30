@@ -1,0 +1,129 @@
+body {
+    font-family: Inter, Inter Fallback, Arial, sans-serif;
+    background: linear-gradient(to right, #fff 58%, #fafafa 58%);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+.wrap {
+    display: flex;
+    width: 80%;
+    margin: 0 auto;
+    min-height: 100vh;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    display: contents;
+}
+.left {
+    flex: 7;
+    background: #fff;
+    padding: 50px 70px;
+}
+.left .text-start img{
+border-radius: 100px;
+}
+
+.right {
+    flex: 5;
+    background: #fafafa;
+    padding: 50px 70px;
+}
+
+/* === BREADCRUMB (ĐƯỜNG DẪN) === */
+.breadcrumb {
+    margin-top: 10px;
+    margin-bottom: 0;
+    font-size: 0.95rem;
+}
+
+/* Liên kết có thể click (Giỏ hàng + Thông tin giao hàng) */
+.breadcrumb a {
+    color: #0051c6;            /* Xanh chuẩn Bootstrap */
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: color 0.2s, text-decoration 0.2s;
+}
+
+.breadcrumb a:hover {
+    color: #0056b3;            /* Xanh đậm khi hover */
+    text-decoration: underline;
+}
+
+/* Bước hiện tại (Phương thức thanh toán) */
+.breadcrumb span.current {
+    color: #6c757d;            /* Màu xám */
+    cursor: default;           /* Không đổi con trỏ */
+    font-weight: 500;
+}
+
+/* === NÚT CHÍNH === */
+.btn-primary {
+    background-color: #0051c6;
+    border: none;
+    font-weight: 500;
+    border-radius: 8px;
+    padding: 10px 0;
+}
+
+.btn-primary:hover {
+    background-color: #0069d9;
+}
+
+.btn-primary {
+    background-color: #0051c6;
+    border: none;
+    font-weight: 500;
+    border-radius: 8px;
+    padding: 10px 0;
+}
+.btn-primary:hover {
+    background-color: #0069d9;
+}
+
+.prod-img {
+    border-radius: 8px;
+}
+.total {
+    font-size: 1.25rem;
+    color: #212529;
+}
+
+/* POPUP GIẢ LẬP VNPAY */
+.vnpay-popup {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 9999;
+}
+
+.vnpay-box {
+    background: #fff;
+    border-radius: 12px;
+    padding: 30px 40px;
+    width: 400px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    animation: fadeIn 0.3s ease;
+}
+
+.vnpay-option {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+.vnpay-option:hover {
+    background: #f6f9ff;
+}
