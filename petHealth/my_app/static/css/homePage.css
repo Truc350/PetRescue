@@ -1,0 +1,302 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.container-content {
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+/* Benefit hover */
+.benefit-box {
+    transition: 0.25s;
+}
+
+.benefit-box:hover {
+    transform: translateY(-4px);
+}
+
+/* Pet sections */
+.pet-box {
+    height: 250px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 12px;
+}
+
+/* Background cho chó */
+.dog-box {
+    background-image: url('https://images.unsplash.com/photo-1568572933382-74d440642117?auto=format&fit=crop&w=1200&q=60');
+}
+
+/* Background cho mèo */
+.cat-box {
+    background-image: url('https://images.unsplash.com/photo-1518791841217-8f162f1e1131?auto=format&fit=crop&w=1200&q=60');
+}
+
+
+.carousel-item img {
+    height: 600px;
+    object-fit: cover;
+    width: 600px;
+}
+
+/* Ẩn thanh cuộn nhưng vẫn cho cuộn ngang được */
+.scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+/* Giới hạn dòng tiêu đề sản phẩm */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.4;
+}
+
+/* Card sản phẩm hover nhẹ */
+.product-card {
+    transition: all 0.25s;
+    border: 1px solid #eee;
+    height: 100%;
+    background: #fff;
+}
+
+.product-card:hover {
+    transform: translateY(-4px);
+}
+
+/* Responsive cho mobile - cuộn ngang mượt */
+@media (max-width: 768px) {
+    .overflow-x-auto {
+        scroll-snap-type: x mandatory;
+    }
+
+    .overflow-x-auto > div {
+        scroll-snap-align: start;
+    }
+}
+
+/* ==================== KHOẢNG CÁCH ĐỀU CHO TẤT CẢ SECTION ==================== */
+.section-spacing {
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+
+/* Đảm bảo không bị margin chồng từ các phần tử con */
+.section-spacing > * {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+/* Trên mobile tăng nhẹ cho thoáng (vẫn đẹp, không bị dính) */
+@media (max-width: 768px) {
+    .section-spacing {
+        padding-top: 40px !important;
+        padding-bottom: 40px !important;
+
+    }
+}
+
+/* Banner cách phần dưới một chút (giữ nguyên như bạn đang có) */
+.content-padding.pb-4 {
+    padding-bottom: 30px !important;
+}
+
+/* Xóa hoàn toàn margin cũ của Bootstrap (my-5, my-4,...) */
+.my-4, .my-5, .mt-4, .mb-5 {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+/* ================== NÚT MUA NGAY ================== */
+.btn-danger {
+    background: linear-gradient(135deg, #234bbb, #1e40a3);
+    border: none !important;
+    color: white;
+    font-weight: 600;
+    transition: all 0.35s ease;
+    border-radius: 50px !important;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #1e3a9d, #1a3370);
+    transform: translateY(-3px);
+    color: white;
+}
+
+/* Đảm bảo nút luôn nằm dưới cùng của card */
+.product-card .p-3 {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.product-card .btn-danger {
+    margin-top: auto; /* đẩy nút xuống đáy */
+}
+
+/* ===================== BANNER ===================== */
+/* Xóa full-width, đưa banner về đúng lề container như các phần khác */
+#bannerCarousel {
+    margin-top: 30px; /* Cách header một khoảng đẹp */
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1300px; /* bằng với .container-content */
+    overflow: hidden; /* để bo góc ảnh con bên trong */
+}
+
+/* Đảm bảo ảnh bên trong vẫn full chiều rộng của carousel */
+#bannerCarousel .carousel-inner,
+#bannerCarousel .carousel-item,
+#bannerCarousel img {
+    width: 100%;
+    height: 500px; /* bạn tự điều chỉnh chiều cao mong muốn */
+    object-fit: cover;
+}
+
+/* Nếu bạn muốn banner cao hơn trên desktop, thấp hơn trên mobile */
+@media (max-width: 768px) {
+    #bannerCarousel,
+    #bannerCarousel img {
+        height: 300px !important;
+        margin-top: 50px;
+    }
+}
+
+/* .container-content căn giữa và giới hạn độ rộng */
+.container-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+
+/* ===================== NÚT MŨI TÊN TRÁI/PHẢI ===================== */
+.product-carousel-wrapper {
+    position: relative;
+    padding: 0 30px; /* để chừa chỗ cho 2 nút 2 bên */
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.product-scroll-container {
+    display: flex !important; /* BỎ row Bootstrap, dùng flex thuần */
+    gap: 1rem; /* thay cho g-3 */
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    padding: 10px 0;
+    margin: 0 !important;
+}
+
+.product-scroll-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Bỏ toàn bộ padding/margin của Bootstrap trong container này */
+.product-scroll-container > * {
+    flex: 0 0 auto;
+    width: calc(100% / 4 - 1rem); /* desktop: 4 sản phẩm */
+}
+
+@media (max-width: 992px) {
+    .product-scroll-container > * {
+        width: calc(100% / 3 - 1rem);
+    }
+}
+
+@media (max-width: 768px) {
+    .product-scroll-container > * {
+        width: calc(50% - 0.5rem);
+    }
+
+    .product-carousel-wrapper {
+        padding: 0 45px;
+    }
+
+}
+
+/* Nút mũi tên chung */
+/* Nút mũi tên – đẹp, cố định, không làm lệch trang */
+.scroll-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 35px;
+    height: 35px;
+    background: #fff;
+    border: 2px solid #234bbb;
+    border-radius: 50%;
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.0rem;
+    color: #234bbb;
+    z-index: 100;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+
+.scroll-arrow.left {
+    left: 5px;
+}
+
+.scroll-arrow.right {
+    right: 5px;
+}
+
+@media (max-width: 768px) {
+    .scroll-arrow {
+        width: 44px;
+        height: 44px;
+        font-size: 1.5rem;
+    }
+
+    .scroll-arrow.left {
+        left: 3px;
+    }
+
+    .scroll-arrow.right {
+        right: 3px;
+    }
+}
+
+.section-header {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.section-header .view-all {
+    white-space: nowrap;
+    margin-left: auto; /* ép nằm sát phải */
+}
+
+.view-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px; /* khoảng cách đẹp */
+    white-space: nowrap;
+}
+
+
