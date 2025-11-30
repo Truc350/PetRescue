@@ -10,5 +10,12 @@ urlpatterns = [
     path('login', views.getLogin),
     path('register', views.getRegister),
     path('forgot-password', views.getForgotPassword),
+    path('payment', views.getPayment),
+    path('payment-infor', views.getPaymentInfor),
+    path('category', views.getCategory),
+    path('categoryManage', views.getCategoryManage),
+    path('customerManage', views.getCustomerManage),
+    path('productManagement', views.getProductManagement),
+    path('overviewAdmin', views.getProfileAdmin),
 ]
 
