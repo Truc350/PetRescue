@@ -17,5 +17,6 @@ urlpatterns = [
     path('customerManage', views.getCustomerManage),
     path('productManagement', views.getProductManagement),
     path('overviewAdmin', views.getProfileAdmin),
+    path('DogKibbleView', views.getDogKibbleView),
 ]
 

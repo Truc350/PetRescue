@@ -31,3 +31,5 @@ def getProductManagement(request):
     return render(request, 'fontend/admin/product-management.html')
 def getProfileAdmin(request):
     return render(request, 'fontend/admin/profileAdmin.html')
+def getDogKibbleView(request):
+    return render(request, 'fontend/DogKibbleView.html')
