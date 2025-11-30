@@ -298,5 +298,52 @@ body {
     gap: 4px; /* khoảng cách đẹp */
     white-space: nowrap;
 }
+/* ===================== NÚT YÊU THÍCH (TRÁI TIM) ===================== */
+.product-header {
+    position: relative;
+}
 
+.btn-wishlist {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #999;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-wishlist:hover {
+    color: #234bbb;
+    background: #f0f4ff;
+}
+
+.btn-wishlist:active,
+.btn-wishlist.liked {
+    color: #e74c3c !important;   /* đỏ đẹp */
+    background: #ffeaea;
+}
+
+.btn-wishlist:active {
+    transform: scale(0.92);
+}
+
+
+/* Đảm bảo brand không bị lệch */
+.brand-name {
+    font-size: 13px;
+    color: #666;
+    margin: 0;
+}
+
+/* Tùy chọn: thêm hiệu ứng nhấp */
+.btn-wishlist:active {
+    transform: scale(0.9);
+}
 
