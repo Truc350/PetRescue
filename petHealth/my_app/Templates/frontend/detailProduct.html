@@ -165,5 +165,12 @@
     });
 </script>
 
+<script>
+document.querySelectorAll('.btn-outline-secondary').forEach(btn => {
+    btn.addEventListener('click', function() {
+        this.classList.toggle('liked');
+    });
+});
+</script>
 </body>
 </html>
