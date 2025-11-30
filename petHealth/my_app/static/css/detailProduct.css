@@ -24,7 +24,8 @@ body {
 .product-page {
     padding: 20px 20px;
 }
-.product-page .row{
+
+.product-page .row {
     align-items: flex-start;
 }
 
@@ -72,10 +73,10 @@ body {
 .col-lg-5.position-relative.main-image,
 .col-lg-7.position-relative.main-image,
 .col-lg-6.position-relative.main-image {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
 }
 
 .main-image .img-wrap {
@@ -96,9 +97,10 @@ body {
     object-fit: contain
 }
 
-.product-info{
+.product-info {
     padding-left: 40px;
 }
+
 .product-info h1 {
     font-size: 20px;
     color: #0b4aa3;
@@ -134,18 +136,24 @@ body {
 }
 
 .size-buttons .btn {
-    border: 1px solid #ddd;
-    background: #fff;
-    color: #222;
-    padding: 6px 18px;
+    border: 1px solid #ddd !important;
+    background: #fff !important;
+    color: #222 !important;
+    padding: 6px 18px !important;
+    font-weight: 500;
+    border-radius: 0px !important; /* chỉ bo nhẹ góc */
+    transition: all 0.2s ease;
 }
 
-.size-buttons .btn.active {
-    background: #fff;
-    border-color: var(--accent);
-    box-shadow: 0 4px 20px rgba(11, 132, 240, 0.12)
+.size-buttons .btn.active,
+.size-buttons .btn:active,
+.size-buttons .btn:focus {
+    border-color: #000 !important;
+    background: #fff !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    font-weight: 600;
 }
-
 .qty {
     display: flex;
     align-items: center;
@@ -153,8 +161,8 @@ body {
 }
 
 .qty .btn {
-    width: 44px;
-    height: 44px;
+    width: 35px;
+    height: 35px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -166,7 +174,7 @@ body {
 }
 
 .add-cart {
-    background: #234bbb;
+    background: #0849ff;
     color: #fff;
     border-radius: 30px;
     padding: 12px 28px;
@@ -174,6 +182,12 @@ body {
     border: none;
     width: 400px;
     text-align: center;
+}
+
+.add-cart:hover{
+    background: white;
+    border: 1px solid #0849ff;
+    color: #0849ff;
 }
 
 .bubble {
@@ -240,79 +254,133 @@ body {
 
 /* ---------- Product description ---------- */
 .product-desc {
-  margin-top: 60px;
-  padding: 40px 0;
-  border-top: 1px solid #eee;
+    margin-top: 60px;
+    padding: 40px 0;
+    border-top: 1px solid #eee;
 }
 
 .product-desc .desc-header {
-  text-align: center;
-  margin-bottom: 28px;
+    text-align: center;
+    margin-bottom: 28px;
 }
 
 .product-desc .desc-header h2 {
-  font-size: 20px;
-  font-weight: 700;
-  display: inline-block;
-  padding-bottom: 8px;
-  position: relative;
+    font-size: 20px;
+    font-weight: 700;
+    display: inline-block;
+    padding-bottom: 8px;
+    position: relative;
 }
 
-.product-desc .desc-header h2::after{
-  content: "";
-  display:block;
-  width: 48px;
-  height: 3px;
-  background:#111;
-  margin: 8px auto 0;
-  border-radius:2px;
+.product-desc .desc-header h2::after {
+    content: "";
+    display: block;
+    width: 48px;
+    height: 3px;
+    background: #111;
+    margin: 8px auto 0;
+    border-radius: 2px;
 }
 
 /* content layout: centered narrow column like ảnh */
 .product-desc .desc-body {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 10px 30px;
-  color: #333;
-  line-height: 1.8;
-  font-size: 16px;
+    padding: 10px 30px;
+    text-align: left !important;
+}
+
+.product-desc .desc-body ul {
+    text-align: left;
+    padding-left: 28px;
 }
 
 /* subtitle inside description (e.g. Lợi ích, Thành phần) */
 .product-desc .desc-subtitle {
-  font-weight: 700;
-  margin: 28px 0 12px;
-  color: #222;
+    font-weight: 700;
+    margin: 28px 0 12px;
+    color: #222;
 }
 
 /* bullets spacing */
 .product-desc .desc-body ul {
-  padding-left: 22px;
-  margin-bottom: 16px;
+    padding-left: 22px;
+    margin-bottom: 16px;
 }
 
 .product-desc .desc-body ul li {
-  margin: 12px 0;
+    margin: 12px 0;
 }
 
 /* centered small product short title */
 .product-desc .short-title {
-  text-align: center;
-  font-weight: 700;
-  margin-bottom: 18px;
-  color: #222;
+    text-align: center;
+    font-weight: 700;
+    margin-bottom: 18px;
+    color: #222;
+}
+
+.product-desc .desc-body::after {
+    content: "Xem thêm sản phẩm khác tại PesRecue.vn";
+    display: block;
+    text-align: center;
+    margin: 40px auto 10px;
+    padding: 16px 20px;
+    background: #f8f9fa;
+    border: 1.5px dashed #234bbb;
+    border-radius: 12px;
+    font-weight: 600;
+    color: #234bbb;
+    font-size: 16px;
+    max-width: 90%;
+    width: fit-content;
 }
 
 /* smaller, dim brand link style used in image */
-.product-desc a.brand-link{
-  color:#1a3bff;
-  font-weight:600;
-  text-decoration:none;
+.product-desc a.brand-link {
+    color: #1a3bff;
+    font-weight: 600;
+    text-decoration: none;
 }
 
 /* responsive tweaks */
-@media (max-width: 768px){
-  .product-desc .desc-body{padding: 10px 16px; font-size:15px}
-  .product-desc .desc-header h2::after{width:36px}
+@media (max-width: 768px) {
+    .product-desc .desc-body {
+        padding: 10px 16px;
+        font-size: 15px
+    }
+
+    .product-desc .desc-header h2::after {
+        width: 36px
+    }
 }
 
+/* ===================== NÚT YÊU THÍCH (TRÁI TIM) ===================== */
+.d-flex .btn-outline-secondary {
+    background: none !important;
+    border: 1px solid #ddd !important;
+    font-size: 18px;
+    color: #999;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.d-flex .btn-outline-secondary:hover {
+    color: #234bbb !important;
+    background: #f0f4ff !important;
+}
+
+.d-flex .btn-outline-secondary:active,
+.d-flex .btn-outline-secondary.liked {
+    color: #e74c3c !important; /* đỏ đẹp */
+    background: #ffeaea !important;
+}
+
+.d-flex .btn-outline-secondary:active {
+    transform: scale(0.92);
+}
