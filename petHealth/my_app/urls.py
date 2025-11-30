@@ -18,6 +18,8 @@ urlpatterns = [
     path('productManagement', views.getProductManagement),
     path('overviewAdmin', views.getProfileAdmin),
     path('DogKibbleView', views.getDogKibbleView),
+    path('personal-page', views.getPersonal),
+    path('homePage', views.getHomePage),
 ]
 
 
