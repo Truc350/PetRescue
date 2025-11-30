@@ -1,0 +1,133 @@
+/* === NỀN VÀ FONT CHUNG === */
+body {
+    font-family: Inter, Inter Fallback, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: linear-gradient(to right, #fff 58%, #fafafa 58%);
+}
+
+/* === KHUNG CHÍNH === */
+.wrap {
+    display: flex;
+    width: 80%;
+    margin: 0 auto;
+    min-height: 100vh;
+    align-items: stretch;
+}
+
+/* === BÊN TRÁI: FORM THANH TOÁN === */
+.left {
+    flex: 7;
+    background: #fff;
+    padding: 0 50px; /* giảm padding để xích lên cao */
+}
+.left .text-start img{
+    border-radius: 100px;
+}
+
+/* === BÊN PHẢI: TÓM TẮT ĐƠN HÀNG === */
+.right {
+    flex: 5;
+    background: #fafafa;
+    padding: 50px 70px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+/* === BREADCRUMB (ĐƯỜNG DẪN) === */
+.breadcrumb {
+    margin-top: 10px;
+    margin-bottom: 0;
+    font-size: 0.95rem;
+}
+
+/* Liên kết có thể click (Giỏ hàng, Phương thức thanh toán) */
+.breadcrumb a {
+    color: #0051c6;        /* Xanh chuẩn Bootstrap */
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: color 0.2s, text-decoration 0.2s;
+}
+
+.breadcrumb a:hover {
+    color: #0056b3;        /* Xanh đậm hơn khi hover */
+    text-decoration: underline;
+}
+
+/* Bước hiện tại (Thông tin giao hàng) */
+.breadcrumb span.current {
+    color: #6c757d;        /* Màu xám */
+    cursor: default;       /* Không đổi con trỏ */
+    font-weight: 500;
+}
+
+/* === NÚT CHÍNH === */
+.btn-primary {
+    background-color: #0051c6;
+    border: none;
+    font-weight: 500;
+    border-radius: 8px;
+    padding: 10px 0;
+}
+
+.btn-primary:hover {
+    background-color: #0069d9;
+}
+
+/* === FORM INPUT === */
+.form-select, .form-control {
+    border-radius: 8px;
+}
+
+/* === HÌNH SẢN PHẨM === */
+.prod-img {
+    border-radius: 8px;
+}
+
+/* === TỔNG TIỀN === */
+.total {
+    font-size: 1.25rem;
+    color: #212529;
+}
+
+#comment-form {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    resize: vertical;
+    height: 80px; /* chiều cao mong muốn */
+}
+.address-select-group {
+    display: flex;
+    gap: 10px; /* khoảng cách giữa 2 dropdown */
+}
+
+.address-select-group select {
+    flex: 1;
+    padding: 10px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+
+    /* Mũi tên dropdown đẹp */
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"><polygon points="0,0 12,0 6,6" fill="%23666"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+.address-select-group select:focus {
+    border-color: #4a90e2;
+    outline: none;
+    box-shadow: 0 0 3px rgba(74, 144, 226, 0.5);
+}
