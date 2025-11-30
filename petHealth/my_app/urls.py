@@ -7,6 +7,17 @@ urlpatterns = [
     path('ChatWithAI', views.getChatWithAI),
     path('footer', views.getFooter),
     path('header', views.getHeader),
-    path('homePage', views.getHomePage),
-
+    path('login', views.getLogin),
+    path('register', views.getRegister),
+    path('forgot-password', views.getForgotPassword),
+    path('payment', views.getPayment),
+    path('payment-infor', views.getPaymentInfor),
+    path('category', views.getCategory),
+    path('categoryManage', views.getCategoryManage),
+    path('customerManage', views.getCustomerManage),
+    path('productManagement', views.getProductManagement),
+    path('overviewAdmin', views.getProfileAdmin),
+    path('DogKibbleView', views.getDogKibbleView),
 ]
+
+
