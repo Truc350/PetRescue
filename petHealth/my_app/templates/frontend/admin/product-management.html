@@ -83,9 +83,6 @@
                 </ul>
             </li>
 
-            <a href="blog-manage.html">
-                <li><i class="bi bi-journal-text"></i> Quản Lý Blog</li>
-            </a>
             <a href="promotion-manage.html">
                 <li><i class="bi bi-megaphone"></i> Quản Lý Khuyến Mãi</li>
             </a>
@@ -177,111 +174,95 @@
     </main>
 </div>
 
-<!-- === MODAL THÊM / SỬA SẢN PHẨM === -->
+<section id="product-form" style="display: none;">
+    <button class="btn btn-secondary mb-3" onclick="showList()">⬅ Quay lại</button>
 
-<div class="modal fade" id="modalSanPham" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title"><i class="bi bi-pencil-square"></i> Cập Nhật Thông Tin Sản Phẩm</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
+    <h4 class="text-primary fw-bold"><i class="bi bi-pencil-square"></i> Cập Nhật Thông Tin Sản Phẩm</h4>
 
-            <div class="modal-body">
-                <form id="formSanPham" class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Mã sản phẩm</label>
-                        <input type="text" class="form-control" id="maSP" placeholder="Nhập mã sản phẩm">
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Tên sản phẩm</label>
-                        <input type="text" class="form-control" id="tenSP" placeholder="Nhập tên sản phẩm">
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Danh mục</label>
-                        <select class="form-select" id="danhMuc">
-                            <option value="dog-food">
-                                🦴 Thức ăn cho chó
-                            </option>
-
-                            <option value="dog-clean">
-                                🧼 Chăm sóc vệ sinh cún
-                            </option>
-
-                            <option value="dog-health">
-                                🏥 Chăm sóc sức khoẻ cún
-                            </option>
-
-                            <option value="cat-food">
-                                🐟 Thức ăn cho mèo
-                            </option>
-
-                            <option value="cat-health">
-                                🩺 Chăm sóc sức khoẻ mèo
-                            </option>
-
-                            <option value="cat-clean">
-                                🧽 Vệ sinh mèo
-                            </option>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Thương hiệu</label>
-                        <input type="text" class="form-control" id="thuongHieu"
-                               placeholder="VD: Royal Canin, Zenith, Inaba...">
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Trạng thái</label>
-                        <select class="form-select" id="trangThai">
-                            <option>Đang Kinh Doanh</option>
-                            <option>Ẩn</option>
-                            <option>Hết Hàng</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Giá gốc</label>
-                        <input type="number" class="form-control" id="giaGoc" placeholder="Nhập giá gốc">
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Số lượng</label>
-                        <input type="number" class="form-control" id="soLuong" placeholder="Nhập số lượng">
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Đánh giá trung bình</label>
-                        <input type="text" class="form-control" id="danhGia" value="Tự động tính" disabled>
-                    </div>
-
-                    <div class="col-12">
-                        <label class="form-label">Ảnh chính</label>
-                        <input type="file" class="form-control" id="anhChinh">
-                    </div>
-
-                    <div class="col-12">
-                        <label class="form-label">Ảnh phụ (nhiều hình)</label>
-                        <input type="file" class="form-control" id="anhPhu" multiple>
-                    </div>
-
-                    <div class="col-12">
-                        <label class="form-label">Mô tả chi tiết</label>
-                        <textarea class="form-control" id="moTa" rows="3"
-                                  placeholder="Giới thiệu, ưu điểm,..."></textarea>
-                    </div>
-                </form>
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                <button class="btn btn-primary">Lưu Thay Đổi</button>
-            </div>
+    <form id="formSanPham" class="row g-3 mt-3">
+        <div class="col-md-6">
+            <label class="form-label">Mã sản phẩm</label>
+            <input type="text" class="form-control" id="maSP" placeholder="Nhập mã sản phẩm">
         </div>
-    </div>
-</div>
+
+        <div class="col-md-6">
+            <label class="form-label">Tên sản phẩm</label>
+            <input type="text" class="form-control" id="tenSP" placeholder="Nhập tên sản phẩm">
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Danh mục</label>
+            <select class="form-select" id="danhMuc">
+                <option value="dog-food">🦴 Thức ăn cho chó</option>
+                <option value="dog-clean">🧼 Chăm sóc vệ sinh cún</option>
+                <option value="dog-health">🏥 Chăm sóc sức khoẻ cún</option>
+                <option value="cat-food">🐟 Thức ăn cho mèo</option>
+                <option value="cat-health">🩺 Chăm sóc sức khoẻ mèo</option>
+                <option value="cat-clean">🧽 Vệ sinh mèo</option>
+            </select>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Thương hiệu</label>
+            <input type="text" class="form-control" id="thuongHieu" placeholder="VD: Royal Canin, Zenith, Inaba...">
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Trạng thái</label>
+            <select class="form-select" id="trangThai">
+                <option>Đang Kinh Doanh</option>
+                <option>Ẩn</option>
+                <option>Hết Hàng</option>
+            </select>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Giá gốc</label>
+            <input type="number" class="form-control" id="giaGoc" placeholder="Nhập giá gốc">
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Số lượng</label>
+            <input type="number" class="form-control" id="soLuong" placeholder="Nhập số lượng">
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Đánh giá trung bình</label>
+            <input type="text" class="form-control" id="danhGia" value="Tự động tính" disabled>
+        </div>
+
+        <div class="col-12">
+            <label class="form-label">Ảnh chính</label>
+            <input type="file" class="form-control" id="anhChinh">
+        </div>
+
+        <div class="col-12">
+            <label class="form-label">Ảnh phụ (nhiều hình)</label>
+            <input type="file" class="form-control" id="anhPhu" multiple>
+        </div>
+
+        <!-- === BIẾN THỂ SẢN PHẨM === -->
+        <div class="col-12 mt-3">
+            <label class="form-label fw-bold">Biến thể sản phẩm</label>
+
+            <button type="button" class="btn btn-success btn-sm mb-2" onclick="addVariant()">
+                + Thêm biến thể
+            </button>
+
+            <div id="variantContainer"></div>
+        </div>
+
+        <div class="col-12">
+            <label class="form-label">Mô tả chi tiết</label>
+            <textarea class="form-control" id="moTa" rows="3" placeholder="Giới thiệu, ưu điểm,..."></textarea>
+        </div>
+
+        <div class="col-12 mt-2">
+            <button type="submit" class="btn btn-primary">Lưu Thay Đổi</button>
+            <button type="button" class="btn btn-secondary" onclick="showList()">Hủy</button>
+        </div>
+    </form>
+</section>
 
 
 <!-- === SCRIPT === -->
@@ -435,6 +416,54 @@
         renderTable();
 
     });
+
+    function addVariant() {
+        const container = document.getElementById("variantContainer");
+
+        const row = document.createElement("div");
+        row.classList.add("variant-row");
+
+        row.innerHTML = `
+        <input type="text" class="form-control" placeholder="Tên biến thể (VD: Hoa Hồng 8L)">
+        <input type="number" class="form-control" placeholder="Giá">
+        <input type="number" class="form-control" placeholder="Số lượng">
+
+        <button type="button" class="btn btn-danger" onclick="this.parentElement.remove()">
+            X
+        </button>
+    `;
+
+        container.appendChild(row);
+    }
+
 </script>
+<script>
+    function showForm() {
+        document.getElementById("tableSanPham").closest('main').style.display = "none"; // ẩn danh sách
+        document.getElementById("product-form").style.display = "block"; // hiện form
+    }
+
+    function showList() {
+        document.getElementById("tableSanPham").closest('main').style.display = "block";
+        document.getElementById("product-form").style.display = "none";
+    }
+
+    // Nút Thêm sản phẩm
+    document.querySelector('.btn-success').addEventListener('click', showForm);
+
+    // Nút Sửa sản phẩm
+    document.querySelectorAll('.btn-warning').forEach(btn => {
+        btn.addEventListener('click', () => {
+            showForm();
+            const row = btn.closest('tr');
+            // đổ dữ liệu vào form
+            document.getElementById("maSP").value = row.cells[0].innerText;
+            document.getElementById("tenSP").value = row.cells[1].innerText;
+            document.getElementById("danhMuc").value = row.cells[2].innerText.toLowerCase().replace(/\s/g, '-');
+            document.getElementById("giaGoc").value = row.cells[4].innerText.replace(/\D/g, '');
+        });
+    });
+</script>
+
 </body>
 </html>
