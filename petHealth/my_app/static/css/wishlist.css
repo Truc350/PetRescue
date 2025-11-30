@@ -1,0 +1,116 @@
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", "Segoe UI", sans-serif;
+}
+
+/* NỀN TRANG */
+body {
+    background: #ffffff;
+}
+
+/* KHUNG TỔNG */
+.gio-hang {
+    padding: 0 10%;
+}
+
+.gio-hang-noi-dung {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* TIÊU ĐỀ */
+h3.text-primary {
+    font-size: 28px;
+    letter-spacing: 0.5px;
+    color: #234bbb !important;
+    text-transform: uppercase;
+}
+
+/* KHUNG SẢN PHẨM */
+.khung_san_pham {
+    border-radius: 18px;
+    border: 1px solid #e4e7f0;
+    transition: all 0.25s ease;
+}
+
+.khung_san_pham:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+/* ẢNH SẢN PHẨM */
+.anh_san_pham {
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+/* TÊN SẢN PHẨM */
+.ten_san_pham {
+    font-size: 17px;
+    font-weight: 600;
+    color: #1b1d21;
+}
+
+/* GIÁ */
+.gia_hien_tai {
+    font-size: 18px;
+}
+
+.gia_goc {
+    font-size: 14px;
+}
+
+/* CHECKBOX CUSTOM */
+.chon_san_pham,
+#chon_tat_ca {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+/* NÚT THÊM VÀO GIỎ */
+.nut_them_vao_gio {
+    background-color: #234bbb !important;
+    border-color: #234bbb !important;
+    padding: 6px 14px;
+    border-radius: 10px;
+    transition: 0.25s;
+}
+
+.nut_them_vao_gio:hover {
+    background-color: #1d3d99 !important;
+}
+
+/* NÚT XOÁ */
+.nut_xoa, .nut_xoa_da_chon {
+    border-radius: 10px !important;
+    transition: 0.25s;
+}
+
+.nut_xoa:hover, .nut_xoa_da_chon:hover {
+    background-color: #ffebee !important;
+    border-color: #d9534f !important;
+    color: #d9534f !important;
+}
+
+/* THANH CÔNG CỤ */
+.nut_xoa_da_chon {
+    padding: 7px 14px;
+}
+
+/* ANIMATION NHẸ */
+.khung_san_pham {
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.text-primary {
+    color: #234bbb !important;
+}
