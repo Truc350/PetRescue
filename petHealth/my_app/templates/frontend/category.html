@@ -1,7 +1,7 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    {% load static %}
     <meta charset="UTF-8"/>
     <title>Brand Slider</title>
 
@@ -62,43 +62,44 @@
 
 <body>
 
-    {% include "frontend/header.html" %}
+{% include "frontend/header.html" %}
+<h1></h1>
+<div class="slider-container">
 
-    <div class="slider-container">
-
-        <div class="brand-card">
-            <img src="https://paddy.vn/cdn/shop/files/royal_canin_logo_86c428bc-175d-4ddb-948f-cc74cf6c68f2_534x.png?v=1697601427"
-                 alt="Royal Canin"/>
-            <div class="brand-name">Royal Canin</div>
-        </div>
-
-        <div class="brand-card">
-            <img src="https://paddy.vn/cdn/shop/files/zenith-paddy_534x.png?v=1697600511"
-                 alt="Zenith"/>
-            <div class="brand-name">Zenith</div>
-        </div>
-
-        <div class="brand-card">
-            <img src="https://paddy.vn/cdn/shop/files/taste-of-the-wild-paddy_534x.png?v=1697599930"
-                 alt="Taste of The Wild"/>
-            <div class="brand-name">Taste Of The Wild</div>
-        </div>
-
-        <div class="brand-card">
-            <img src="https://paddy.vn/cdn/shop/files/inaba-paddy_534x.jpg?v=1697599812"
-                 alt="Inaba"/>
-            <div class="brand-name">Inaba</div>
-        </div>
-
-        <div class="brand-card">
-            <img src="https://paddy.vn/cdn/shop/files/equilibrio-logo-paddy_a80692f6-6cd0-45a7-8651-5474a292c72f_534x.jpg?v=1697600022"
-                 alt="Equilibrio"/>
-            <div class="brand-name">Equilibrio</div>
-        </div>
-
+    <div class="brand-card">
+        <img src="https://paddy.vn/cdn/shop/files/royal_canin_logo_86c428bc-175d-4ddb-948f-cc74cf6c68f2_534x.png?v=1697601427"
+             alt="Royal Canin"/>
+        <div class="brand-name">Royal Canin</div>
     </div>
 
-    {% include "frontend/footer.html" %}
+    <div class="brand-card">
+        <img src="https://paddy.vn/cdn/shop/files/zenith-paddy_534x.png?v=1697600511"
+             alt="Zenith"/>
+        <div class="brand-name">Zenith</div>
+    </div>
+
+    <div class="brand-card">
+        <img src="https://paddy.vn/cdn/shop/files/taste-of-the-wild-paddy_534x.png?v=1697599930"
+             alt="Taste of The Wild"/>
+        <div class="brand-name">Taste Of The Wild</div>
+    </div>
+
+    <div class="brand-card">
+        <img src="https://paddy.vn/cdn/shop/files/inaba-paddy_534x.jpg?v=1697599812"
+             alt="Inaba"/>
+        <div class="brand-name">Inaba</div>
+    </div>
+
+    <div class="brand-card">
+        <img src="https://paddy.vn/cdn/shop/files/equilibrio-logo-paddy_a80692f6-6cd0-45a7-8651-5474a292c72f_534x.jpg?v=1697600022"
+             alt="Equilibrio"/>
+        <div class="brand-name">Equilibrio</div>
+    </div>
+
+</div>
+<h1></h1>
+
+{% include "frontend/footer.html" %}
 
 </body>
 </html>
