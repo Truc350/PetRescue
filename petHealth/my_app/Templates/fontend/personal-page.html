@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Hồ Sơ Của Tôi</title>
+
+    <!-- Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="../../static/css/header.css">
+    <link rel="stylesheet" href="../../static/css/personal-page.css">
+
+
+</head>
+<body>
+
+
+<div id="header-container"></div>
+
+
+<div class="container">
+    <aside class="sidebar">
+        <div class="user-info">
+            <!-- Avatar -->
+            <div class="avatar-wrapper">
+                <img src="https://res.cloudinary.com/dwnbmfhel/image/upload/v1764038017/z7195574147136_4515011aa6bd8fb3801ff37f93280684_gahjde.jpg"
+                     alt="Avatar" class="avatar-img">
+                <span class="avatar-camera">
+        <i class="bi bi-camera-fill"></i>
+    </span>
+            </div>
+            <input type="file" id="avatar-upload" accept="image/*" hidden>
+
+
+            <p class="username">nfgyuu632</p>
+            <a href="#" class="edit-profile">Sửa Hồ Sơ</a>
+        </div>
+
+
+        <nav class="menu">
+            <ul>
+                <li class="active" data-section="profile"><a href="#">Tài Khoản Của Tôi</a></li>
+                <li data-section="repass"><a href="#">Đổi mật khẩu</a></li>
+                <li data-section="orders"><a href="#">Đơn Mua</a></li>
+                <li data-section="history"><a href="#">Lịch sử mua hàng</a></li>
+            </ul>
+        </nav>
+
+        <!-- 🧾 Nút đăng xuất -->
+        <div class="logout-section">
+            <a href="homepage-visitors.html">
+                <button id="logoutBtn">Đăng Xuất</button>
+            </a>
+
+        </div>
+    </aside>
+
+    <main class="content">
+        <!-- === Tài khoản của tôi === -->
+        <section id="profile-section" class="section active">
+            <h2>Hồ Sơ Của Tôi</h2>
+            <p class="desc">Quản lý thông tin hồ sơ để bảo mật tài khoản</p>
+
+            <form class="profile-form">
+                <div class="form-left">
+                    <div class="form-group">
+                        <label>Tên đăng nhập</label>
+                        <input type="text" value="phclhu632" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tên</label>
+                        <input type="text" value="ghjrjgkl">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" value="23******@st.hcmuaf.edu.vn" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Số điện thoại</label>
+                        <input type="tel" value="0901234567" maxlength="10">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Giới tính</label>
+                        <select name="gender">
+                            <option value="" disabled selected>Chọn giới tính</option>
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                            <option value="Khác">Khác</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group birthday">
+                        <label>Ngày sinh</label>
+                        <div class="date-select">
+                            <select name="day">
+                                <option value="" disabled selected>Ngày</option>
+                                <script>
+                                    for (let i = 1; i <= 31; i++) document.write(`<option value="${i}">${i}</option>`);
+                                </script>
+                            </select>
+                            <select name="month">
+                                <option value="" disabled selected>Tháng</option>
+                                <script>
+                                    for (let i = 1; i <= 12; i++) document.write(`<option value="${i}">${i}</option>`);
+                                </script>
+                            </select>
+                            <select name="year">
+                                <option value="" disabled selected>Năm</option>
+                                <script>
+                                    const year = new Date().getFullYear();
+                                    for (let i = year; i >= 1950; i--) document.write(`<option value="${i}">${i}</option>`);
+                                </script>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button class="save-btn" type="button">Lưu</button>
+                </div>
+            </form>
+        </section>
+        <!-- === Đổi mật khẩu có OTP === -->
+        <section id="repass-section" class="section">
+            <h2>Đổi Mật Khẩu</h2>
+            <p class="desc">Vui lòng xác minh qua mã OTP để đảm bảo an toàn cho tài khoản của bạn</p>
+
+            <form id="passwordForm" class="password-form">
+                <div class="form-group">
+                    <label for="currentPassword">Mật khẩu hiện tại</label>
+                    <input type="password" id="currentPassword" placeholder="Nhập mật khẩu hiện tại">
+                </div>
+
+                <div class="form-group">
+                    <label for="newPassword">Mật khẩu mới</label>
+                    <input type="password" id="newPassword" placeholder="Nhập mật khẩu mới">
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Nhập lại mật khẩu mới</label>
+                    <input type="password" id="confirmPassword" placeholder="Nhập lại mật khẩu mới">
+                </div>
+
+                <div class="otp-group" style="display: none;">
+                    <label for="otpInput">Nhập mã OTP (đã gửi đến email/số điện thoại của bạn)</label>
+                    <input type="text" id="otpInput" placeholder="Nhập mã OTP 6 chữ số" maxlength="6">
+                </div>
+
+                <a href="personal-page.html">
+                    <div class="btn-group">
+                        <button type="button" id="sendOtpBtn" class="save-btn">Lưa thay đổi</button>
+                        <button type="button" id="confirmChangeBtn" class="save-btn" style="display: none;">Xác nhận đổi
+                            mật khẩu
+                        </button>
+                    </div>
+                </a>
+            </form>
+        </section>
+
+
+        <!-- === Đơn Mua === -->
+        <section id="orders-section" class="section">
+            <h2>Đơn Mua</h2>
+            <!-- BẢNG DANH SÁCH HÓA ĐƠN -->
+            <div id="order-list" class="order-table">
+                <!-- TABS LỌC TRẠNG THÁI -->
+                <div class="order-tabs">
+                    <button class="order-tab tab-cho active" data-status="cho">
+                        <i class="bi bi-clock-history"></i> Chờ xác nhận
+                    </button>
+
+                    <button class="order-tab tab-dang-giao" data-status="dang-giao">
+                        <i class="bi bi-truck"></i> Đang giao
+                    </button>
+
+                    <button class="order-tab tab-da-giao" data-status="da-giao">
+                        <i class="bi bi-check2-circle"></i> Đã giao
+                    </button>
+
+                    <button class="order-tab tab-da-huy" data-status="da-huy">
+                        <i class="bi bi-x-circle"></i> Đã huỷ
+                    </button>
+                </div>
+                <h3>Hóa đơn gần đây</h3>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Mã hóa đơn</th>
+                        <th>Thời gian cập nhật</th>
+                        <th>Trạng thái</th>
+                        <th>Tổng giá trị</th>
+                        <th class="text-center">Thao Tác</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr>
+                        <td>51</td>
+                        <td>2024-01-03 23:21:41</td>
+                        <td class="delivered">Đang giao</td>
+                        <td>100.990 ₫</td>
+                        <td class="thao-tac-col">
+                            <button class="btn btn-view btn-sm" onclick="showOrderDetail(51)">
+                                <i class="bi bi-eye"></i> Xem chi tiết
+                            </button>
+
+                            <button class="btn btn-cancel btn-sm" onclick="cancelOrder(51)">
+                                <i class="bi bi-trash"></i> Huỷ đơn hàng
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>51</td>
+                        <td>2024-01-03 23:21:41</td>
+                        <td class="delivered">Chờ xác nhận</td>
+                        <td>99.990 ₫</td>
+                        <td class="thao-tac-col">
+                            <button class="btn btn-view btn-sm" onclick="showOrderDetail(51)">
+                                <i class="bi bi-eye"></i> Xem chi tiết
+                            </button>
+
+                            <button class="btn btn-cancel btn-sm" onclick="cancelOrder(51)">
+                                <i class="bi bi-trash"></i> Huỷ đơn hàng
+                            </button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>50</td>
+                        <td>2024-01-02 22:24:02</td>
+                        <td class="delivered">Đang giao</td>
+                        <td>999.990 ₫</td>
+                        <td class="thao-tac-col">
+                            <button class="btn btn-view btn-sm" onclick="showOrderDetail(51)">
+                                <i class="bi bi-eye"></i> Xem chi tiết
+                            </button>
+
+                            <button class="btn btn-cancel btn-sm" onclick="cancelOrder(51)">
+                                <i class="bi bi-trash"></i> Huỷ đơn hàng
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+            <!-- 🔹 CHI TIẾT ĐƠN HÀNG (ẩn mặc định) -->
+            <div id="order-detail" class="order-card" style="display: none;">
+                <button class="back-btn" onclick="showOrderList()">Quay lại danh sách</button>
+                <p class="order-date">Vận chuyển ngày <strong>03 tháng 11 năm 2025</strong></p>
+
+                <div class="order-progress">
+                    <div class="step active">ĐANG XỬ LÝ</div>
+                    <div class="step">ĐANG VẬN CHUYỂN</div>
+                    <div class="step">ĐÃ GIAO</div>
+                </div>
+
+                <div class="order-item">
+                    <img src="https://paddy.vn/cdn/shop/files/forcans_1.jpg?v=1748246401" alt="Flycam DJI Air 3">
+                    <div class="item-info">
+                        <h4>Xịt Thơm Miệng Chó</h4>
+                        <p>Số lượng: 1</p>
+                        <p>Giá: <strong>165.000 ₫</strong></p>
+                    </div>
+                </div>
+
+                <div class="order-item">
+                    <img src="https://paddy.vn/cdn/shop/files/pate-meo-royal-canin-persian-85g_2.png?v=1724915140" alt="Flycam DJl Inspire 3">
+                    <div class="item-info">
+                        <h4>Pate Cho Mèo Ba Tư Trưởng Thành</h4>
+                        <p>Số lượng: 1</p>
+                        <p>Giá: <strong>29.000 ₫</strong></p>
+                    </div>
+                </div>
+
+                <div class="order-summary-box">
+                    <div class="summary-left">
+                        <h4>Địa chỉ giao hàng</h4>
+                        <p><strong>Chí Nguyên</strong></p>
+                        <p>Tòa B, Ký túc xá Khu B</p>
+                        <p>033332234</p>
+                    </div>
+
+                    <div class="summary-right">
+                        <p>Tổng phụ thu: <strong>194.990 ₫</strong></p>
+                        <p>Phí vận chuyển: <strong>0 ₫</strong></p>
+                        <hr>
+                        <p><strong>Tổng: 194.990 ₫</strong></p>
+                        <p class="payment-note">Thanh toán bằng tiền mặt khi giao hàng</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    <!-- === Lịch sử mua hàng === -->
+<section id="history-section" class="section">
+    <h2>Lịch Sử Mua Hàng</h2>
+    <p class="desc">Danh sách tất cả các đơn hàng đã mua</p>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Mã hóa đơn</th>
+                <th>Ngày mua</th>
+                <th>Trạng thái</th>
+                <th>Tổng giá trị</th>
+                <th class="text-center">Thao Tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>49</td>
+                <td>2024-01-01</td>
+                <td>Đã giao</td>
+                <td>25.000.000 ₫</td>
+                <td class="thao-tac-col">
+                    <button class="btn btn-primary btn-sm" onclick="buyAgain(49)">
+                        <i class="bi bi-cart-plus"></i> Mua lại
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td>48</td>
+                <td>2023-12-29</td>
+                <td>Đã giao</td>
+                <td>15.500.000 ₫</td>
+                <td class="thao-tac-col">
+                    <button class="btn btn-primary btn-sm" onclick="buyAgain(48)">
+                        <i class="bi bi-cart-plus"></i> Mua lại
+                    </button>
+                </td>
+            </tr>
+            <!-- Thêm các đơn hàng khác -->
+        </tbody>
+    </table>
+</section>
+
+
+
+
+    </main>
+</div>
+
+
+
+
+
+
+<!-- Popup nhập lý do hủy -->
+<div id="cancelModal" class="modal" tabindex="-1" style="display:none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Hủy Đơn Hàng</h5>
+        <button type="button" class="btn-close" onclick="closeCancelModal()"></button>
+      </div>
+      <div class="modal-body">
+        <label>Lý do hủy đơn hàng:</label>
+        <textarea id="cancelReason" class="form-control" rows="3"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeCancelModal()">Hủy</button>
+        <button class="btn btn-danger" onclick="confirmCancelOrder()">Xác nhận hủy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+<script>
+fetch('../../Templates/fontend/header.html')
+  .then(res => res.text())
+  .then(html => {
+      const container = document.getElementById('header-container');
+      const temp = document.createElement('div');
+      temp.innerHTML = html;
+
+      // Chèn HTML
+      Array.from(temp.childNodes).forEach(node => {
+          if(node.tagName !== 'SCRIPT') container.appendChild(node);
+      });
+
+      // Chèn script
+      Array.from(temp.querySelectorAll('script')).forEach(oldScript => {
+          const newScript = document.createElement('script');
+          if(oldScript.src) newScript.src = oldScript.src;
+          else newScript.textContent = oldScript.textContent;
+          document.body.appendChild(newScript);
+      });
+
+      // ⭐ Gọi initHeaderDropdown sau khi load xong
+      if(typeof initHeaderDropdown === "function") initHeaderDropdown();
+
+
+
+      // ==== PHẦN CHO MENU SIDEBAR ====
+      const menuItems = document.querySelectorAll('.sidebar .menu li');
+      const sections = document.querySelectorAll('.content .section');
+
+      menuItems.forEach(item => {
+          item.addEventListener('click', e => {
+              e.preventDefault();
+
+              // Bỏ active ở tất cả menu
+              menuItems.forEach(i => i.classList.remove('active'));
+
+              // Ẩn tất cả section
+              sections.forEach(s => s.classList.remove('active'));
+
+              // active menu hiện tại
+              item.classList.add('active');
+
+              // Lấy section tương ứng và show
+              const sectionId = item.getAttribute('data-section');
+              const section = document.getElementById(sectionId + '-section');
+              if(section){
+                  section.classList.add('active');
+              }
+          });
+      });
+  });
+
+    let currentOrderId = null;
+
+// Hiển thị chi tiết đơn hàng đúng ID
+function showOrderDetail(orderId) {
+    currentOrderId = orderId;
+
+    // Ẩn danh sách đơn
+    document.getElementById('order-list').style.display = 'none';
+    // Hiển thị khung chi tiết
+    const detail = document.getElementById('order-detail');
+    detail.style.display = 'block';
+
+    // Cập nhật nội dung theo orderId (demo, bạn có thể thay bằng dữ liệu thực)
+    detail.querySelector('.order-date strong').textContent = "03 tháng 11 năm 2025";
+}
+
+// Quay lại danh sách đơn hàng
+function showOrderList() {
+    document.getElementById('order-detail').style.display = 'none';
+    document.getElementById('order-list').style.display = 'block';
+}
+
+// Mở popup hủy đơn
+function cancelOrder(orderId) {
+    currentOrderId = orderId;
+    document.getElementById('cancelReason').value = '';
+    const modal = document.getElementById('cancelModal');
+    modal.style.display = 'block';
+    modal.classList.add('show');
+}
+
+// Đóng popup hủy đơn
+function closeCancelModal() {
+    const modal = document.getElementById('cancelModal');
+    modal.style.display = 'none';
+    modal.classList.remove('show');
+}
+
+// Xác nhận hủy đơn
+function confirmCancelOrder() {
+    const reason = document.getElementById('cancelReason').value.trim();
+    if(reason === ''){
+        alert("Vui lòng nhập lý do hủy đơn!");
+        return;
+    }
+    alert(`Đơn hàng #${currentOrderId} đã được hủy!\nLý do: ${reason}`);
+    closeCancelModal();
+
+    // TODO: Gọi API để hủy đơn thực tế
+}
+
+</script>
+
+
+
+
+</html>

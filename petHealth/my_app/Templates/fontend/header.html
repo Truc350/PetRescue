@@ -5,6 +5,8 @@
     <title>PetRescue Header</title>
 
     <!-- Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -16,15 +18,17 @@
 <body>
 
 <!-- ==== HEADER TRÊN ==== -->
+
 <div class="header-bg">
     <div class="header-wrapper">
         <header class="top-header">
             <!-- LOGO -->
             <a href="header.html">
-            <div class="logo">
-                <img src="https://res.cloudinary.com/dwnbmfhel/image/upload/v1764038017/z7195574147136_4515011aa6bd8fb3801ff37f93280684_gahjde.jpg" alt="Logo">
-                <h2>PetRescue</h2>
-            </div>
+                <div class="logo">
+                    <img src="https://res.cloudinary.com/dwnbmfhel/image/upload/v1764038017/z7195574147136_4515011aa6bd8fb3801ff37f93280684_gahjde.jpg"
+                         alt="Logo">
+                    <h2>PetRescue</h2>
+                </div>
             </a>
 
             <!-- THANH TÌM KIẾM -->
@@ -43,21 +47,25 @@
             <!-- HÀNH ĐỘNG HEADER -->
             <div class="header-actions">
                 <a href="wishlist.html">
-                <div class="icon-btn" title="Yêu thích">
-                    <i class="bi bi-heart"></i>
-                    <span>Yêu thích</span>
-                </div>
+                    <div class="icon-btn" title="Yêu thích">
+                        <i class="bi bi-heart"></i>
+                        <span>Yêu thích</span>
+                    </div>
                 </a>
 
-                <a href="shoppingcart.html"><div class="icon-btn" title="Giỏ hàng">
-                    <i class="bi bi-cart3"></i>
-                    <span>Giỏ hàng</span>
-                </div></a>
+                <a href="shoppingcart.html">
+                    <div class="icon-btn" title="Giỏ hàng">
+                        <i class="bi bi-cart3"></i>
+                        <span>Giỏ hàng</span>
+                    </div>
+                </a>
 
-                <a href="personal-page.html"><div class="icon-btn" title="Tài khoản">
-                    <i class="bi bi-person-circle"></i>
-                    <span>Tài khoản</span>
-                </div></a>
+                <a href="personal-page.html">
+                    <div class="icon-btn" title="Tài khoản">
+                        <i class="bi bi-person-circle"></i>
+                        <span>Tài khoản</span>
+                    </div>
+                </a>
             </div>
         </header>
     </div>
@@ -69,35 +77,67 @@
     <div class="header-wrapper">
         <nav class="main-nav">
 
-            <a href="dogs.html">
+            <!-- DROPDOWN CHÓ -->
+            <div class="dropdown-custom">
                 <button class="nav-item">
                     <i class="fa-solid fa-dog"></i> Chó
                 </button>
-            </a>
+                <div class="dropdown-menu-custom">
+<div class="dropdown-column">
+                        <h4>Thức Ăn Cho Chó</h4>
+                    </div>
 
-            <a href="cats.html">
+                    <div class="dropdown-column">
+                        <h4>Chăm Sóc Vệ Sinh Cún</h4>
+                    </div>
+
+                    <div class="dropdown-column">
+                        <h4>Chăm Sóc Sức Khỏe Cún</h4>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- DROPDOWN MÈO -->
+            <div class="dropdown-custom">
                 <button class="nav-item">
                     <i class="fa-solid fa-cat"></i> Mèo
                 </button>
-            </a>
 
-            <a href="brand.html">
-                <button class="nav-item">
-                    <i class="bi bi-award-fill"></i> Thương hiệu
-                </button>
-            </a>
+                <div class="dropdown-menu-custom">
 
-            <a href="promotion.html">
-                <button class="nav-item"><i class="bi bi-gift"></i> Khuyến mãi</button>
-            </a>
+                    <div class="dropdown-column">
+                        <h4>Thức Ăn Cho Mèo</h4>
+                    </div>
 
-            <a href="support.html">
-                <button class="nav-item"><i class="bi bi-headset"></i> Hỗ trợ</button>
-            </a>
+                    <div class="dropdown-column">
+                        <h4>Chăm Sóc Sức Khỏe C</h4>
+                    </div>
 
-            <a href="policy.html">
-                <button class="nav-item"><i class="bi bi-journal-text"></i> Chính sách mua hàng</button>
-            </a>
+                    <div class="dropdown-column">
+                        <h4>Vệ Sinh Cho Mèo</h4>
+                    </div>
+
+                </div>
+            </div>
+
+
+            <!-- MỤC ĐƠN BÌNH THƯỜNG -->
+            <button class="nav-item" onclick="location.href='brand.html'">
+                <i class="bi bi-award-fill"></i> Thương hiệu
+            </button>
+
+            <button class="nav-item" onclick="location.href='promotion.html'">
+                <i class="bi bi-gift"></i> Khuyến mãi
+            </button>
+
+            <button class="nav-item" onclick="location.href='support.html'">
+                <i class="bi bi-headset"></i> Hỗ trợ
+            </button>
+
+            <button class="nav-item" onclick="location.href='policy.html'">
+                <i class="bi bi-journal-text"></i> Chính sách mua hàng
+            </button>
 
         </nav>
     </div>
@@ -129,14 +169,56 @@
 
             <div class="modal-footer chatbox-footer">
                 <input type="text" class="form-control" placeholder="Nhập tin nhắn...">
-                <button class="btn btn-primary">Gửi</button>
+<button class="btn btn-primary">Gửi</button>
             </div>
 
         </div>
     </div>
 </div>
+<!-- SCRIPT DROPDOWN TÁCH RA HÀM -->
+<script>
+function initHeaderDropdown() {
+    const dropdowns = document.querySelectorAll(".dropdown-custom");
 
+    dropdowns.forEach(drop => {
+        const button = drop.querySelector(".nav-item");
+        const menu = drop.querySelector(".dropdown-menu-custom");
+
+        button.addEventListener("click", (event) => {
+            event.stopPropagation();
+
+            // Đóng hết dropdown khác
+            dropdowns.forEach(d => {
+                if (d !== drop) d.classList.remove("show");
+            });
+
+            // Toggle dropdown hiện tại
+            drop.classList.toggle("show");
+        });
+
+        menu.addEventListener("click", e => e.stopPropagation());
+    });
+
+    // Click ra ngoài → đóng tất cả
+    document.addEventListener("click", () => {
+        dropdowns.forEach(d => d.classList.remove("show"));
+    });
+}
+
+// Gọi khi DOM load xong
+window.addEventListener("DOMContentLoaded", initHeaderDropdown);
+</script>
+
+<!-- Script gửi chiều cao header -->
+<script>
+window.onload = function () {
+    const height = document.body.scrollHeight;
+    parent.postMessage({ type: "header-height", height }, "*");
+};
+</script>
 
 
 </body>
+
+
 </html>

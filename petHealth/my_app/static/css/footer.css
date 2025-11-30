@@ -11,23 +11,7 @@ body {
     font-family: Inter, sans-serif;
 }
 
-/* ===== TOP AREA ===== */
-.footer-top {
-    text-align: center;
-    margin-bottom: 40px;
-}
 
-.footer-top h2 {
-    font-size: 28px;
-    font-weight: 700;
-    margin-bottom: 10px;
-}
-
-.footer-top p {
-    font-size: 15px;
-    color: #2b3551;
-    margin-bottom: 25px;
-}
 
 .footer-subscribe {
     display: flex;
@@ -179,7 +163,7 @@ body {
     margin-top: 40px;
     padding: 0 60px;
     display: flex;
-    justify-content: space-between;
+justify-content: space-between;
     align-items: center;
 }
 

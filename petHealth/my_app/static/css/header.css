@@ -1,7 +1,6 @@
 /* RESET */
 * {
     margin: 0;
-
     box-sizing: border-box;
     font-family: Inter, Arial, sans-serif;
 }
@@ -9,7 +8,7 @@
 a {
     text-decoration: none;
     color: inherit;
-    display: contents;
+
 }
 
 ul {
@@ -34,7 +33,9 @@ ul {
 .header-bg {
     background-color: var(--primary);
     color: white;
-    padding: 12px 0;
+     padding: 10px 30px 15px;
+     position: relative; /* hoặc cố định */
+    z-index: 1000;
 }
 
 .top-header {
@@ -116,7 +117,7 @@ ul {
 .menu-bg {
     background-color: var(--primary);
     color: white;
-    padding: 10px 0 15px;
+    padding: 10px 30px 15px;
 }
 
 .menu-bg .header-wrapper{
@@ -175,10 +176,10 @@ padding: 0 70px;
     position: fixed;
     bottom: 35px;
     right: 30px;
-    width: 65px;
-    height: 65px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
-    background: var(--primary);
+background: var(--primary);
     color: white;
     font-size: 28px;
     border: none;
@@ -212,8 +213,8 @@ padding: 0 70px;
 }
 
 .chatbox-logo {
-    width: 40px;
-    height: 40px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     object-fit: cover;
 }
@@ -248,4 +249,60 @@ padding: 0 70px;
 .chatbox-footer {
     background: #eef3fb;
     padding: 10px;
+}
+
+
+/* ===== DROPDOWN MENU NHỎ 1 CỘT ===== */
+
+.dropdown-custom {
+    position: relative;
+    display: inline-block;
+     z-index: 10000;
+}
+
+/* Menu */
+.dropdown-menu-custom {
+    position: absolute;
+    top: calc(100% + 16px);
+    left: 0;
+
+    width: 220px;
+    background: #ffffff;
+    padding: 15px 20px;
+    border-top: 3px solid #324ECF;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+    border-radius: 6px;
+
+    z-index: 9999;
+
+    display: none;    /* đảm bảo ẩn đúng */
+}
+
+/* Khi click thêm .show → menu mở */
+.dropdown-custom.show .dropdown-menu-custom {
+    display: grid;                /* mở bằng dạng grid */
+    grid-template-columns: 1fr;  /* 1 cột */
+    row-gap: 10px;
+}
+
+/* ===== CỘT ===== */
+.dropdown-column h4 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #162447;
+    margin-bottom: 10px;
+}
+
+.dropdown-column a {
+    display: block;
+    color: #1a2741;
+    font-size: 15px;
+    text-decoration: none;
+    margin-bottom: 8px;
+    transition: 0.2s;
+}
+
+.dropdown-column a:hover {
+    color: #324ECF;
+    padding-left: 3px;
 }
