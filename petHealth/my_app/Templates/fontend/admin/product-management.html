@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Trang Quản Trị - SkyDrone</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../../static/css/product-manage.css">
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="main-header">
+    <div class="logo">
+        <img src="https://res.cloudinary.com/dwnbmfhel/image/upload/v1764038017/z7195574147136_4515011aa6bd8fb3801ff37f93280684_gahjde.jpg"
+             alt="Logo">
+        <h2>PetRescue</h2>
+    </div>
+    <div class="header-right">
+        <!-- Icon admin + tên -->
+        <a href="profile-admin.html" class="text-decoration-none text-while">
+            <div class="thong-tin-admin d-flex align-items-center gap-2">
+                <i class="bi bi-person-circle fs-4"></i>
+                <span class="fw-semibold">Admin</span>
+            </div>
+        </a>
+
+        <button class="logout-btn" id="logoutBtn" title="Đăng xuất">
+            <i class="bi bi-box-arrow-right"></i>
+        </button>
+    </div>
+    <div class="logout-modal" id="logoutModal">
+        <div class="logout-modal-content">
+            <p>Bạn có chắc muốn đăng xuất không?</p>
+            <div class="logout-actions">
+                <a href="../login.html">
+                    <button id="confirmLogout" class="confirm">Có</button>
+                </a>
+                <button id="cancelLogout" class="cancel">Không</button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- ===== LAYOUT ===== -->
+<div class="layout">
+    <!-- === SIDEBAR === -->
+    <aside class="sidebar">
+        <div class="user-info">
+            <img src="https://res.cloudinary.com/dwnbmfhel/image/upload/v1764476041/z7055808379444_91c23f00777f6dac0cc2baf49e45429a_ipj8go.jpg"
+                 alt="Avatar">
+            <h3>Mạc Nguyên</h3>
+            <p>Chào mừng bạn trở lại 👋</p>
+        </div>
+
+        <ul class="menu">
+            <a href="dashboard.html">
+                <li><i class="bi bi-speedometer2"></i> Tổng Quan</li>
+            </a>
+            <a href="customer-manage.html">
+                <li><i class="bi bi-person-lines-fill"></i> Quản Lý Tài Khoản</li>
+            </a>
+            <a href="product-management.html">
+                <li class="active"><i class="bi bi-box-seam"></i> Quản Lý Sản Phẩm</li>
+            </a>
+            <a href="category-manage.html">
+                <li><i class="bi bi-tags"></i> Quản Lý Danh Mục</li>
+            </a>
+
+            <li class="has-submenu">
+                <div class="menu-item">
+                    <i class="bi bi-truck"></i>
+                    <span>Quản Lý Đơn Hàng</span>
+                    <i class="bi bi-chevron-right arrow"></i>
+                </div>
+                <ul class="submenu">
+                    <a href="uncomfirmed-order-manage.html">
+                        <li>Chưa Xác Nhận</li>
+                    </a>
+                    <a href="comfirmed-order-manage.html">
+                        <li>Đã Xác Nhận</li>
+                    </a>
+                </ul>
+            </li>
+
+            <a href="blog-manage.html">
+                <li><i class="bi bi-journal-text"></i> Quản Lý Blog</li>
+            </a>
+            <a href="promotion-manage.html">
+                <li><i class="bi bi-megaphone"></i> Quản Lý Khuyến Mãi</li>
+            </a>
+            <a href="statistics.html">
+                <li><i class="bi bi-bar-chart"></i> Báo Cáo & Thống Kê</li>
+            </a>
+        </ul>
+    </aside>
+
+    <!-- === MAIN CONTENT === -->
+    <main class="main-content container-fluid p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+
+            <h4 class="text-primary fw-bold"><i class="bi bi-box-seam"></i> Quản Lý Sản Phẩm</h4>
+
+            <div class="d-flex align-items-center gap-2">
+
+                <!-- THANH TÌM KIẾM -->
+                <form class="d-flex" role="search" style="max-width: 300px;">
+                    <div class="input-group">
+                <span class="input-group-text bg-primary text-white">
+                    <i class="bi bi-search"></i>
+                </span>
+                        <input id="searchInput" type="search" class="form-control"
+                               placeholder="Tìm kiếm sản phẩm..." aria-label="Tìm kiếm">
+                    </div>
+                </form>
+
+                <!-- NÚT THÊM SẢN PHẨM -->
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalSanPham">
+                    <i class="bi bi-plus-lg"></i> Thêm Sản Phẩm
+                </button>
+
+            </div>
+        </div>
+
+
+        <div class="d-flex justify-content-start align-items-center mb-2">
+            <label class="me-2">Hiển thị</label>
+            <select id="rowsPerPage" class="form-select d-inline-block" style="width:80px;">
+                <option value="5">5</option>
+                <option value="10" selected>10</option>
+                <option value="20">20</option>
+            </select>
+            <label class="ms-2">sản phẩm</label>
+        </div>
+        <!-- === BẢNG SẢN PHẨM === -->
+        <table id="tableSanPham" class="table table-striped table-bordered">
+            <thead class="table-primary">
+            <tr>
+                <th>Mã SP</th>
+                <th>Tên SP</th>
+                <th>Danh Mục</th>
+                <th>Ảnh</th>
+                <th>Giá Gốc</th>
+                <th>Giá KM</th>
+                <th>Trạng Thái</th>
+                <th>Thao Tác</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>SP001</td>
+                <td>Cát Mèo Đất Sét Moon Cat Vón Cục Khử Mùi Tốt (8L)</td>
+                <td>Vệ Sinh Mèo</td>
+                <td>
+                    <img src="https://paddy.vn/cdn/shop/files/cat-meo-dat-set-moon-cat-von-cuc-khu-mui-8l_4.png?v=1704521004"
+                         alt="Ảnh sản phẩm" class="img-thumbnail" style="width:60px; height:60px; object-fit:cover;">
+                </td>
+
+                <td>65.000đ</td>
+                <td>55.000đ</td>
+                <td><span class="badge bg-success">Đang KD</span></td>
+                <td>
+                    <button class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+                    <button class="btn btn-secondary btn-sm"><i class="bi bi-eye-slash"></i></button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="d-flex justify-content-end align-items-center mt-3">
+            <div class="pagination-controls">
+                <button id="prevPage" class="btn btn-outline-primary btn-sm">Trước</button>
+                <span id="pageInfo" class="mx-2">1 / 1</span>
+                <button id="nextPage" class="btn btn-outline-primary btn-sm">Sau</button>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- === MODAL THÊM / SỬA SẢN PHẨM === -->
+
+<div class="modal fade" id="modalSanPham" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="bi bi-pencil-square"></i> Cập Nhật Thông Tin Sản Phẩm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <form id="formSanPham" class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Mã sản phẩm</label>
+                        <input type="text" class="form-control" id="maSP" placeholder="Nhập mã sản phẩm">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Tên sản phẩm</label>
+                        <input type="text" class="form-control" id="tenSP" placeholder="Nhập tên sản phẩm">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Danh mục</label>
+                        <select class="form-select" id="danhMuc">
+                            <option value="dog-food">
+                                🦴 Thức ăn cho chó
+                            </option>
+
+                            <option value="dog-clean">
+                                🧼 Chăm sóc vệ sinh cún
+                            </option>
+
+                            <option value="dog-health">
+                                🏥 Chăm sóc sức khoẻ cún
+                            </option>
+
+                            <option value="cat-food">
+                                🐟 Thức ăn cho mèo
+                            </option>
+
+                            <option value="cat-health">
+                                🩺 Chăm sóc sức khoẻ mèo
+                            </option>
+
+                            <option value="cat-clean">
+                                🧽 Vệ sinh mèo
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Thương hiệu</label>
+                        <input type="text" class="form-control" id="thuongHieu"
+                               placeholder="VD: Royal Canin, Zenith, Inaba...">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Trạng thái</label>
+                        <select class="form-select" id="trangThai">
+                            <option>Đang Kinh Doanh</option>
+                            <option>Ẩn</option>
+                            <option>Hết Hàng</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Giá gốc</label>
+                        <input type="number" class="form-control" id="giaGoc" placeholder="Nhập giá gốc">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Số lượng</label>
+                        <input type="number" class="form-control" id="soLuong" placeholder="Nhập số lượng">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Đánh giá trung bình</label>
+                        <input type="text" class="form-control" id="danhGia" value="Tự động tính" disabled>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Ảnh chính</label>
+                        <input type="file" class="form-control" id="anhChinh">
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Ảnh phụ (nhiều hình)</label>
+                        <input type="file" class="form-control" id="anhPhu" multiple>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Mô tả chi tiết</label>
+                        <textarea class="form-control" id="moTa" rows="3"
+                                  placeholder="Giới thiệu, ưu điểm,..."></textarea>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button class="btn btn-primary">Lưu Thay Đổi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- === SCRIPT === -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+    // Toggle submenu
+    document.querySelectorAll('.has-submenu .menu-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const parent = item.parentElement;
+            parent.classList.toggle('open');
+        });
+    });
+
+    // Nút thêm
+    document.querySelector('.btn-success').addEventListener('click', () => {
+        document.querySelector('#modalSanPham .modal-title').textContent = "🆕 Thêm Sản Phẩm";
+        document.getElementById('formSanPham').reset();
+    });
+
+    // Nút Sửa → Hiện modal và đổ dữ liệu
+    document.querySelectorAll('.btn-warning').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const row = btn.closest('tr');
+            // Hiển thị modal
+            const modal = new bootstrap.Modal(document.getElementById('modalSanPham'));
+            modal.show();
+        });
+    });
+
+    // ===== XÓA SẢN PHẨM =====
+    document.querySelectorAll('.btn-danger').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const row = btn.closest('tr');
+            if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này không?")) {
+                row.remove();
+            }
+        });
+    });
+
+
+    // ===== THAY ĐỔI TRẠNG THÁI SẢN PHẨM =====
+    document.querySelectorAll('.btn-secondary').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const row = btn.closest('tr');
+            const statusCell = row.cells[6]; // Cột trạng thái
+
+            // Nếu trạng thái đang là "Đang KD" → chuyển sang "Ẩn"
+            if (statusCell.innerText.trim() === "Đang KD" || statusCell.innerText.trim() === "Đang Kinh Doanh") {
+                statusCell.innerHTML = `<span class="badge bg-secondary">Ẩn</span>`;
+                btn.innerHTML = `<i class="bi bi-eye"></i>`; // icon mở mắt
+            }
+            // Ngược lại: đang Ẩn → chuyển thành Đang KD
+            else {
+                statusCell.innerHTML = `<span class="badge bg-success">Đang KD</span>`;
+                btn.innerHTML = `<i class="bi bi-eye-slash"></i>`; // icon đóng mắt
+            }
+        });
+    });
+
+
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const logoutBtn = document.getElementById("logoutBtn");
+        const logoutModal = document.getElementById("logoutModal");
+        const cancelLogout = document.getElementById("cancelLogout");
+
+        // Mở popup
+        logoutBtn.addEventListener("click", function () {
+            logoutModal.style.display = "flex";
+        });
+
+        // Đóng popup
+        cancelLogout.addEventListener("click", function () {
+            logoutModal.style.display = "none";
+        });
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const table = document.querySelector("#tableSanPham tbody");
+        const searchInput = document.getElementById("searchInput");
+        const rowsPerPageSelect = document.getElementById("rowsPerPage");
+        const prevBtn = document.getElementById("prevPage");
+        const nextBtn = document.getElementById("nextPage");
+        const pageInfo = document.getElementById("pageInfo");
+
+        let currentPage = 1;
+        let rowsPerPage = parseInt(rowsPerPageSelect.value);
+        let allRows = Array.from(table.querySelectorAll("tr"));
+
+        // --- Cập nhật hiển thị bảng ---
+        function renderTable() {
+            const filteredRows = filterRows();
+            const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+
+            currentPage = Math.min(currentPage, totalPages || 1);
+
+            table.innerHTML = "";
+
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+
+            filteredRows.slice(start, end).forEach(row => table.appendChild(row));
+
+            pageInfo.textContent = `${currentPage} / ${totalPages || 1}`;
+        }
+
+        // --- Lọc theo ô tìm kiếm ---
+        function filterRows() {
+            const keyword = searchInput.value.toLowerCase();
+            return allRows.filter(row => row.innerText.toLowerCase().includes(keyword));
+        }
+
+        // --- Event Tìm kiếm ---
+        searchInput.addEventListener("keyup", function () {
+            currentPage = 1;
+            renderTable();
+        });
+
+        // --- Đổi số dòng ---
+        rowsPerPageSelect.addEventListener("change", function () {
+            rowsPerPage = parseInt(this.value);
+            currentPage = 1;
+            renderTable();
+        });
+
+        // --- Nút Trước ---
+        prevBtn.addEventListener("click", function () {
+            if (currentPage > 1) {
+                currentPage--;
+                renderTable();
+            }
+        });
+
+        // --- Nút Sau ---
+        nextBtn.addEventListener("click", function () {
+            const filteredRows = filterRows();
+            const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderTable();
+            }
+        });
+
+        // --- Khởi tạo ---
+        renderTable();
+
+    });
+</script>
+</body>
+</html>
