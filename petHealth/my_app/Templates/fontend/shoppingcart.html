@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <title>Giỏ hàng Flycam</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../static/css/shoppingcart.css">
+</head>
+
+<body>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<div class="gio-hang">
+    <!-- Bao toàn bộ phần giỏ hàng -->
+    <div class="gio-hang-noi-dung">
+        <div class="container py-4">
+            <!-- nội dung giỏ hàng -->
+
+        <!-- Nút quay lại trang chủ -->
+        <div class="mb-3">
+            <h3 class="text-center mb-4 fw-bold text-primary">Giỏ hàng của bạn</h3>
+        </div>
+
+
+        <!-- Thanh công cụ -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="chon_tat_ca">
+                <label for="chon_tat_ca" class="form-check-label">Chọn tất cả</label>
+            </div>
+            <button class="btn btn-outline-danger btn-sm nut_xoa_da_chon">
+                <i class="bi bi-trash"></i> Xóa sản phẩm đã chọn
+            </button>
+        </div>
+
+        <!-- Danh sách sản phẩm -->
+        <div id="danh_sach_san_pham">
+            <!-- Sản phẩm 1 -->
+            <div class="khung_san_pham p-3 mb-3 bg-white shadow-sm rounded d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <input type="checkbox" class="chon_san_pham form-check-input me-3">
+                    <a href=""><img src="https://paddy.vn/cdn/shop/files/123.jpg?v=1760327236" alt="Pate TƯƠI The Pet Cho Chó Mèo Biếng Ăn (1kg) - Ship Now/Grab 2H" class="anh_san_pham me-3" width="120"></a>
+                    <div>
+                        <h5 class="ten_san_pham mb-2">Pate TƯƠI The Pet Cho Chó Mèo Biếng Ăn (1kg) - Ship Now/Grab 2H</h5>
+                        <div>
+                            <span class="gia_hien_tai text-danger fw-bold me-2">105.000₫</span>
+                            <span class="gia_goc text-muted text-decoration-line-through">120.000₫</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-outline-secondary btn-sm nut_giam me-1">−</button>
+                    <input type="text" class="form-control text-center o_so_luong mx-1" value="1" style="width:50px;">
+                    <button class="btn btn-outline-secondary btn-sm nut_tang me-3">+</button>
+                    <button class="btn btn-outline-danger btn-sm nut_xoa"><i class="bi bi-trash"></i></button>
+                </div>
+            </div>
+
+            <!-- Sản phẩm 2 -->
+            <div class="khung_san_pham p-3 mb-3 bg-white shadow-sm rounded d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <input type="checkbox" class="chon_san_pham form-check-input me-3">
+                    <a href=""><img src="https://paddy.vn/cdn/shop/files/85.jpg?v=1690719048" alt="Xịt Khử Mùi Nước Tiểu, Chất Thải Cho CHÓ MÈO Urine Off (Mỹ)" class="anh_san_pham me-3" width="120"></a>
+                    <div>
+                        <h5 class="ten_san_pham mb-2">Xịt Khử Mùi Nước Tiểu, Chất Thải Cho CHÓ MÈO Urine Off (Mỹ)</h5>
+                        <div>
+                            <span class="gia_hien_tai text-danger fw-bold me-2">140.000₫</span>
+                            <span class="gia_goc text-muted text-decoration-line-through">150.000₫</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-outline-secondary btn-sm nut_giam me-1">−</button>
+                    <input type="text" class="form-control text-center o_so_luong mx-1" value="1" style="width:50px;">
+                    <button class="btn btn-outline-secondary btn-sm nut_tang me-3">+</button>
+                    <button class="btn btn-outline-danger btn-sm nut_xoa"><i class="bi bi-trash"></i></button>
+                </div>
+            </div>
+
+            <!-- Sản phẩm 3 -->
+            <div class="khung_san_pham p-3 mb-3 bg-white shadow-sm rounded d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <input type="checkbox" class="chon_san_pham form-check-input me-3">
+                    <a href=""><img src="https://paddy.vn/cdn/shop/files/ban-chai-silicon-tam-cho-meo.png?v=1704521190" alt="Bàn Chải Silicon Cho Chó Mèo Có Ô Đựng Sữa Tắm" class="anh_san_pham me-3" width="120"></a>
+                    <div>
+                        <h5 class="ten_san_pham mb-2">Bàn Chải Silicon Cho Chó Mèo Có Ô Đựng Sữa Tắm</h5>
+                        <div>
+                            <span class="gia_hien_tai text-danger fw-bold me-2">25.000₫</span>
+                            <span class="gia_goc text-muted text-decoration-line-through">50.000₫</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-outline-secondary btn-sm nut_giam me-1">−</button>
+                    <input type="text" class="form-control text-center o_so_luong mx-1" value="1" style="width:50px;">
+                    <button class="btn btn-outline-secondary btn-sm nut_tang me-3">+</button>
+                    <button class="btn btn-outline-danger btn-sm nut_xoa"><i class="bi bi-trash"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tổng tiền -->
+        <div class="card p-3 shadow-sm">
+            <div class="d-flex justify-content-between">
+                <span class="fw-bold">Tạm tính:</span>
+                <span class="so_tien">0 ₫</span>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="tong_cong text-danger m-0">Tổng cộng: 0 ₫</h5>
+                <a href="delivery-info.html">
+                <button class="btn btn-primary nut_thanh_toan">Mua ngay</button>
+                    </a>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+
+<script>
+    const chonTatCa = document.getElementById("chon_tat_ca");
+    const nutXoaDaChon = document.querySelector(".nut_xoa_da_chon");
+    const nutThanhToan = document.querySelector(".nut_thanh_toan");
+    const danhSach = document.getElementById("danh_sach_san_pham");
+
+    function dinhDangTien(vnd) {
+        return vnd.toLocaleString("vi-VN") + " ₫";
+    }
+
+    function capNhatTongTien() {
+        let tong = 0;
+        document.querySelectorAll(".khung_san_pham").forEach(sp => {
+            const check = sp.querySelector(".chon_san_pham");
+            if (check.checked) {
+                const giaText = sp.querySelector(".gia_hien_tai").textContent.replace(/[^\d]/g, "");
+                const soLuong = parseInt(sp.querySelector(".o_so_luong").value);
+                tong += parseInt(giaText) * soLuong;
+            }
+        });
+        document.querySelector(".so_tien").textContent = dinhDangTien(tong);
+        document.querySelector(".tong_cong").textContent = "Tổng cộng: " + dinhDangTien(tong);
+    }
+
+    // Chọn tất cả
+    chonTatCa.addEventListener("change", () => {
+        document.querySelectorAll(".chon_san_pham").forEach(cb => cb.checked = chonTatCa.checked);
+        capNhatTongTien();
+    });
+
+    // Sự kiện trên từng sản phẩm
+    danhSach.addEventListener("click", e => {
+        const sp = e.target.closest(".khung_san_pham");
+        if (!sp) return;
+
+        // Tăng / giảm số lượng
+        if (e.target.classList.contains("nut_tang") || e.target.classList.contains("nut_giam")) {
+            const input = sp.querySelector(".o_so_luong");
+            let soLuong = parseInt(input.value);
+            if (e.target.classList.contains("nut_tang")) soLuong++;
+            else if (soLuong > 1) soLuong--;
+            input.value = soLuong;
+            capNhatTongTien();
+        }
+
+        // Xóa sản phẩm
+        if (e.target.classList.contains("nut_xoa") || e.target.closest(".nut_xoa")) {
+            sp.remove();
+            capNhatTongTien();
+        }
+
+        // Tick chọn sản phẩm
+        if (e.target.classList.contains("chon_san_pham")) {
+            const tatCa = document.querySelectorAll(".chon_san_pham").length;
+            const daChon = document.querySelectorAll(".chon_san_pham:checked").length;
+            chonTatCa.checked = (tatCa === daChon);
+            capNhatTongTien();
+        }
+    });
+
+    // Xóa các sản phẩm đã chọn
+    nutXoaDaChon.addEventListener("click", () => {
+        document.querySelectorAll(".chon_san_pham:checked").forEach(cb => cb.closest(".khung_san_pham").remove());
+        capNhatTongTien();
+    });
+
+
+</script>
+<script>
+    const btnDanhMuc = document.getElementById('btnDanhMuc');
+    const menuLeft = document.getElementById('menuLeft');
+
+    btnDanhMuc.addEventListener('click', () => {
+        menuLeft.classList.toggle('show');
+    });
+
+    // Ẩn menu khi click ra ngoài
+    document.addEventListener('click', (e) => {
+        if (!menuLeft.contains(e.target) && !btnDanhMuc.contains(e.target)) {
+            menuLeft.classList.remove('show');
+        }
+    });
+</script>
+</body>
+</html>

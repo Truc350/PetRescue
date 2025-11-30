@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <title>Giỏ hàng PetRescue</title>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../static/css/wishlist.css">
+</head>
+<body>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<div class="gio-hang">
+    <!-- Bao toàn bộ phần giỏ hàng -->
+    <div class="gio-hang-noi-dung">
+        <div class="container py-4">
+            <!-- nội dung giỏ hàng -->
+            <div class="mb-3">
+                <h3 class="text-center mb-4 fw-bold text-primary">Danh Sách Sản Phẩm Đã Thích</h3>
+            </div>
+            <!-- Thanh công cụ -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="chon_tat_ca">
+                    <label for="chon_tat_ca" class="form-check-label">Chọn tất cả</label>
+                </div>
+                <button class="btn btn-outline-danger btn-sm nut_xoa_da_chon">
+                    <i class="bi bi-trash"></i> Xóa sản phẩm đã chọn
+                </button>
+            </div>
+
+            <!-- Danh sách sản phẩm -->
+            <div id="danh_sach_san_pham">
+                <!-- Sản phẩm 1 -->
+                <div class="khung_san_pham p-3 mb-3 bg-white shadow-sm rounded d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <input type="checkbox" class="chon_san_pham form-check-input me-3">
+                        <a href="#"><img src="https://paddy.vn/cdn/shop/files/thuc-an-dinh-duong-cho-cho-meo-gel-virbac-nutri-plus_1.jpg?v=1732869568" alt="DJI Mini 3" class="anh_san_pham me-3" width="120"></a>
+                        <div>
+                            <h5 class="ten_san_pham mb-2">Gel Dinh Dưỡng Cho Chó Mèo Virbac Nutri-Plus 120g</h5>
+                            <div>
+                                <span class="gia_hien_tai text-danger fw-bold me-2">230.000₫</span>
+                                <span class="gia_goc text-muted text-decoration-line-through">300.000₫</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2">
+                        <a href=""><button class="btn btn-primary btn-sm nut_them_vao_gio">
+                            <i class="bi bi-cart-plus"></i> Thêm vào giỏ hàng
+                        </button></a>
+                        <button class="btn btn-outline-danger btn-sm nut_xoa">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sản phẩm 2 -->
+                <div class="khung_san_pham p-3 mb-3 bg-white shadow-sm rounded d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <input type="checkbox" class="chon_san_pham form-check-input me-3">
+                        <a href=""><img src="https://paddy.vn/cdn/shop/files/6f0bef1155b63ddd2b62458b8bd1454a.jpg?v=1692494934" alt="DJI Mini 4K" class="anh_san_pham me-3" width="120"></a>
+                        <div>
+                            <h5 class="ten_san_pham mb-2">Gel Vệ Sinh Răng Miệng Chó Mèo Pha Nước Uống Cature Rollon Oral Care</h5>
+                            <div>
+                                <span class="gia_hien_tai text-danger fw-bold me-2">5.000₫</span>
+                                <span class="gia_goc text-muted text-decoration-line-through">7.000₫</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2">
+                        <a href=""><button class="btn btn-primary btn-sm nut_them_vao_gio">
+                            <i class="bi bi-cart-plus"></i> Thêm vào giỏ hàng
+                        </button></a>
+                        <button class="btn btn-outline-danger btn-sm nut_xoa">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sản phẩm 3 -->
+                <div class="khung_san_pham p-3 mb-3 bg-white shadow-sm rounded d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <input type="checkbox" class="chon_san_pham form-check-input me-3">
+                        <a href=""><img src="https://paddy.vn/cdn/shop/files/ganadorchickern.jpg?v=1711013439" alt="Hạt Ganador Adult Cho Chó Trưởng Thành Vị Gà Quay" class="anh_san_pham me-3" width="120"></a>
+                        <div>
+                            <h5 class="ten_san_pham mb-2">Hạt Ganador Adult Cho Chó Trưởng Thành Vị Gà Quay</h5>
+                            <div>
+                                <span class="gia_hien_tai text-danger fw-bold me-2">17.000₫</span>
+                                <span class="gia_goc text-muted text-decoration-line-through">22.000₫</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2">
+                        <a href="shoppingcart.html"><button class="btn btn-primary btn-sm nut_them_vao_gio">
+                            <i class="bi bi-cart-plus"></i> Thêm vào giỏ hàng
+                        </button></a>
+                        <button class="btn btn-outline-danger btn-sm nut_xoa">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const chonTatCa = document.getElementById("chon_tat_ca");
+    const nutXoaDaChon = document.querySelector(".nut_xoa_da_chon");
+    const danhSach = document.getElementById("danh_sach_san_pham");
+
+    // Chọn tất cả
+    chonTatCa.addEventListener("change", () => {
+        document.querySelectorAll(".chon_san_pham").forEach(cb => cb.checked = chonTatCa.checked);
+        capNhatTongTien();
+    });
+
+    // Xử lý click trong danh sách
+    danhSach.addEventListener("click", e => {
+        const sp = e.target.closest(".khung_san_pham");
+        if (!sp) return;
+
+        // Xóa sản phẩm
+        if (e.target.classList.contains("nut_xoa") || e.target.closest(".nut_xoa")) {
+            sp.remove();
+            capNhatTongTien();
+        }
+
+        // Tick chọn sản phẩm
+        if (e.target.classList.contains("chon_san_pham")) {
+            const tatCa = document.querySelectorAll(".chon_san_pham").length;
+            const daChon = document.querySelectorAll(".chon_san_pham:checked").length;
+            chonTatCa.checked = (tatCa === daChon);
+            capNhatTongTien();
+        }
+    });
+
+    nutXoaDaChon.addEventListener("click", () => {
+        document.querySelectorAll(".chon_san_pham:checked").forEach(cb => cb.closest(".khung_san_pham").remove());
+        capNhatTongTien();
+    });
+</script>
+<script>
+    const btnDanhMuc = document.getElementById('btnDanhMuc');
+    const menuLeft = document.getElementById('menuLeft');
+
+    btnDanhMuc.addEventListener('click', () => {
+        menuLeft.classList.toggle('show');
+    });
+
+    // Ẩn menu khi click ra ngoài
+    document.addEventListener('click', (e) => {
+        if (!menuLeft.contains(e.target) && !btnDanhMuc.contains(e.target)) {
+            menuLeft.classList.remove('show');
+        }
+    });
+</script>
+</body>
+</html>
