@@ -16,8 +16,9 @@
 <!-- ===== HEADER ===== -->
 <header class="main-header">
     <div class="logo">
-        <img src="/image/logoo2.png" alt="Logo">
-        <h2>SkyDrone Admin</h2>
+        <img src="https://res.cloudinary.com/dwnbmfhel/image/upload/v1764038017/z7195574147136_4515011aa6bd8fb3801ff37f93280684_gahjde.jpg"
+             alt="Logo">
+        <h2>PetRescue</h2>
     </div>
     <div class="header-right">
         <!-- Icon admin + tên -->
@@ -50,7 +51,8 @@
     <!-- === SIDEBAR === -->
     <aside class="sidebar">
         <div class="user-info">
-            <img src="/image/logoTCN.png" alt="Avatar">
+            <img src="https://res.cloudinary.com/dwnbmfhel/image/upload/v1764476041/z7055808379444_91c23f00777f6dac0cc2baf49e45429a_ipj8go.jpg"
+                 alt="Avatar">
             <h3>Mạc Nguyên</h3>
             <p>Chào mừng bạn trở lại 👋</p>
         </div>
@@ -80,10 +82,6 @@
                     <li><a href="comfirmed-order-manage.html">Đã Xác Nhận</a></li>
                 </ul>
             </li>
-
-            <li>
-                <a href="blog-manage.html"><i class="bi bi-journal-text"></i> Quản Lý Blog</a>
-            </li>
             <li>
                 <a href="promotion-manage.html"><i class="bi bi-megaphone"></i> Quản Lý Khuyến Mãi</a>
             </li>
@@ -99,19 +97,26 @@
     <main class="main-content container-fluid p-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="text-primary fw-bold"><i class="bi bi-tags"></i> Quản Lý Danh Mục</h4>
-            <!-- THANH TÌM KIẾM -->
-            <form class="d-flex" role="search" style="max-width: 300px;">
-                <div class="input-group">
+
+            <div class="d-flex align-items-center gap-2">
+
+                <!-- THANH TÌM KIẾM -->
+                <form class="d-flex" role="search" style="max-width: 300px;">
+                    <div class="input-group">
                 <span class="input-group-text bg-primary text-white">
                     <i class="bi bi-search"></i>
                 </span>
-                    <input id="searchInput" type="search" class="form-control"
-                           placeholder="Tìm kiếm danh mục..." aria-label="Tìm kiếm">
-                </div>
-            </form>
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalDanhMuc">
-                <i class="bi bi-plus-lg"></i> Thêm Danh Mục
-            </button>
+                        <input id="searchInput" type="search" class="form-control"
+                               placeholder="Tìm kiếm danh mục..." aria-label="Tìm kiếm">
+                    </div>
+                </form>
+
+                <!-- NÚT THÊM SẢN PHẨM -->
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalDanhMuc">
+                    <i class="bi bi-plus-lg"></i> Thêm Danh Mục
+                </button>
+
+            </div>
         </div>
 
 
@@ -140,7 +145,7 @@
             <tbody>
             <tr>
                 <td>DM001</td>
-                <td>Drone quay phim chuyên nghiệp</td>
+                <td>🦴 Thức ăn cho chó</td>
                 <td><img src="/image/danhmucquayphim.png"
                          alt="Ảnh danh mục"
                          class="img-thumbnail"
@@ -155,7 +160,7 @@
 
             <tr>
                 <td>DM002</td>
-                <td>Drone du lịch / vlog</td>
+                <td>🧼 Chăm sóc vệ sinh cún</td>
                 <td><img src="/image/dulich.png"
                          alt="Ảnh danh mục"
                          class="img-thumbnail"
@@ -169,7 +174,7 @@
             </tr>
             <tr>
                 <td>DM003</td>
-                <td>Drone thể thao tốc độ cao</td>
+                <td>🏥 Chăm sóc sức khoẻ cún</td>
                 <td><img src="/image/thethao.png"
                          alt="Ảnh danh mục"
                          class="img-thumbnail"
@@ -183,7 +188,7 @@
             </tr>
             <tr>
                 <td>DM004</td>
-                <td>Drone nông nghiệp</td>
+                <td>🐟 Thức ăn cho mèo</td>
                 <td><img src="/image/nongnghiep.png"
                          alt="Ảnh danh mục"
                          class="img-thumbnail"
@@ -198,7 +203,7 @@
             </tr>
             <tr>
                 <td>DM005</td>
-                <td>Drone giám sát / an ninh</td>
+                <td>🩺 Chăm sóc sức khoẻ mèo</td>
                 <td><img src="/image/giamsat.png"
                          alt="Ảnh danh mục"
                          class="img-thumbnail"
@@ -213,7 +218,7 @@
             </tr>
             <tr>
                 <td>DM006</td>
-                <td>Drone mini / cỡ nhỏ</td>
+                <td>🧽 Vệ sinh mèo</td>
                 <td><img src="/image/mini.png"
                          alt="Ảnh danh mục"
                          class="img-thumbnail"

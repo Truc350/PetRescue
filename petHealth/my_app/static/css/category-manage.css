@@ -296,11 +296,6 @@ a {
     color: white;
 }
 
-/* Gom form tìm kiếm và nút thêm lại gần nhau */
-.main-content .d-flex > form {
-    margin-right: -350px; /* ép sát nút thêm */
-}
-
 /* Màu thanh tiêu đề bảng danh mục */
 table#tableDanhMuc > thead {
     background-color: #0051c6 !important;

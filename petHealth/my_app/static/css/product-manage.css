@@ -303,3 +303,20 @@ table#tableSanPham > thead.table-primary th {
     color: #fff !important; /* Chữ trắng */
     border-color: #0047a3 !important; /* Viền đậm */
 }
+.variant-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.variant-row input {
+    flex: 1;
+}
+#product-form {
+    max-width: 1220px; /* chiều rộng tối đa */
+    margin-left: 270px; /* bằng chiều rộng sidebar nếu sidebar cố định */
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #fff; /* tuỳ thích */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
