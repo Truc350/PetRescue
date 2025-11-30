@@ -1,0 +1,343 @@
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Inter, Inter Fallback, Arial, sans-serif;
+}
+
+/* ==== ICON SIZE ==== */
+.bi {
+    font-size: 18px;
+    vertical-align: middle;
+}
+
+
+/* ==== NỘI DUNG CHÍNH ==== */
+#lich-su-mua-hang {
+    max-width: 1000px;
+    background: #fff;
+    margin: 30px auto;
+    padding: 5px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+#lich-su-mua-hang h2 {
+    text-align: center;
+    margin-bottom: 28px;
+    color: #007bff;
+
+}
+
+/* ==== BẢNG ĐƠN HÀNG ==== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 8px;
+    overflow: hidden;
+    table-layout: fixed; /* chia cột đều hơn */
+    background-color: #fff;
+}
+
+/* 🔹 Đặt độ rộng cho từng cột (cột sản phẩm rộng hơn) */
+table th:nth-child(1),
+table td:nth-child(1) {
+    width: 10%; /* Mã đơn hàng */
+}
+
+table th:nth-child(2) {
+    text-align: center;
+
+}
+
+table td:nth-child(2) {
+    width: 38%; /* Sản phẩm (rộng nhất) */
+    text-align: left;
+    padding-left: 25px;
+}
+
+table th:nth-child(3),
+table td:nth-child(3) {
+    width: 15%; /* Giá */
+}
+
+table th:nth-child(4),
+table td:nth-child(4) {
+    width: 15%; /* Ngày đặt */
+}
+
+table th:nth-child(5),
+table td:nth-child(5) {
+    width: 15%; /* Trạng thái */
+    text-align: center;
+    vertical-align: middle;
+}
+
+table th:nth-child(6),
+table td:nth-child(6) {
+    width: 15%; /* Thao tác */
+}
+
+thead {
+    background-color: #007bff;
+    color: white;
+}
+
+th, td {
+    text-align: center;
+    padding: 12px;
+    font-size: 15px;
+    vertical-align: middle;
+}
+
+tbody tr:hover {
+    background-color: #f1f9ff;
+}
+
+
+/* ==== SẢN PHẨM ==== */
+.san-pham {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    text-align: left;
+}
+
+.anh-san-pham {
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+}
+
+.ten-san-pham {
+    font-weight: 500;
+    color: #333;
+    white-space: nowrap;
+}
+
+.thong-tin-san-pham {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+.nut-xem-chi-tiet {
+    font-size: 13px;
+    color: #007bff;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.nut-xem-chi-tiet:hover {
+    text-decoration: underline;
+    color: #0056b3;
+}
+
+/* ==== TRẠNG THÁI ==== */
+.trang-thai {
+    display: inline-block;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 8px 18px;
+    border-radius: 20px;
+    line-height: 1.2;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    min-width: 110px;
+    transition: all 0.2s ease;
+    margin: 0;
+}
+
+.trang-thai.da-huy {
+    background-color: #ffe4e4;
+    color: #d9534f;
+    margin: 70px 15px
+
+}
+
+/* ==== CỘT TRẠNG THÁI ==== */
+td.trang-thai {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.trang-thai.dang-xu-ly {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.trang-thai.da-nhan-hang {
+    background-color: #d4edda;
+    color: #155724;
+    text-align: center;
+    margin: 50px 5px;
+    display: inline-flex; /* inline-flex giúp nằm giữa trong ô */
+    align-items: center; /* căn giữa chữ theo chiều dọc */
+    justify-content: center; /* căn giữa chữ theo chiều ngang */
+    height: 36px; /* chiều cao cố định */
+    padding: 0 20px;
+    border-radius: 20px;
+    font-weight: 600;
+    min-width: 130px; /* cho badge đều với các loại khác */
+}
+
+/* ==== NÚT MUA LẠI ==== */
+.nut-mua-lai {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.nut-mua-lai:hover {
+    background-color: #0056b3;
+}
+
+/* ==== LINK MÃ ĐƠN ==== */
+.ma-don {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.ma-don:hover {
+    text-decoration: underline;
+}
+
+.mascot {
+    width: 130px;
+    margin: 0px auto;
+}
+
+.social-icons a {
+    font-size: 20px;
+    color: #ccc;
+    margin-right: 15px;
+    transition: 0.3s;
+}
+
+.social-icons a:hover {
+    color: #fff;
+}
+
+.hotline {
+    margin-top: 10px;
+    background-color: #0051c6;
+    color: #fff;
+    display: inline-block;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+.footer-bottom {
+    border-top: 1px solid #111111;
+    margin-top: 40px;
+    padding-top: 20px;
+    font-size: 13px;
+    color: #111111;
+    text-align: center;
+}
+
+
+.payment-methods {
+    font-family: "Segoe UI", sans-serif;
+    margin: 20px auto;
+}
+
+
+/* Grid 3 cột, logo tự xuống hàng sau 3 cái */
+.payment-icons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    justify-content: center;
+    max-width: 360px; /* gọn giữa trang */
+    margin: 0 auto;
+}
+
+/* Logo nhỏ, trong ô bo tròn */
+.payment-icons img {
+    width: 60px;
+    height: 26px;
+    object-fit: contain;
+    background-color: #fff;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    padding: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Hiệu ứng hover nhẹ */
+.payment-icons img:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive nhỏ màn hình thì 2 logo / dòng */
+@media (max-width: 400px) {
+    .payment-icons {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 280px;
+    }
+
+    .payment-icons img {
+        width: 55px;
+        height: 24px;
+    }
+}
+
+.social-connect {
+    font-family: "Segoe UI", sans-serif;
+    margin: 0px;
+}
+
+.social-icons {
+    display: flex;
+    gap: 10px;
+}
+
+.social-icons .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.social-icons .icon img {
+    width: 22px;
+    height: 22px;
+}
+
+.social-icons .icon:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+
+@media (max-width: 900px) {
+    .footer-container {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .footer-container {
+        grid-template-columns: 1fr;
+    }
+}
