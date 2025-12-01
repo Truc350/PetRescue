@@ -19,7 +19,7 @@ ul {
 .header-wrapper {
     width: 80%;
     margin: 0 auto;
-    padding: 0 30px;   /* Lùi 30px mỗi bên */
+    padding: 0 15px;   /* Lùi 30px mỗi bên */
 }
 
 /* ==== MÀU CHỦ ĐẠO ==== */
@@ -33,7 +33,7 @@ ul {
 .header-bg {
     background-color: var(--primary);
     color: white;
-     padding: 10px 30px 15px;
+     padding: 10px 15px 15px;
      position: relative; /* hoặc cố định */
     z-index: 1000;
 }
@@ -42,7 +42,7 @@ ul {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 30px;   /* Lùi 30px mỗi bên */
+    padding: 0 5px;
 }
 
 /* LOGO */
@@ -83,7 +83,7 @@ ul {
 .search-bar i {
     position: absolute;
     top: 50%;
-    left: 14px;
+    left: 15px;
     transform: translateY(-50%);
     font-size: 18px;
     color: var(--primary);
@@ -117,11 +117,11 @@ ul {
 .menu-bg {
     background-color: var(--primary);
     color: white;
-    padding: 10px 30px 15px;
+    padding: 10px 15px 15px;
 }
 
 .menu-bg .header-wrapper{
-padding: 0 70px;
+padding: 0 15px;
 
 }
 

@@ -25,4 +25,5 @@ urlpatterns = [
     path('health-dog', views.getHealthDog),
     path('policy-purchases', views.getPolicy),
     path('cat-food', views.getCatFood),
+    path('health-cat', views.getHealthCat),
 ]
