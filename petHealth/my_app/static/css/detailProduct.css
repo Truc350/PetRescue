@@ -384,3 +384,371 @@ body {
 .d-flex .btn-outline-secondary:active {
     transform: scale(0.92);
 }
+
+
+/* ================= REVIEW POPUP ================= */
+.review-popup {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+/* Khi mở popup */
+.review-popup.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Hộp nội dung chính */
+.popup-content {
+    background: #fff;
+    border-radius: 16px;
+    padding: 32px 40px;
+    width: 95%;
+    max-width: 550px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    position: relative;
+    animation: popupFadeIn 0.3s ease;
+}
+
+@keyframes popupFadeIn {
+    from {
+        transform: translateY(-15px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Nút đóng */
+.close-btn {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    font-size: 26px;
+    cursor: pointer;
+    color: #777;
+    transition: color 0.2s;
+}
+.close-btn:hover {
+    color: #000;
+}
+
+/* Tiêu đề & ghi chú */
+.popup-content h2 {
+    text-align: center;
+    font-weight: 600;
+    color: #0d6efd;
+    margin-bottom: 10px;
+}
+.popup-content .note {
+    text-align: center;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 24px;
+}
+.popup-content .note span {
+    color: red;
+}
+/* === ĐÁNH GIÁ SẢN PHẨM === */
+.review-section {
+    background: #fff;
+    padding: 25px;
+    margin-top: 40px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    width: 100%;
+}
+
+.review-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    color: #333;
+}
+
+/* --- KHỐI TỔNG ĐIỂM & LỌC --- */
+.rating-overview {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    background: rgba(0, 81, 198, 0.3);
+    border: 1px solid #f1e1df;
+    border-radius: 8px;
+    padding: 20px 30px;
+    gap: 25px;
+}
+
+.rating-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 120px;
+}
+
+.rating-score .bi-star-fill {
+    color: #ffc107;
+    font-size: 36px;
+    vertical-align: middle;
+    margin-right: 6px;
+}
+
+.rating-score .score {
+    font-size: 60px;
+    font-weight: 700;
+    color: #333;
+}
+
+.rating-score small {
+    font-size: 18px;
+    color: #666;
+}
+
+.rating-score p {
+    font-size: 14px;
+    color: #777;
+    margin-top: 5px;
+}
+
+/* --- NÚT LỌC --- */
+.rating-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    flex: 1;
+}
+
+.filter-btn {
+    border: 1px solid #ddd;
+    background: #fff;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #333;
+}
+
+.filter-btn:hover {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.filter-btn.active {
+    border: 1px solid #dc3545;
+    color: #dc3545;
+    background: #fff5f5;
+}
+
+/* --- DANH SÁCH ĐÁNH GIÁ --- */
+.review {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 20px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.review-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: #ddd;
+}
+
+.review-content {
+    flex: 1;
+}
+
+.review-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.review-name {
+    font-weight: 600;
+    color: #333;
+    font-size: 15px;
+}
+
+.review-stars {
+    color: #ffc107;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.review-stars i {
+    color: #ffd400;
+    font-size: 18px;
+    margin-right: 2px;
+}
+
+.review-date {
+    font-size: 13px;
+    color: #999;
+    margin: 5px 0;
+}
+
+.review-text {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #333;
+}
+
+/* --- PHÂN TRANG --- */
+.pagination {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.pagination button {
+    border: 1px solid #ddd;
+    background: #fff;
+    padding: 6px 12px;
+    border-radius: 4px;
+    margin: 0 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pagination button:hover {
+    border-color: #0051c6;
+    color: #007bff;
+}
+
+.pagination button.active {
+    background: #0051c6;
+    color: #fff;
+    border-color: #007bff;
+}
+
+/* --- NÚT VIẾT ĐÁNH GIÁ --- */
+.write-review-btn {
+    display: block;
+    margin: 25px auto 0;
+    background: #0051c6;
+    color: #fff;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 6px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.write-review-btn:hover {
+    background: #0056b3;
+}
+/* ================= BUTTON ================= */
+.submit-btn {
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 0;
+    background: #0d6efd;
+    color: #fff;
+    font-weight: 600;
+    font-size: 16px;
+    transition: background-color 0.25s ease;
+}
+.submit-btn:hover {
+    background: #004bcd;
+}
+a {
+    text-decoration: none;
+    color: inherit;
+    display: contents;
+}
+/* ===== FORM ĐÁNH GIÁ ===== */
+.review-form {
+    margin-top: 15px;
+}
+
+/* ===== NHÓM RATING ===== */
+.rating-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.rating-group label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    padding: 10px 0;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.rating-group label:hover {
+    transform: translateY(-3px);
+}
+
+.rating-group input {
+    display: none; /* Ẩn radio */
+}
+
+.rating-group .stars i {
+    font-size: 20px;
+    color: #ccc;
+    transition: 0.2s;
+}
+
+/* Khi được chọn → đổi màu sao */
+.rating-group input:checked + .stars i {
+    color: #ffc107;
+}
+
+/* Hover để highlight sao */
+.rating-group label:hover .stars i {
+    color: #ffc107;
+}
+
+/* ===== COMMENT ===== */
+.comment-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.comment-group label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 15px;
+}
+
+.comment-group span {
+    color: red;
+}
+
+.comment-group textarea {
+    resize: vertical;
+    min-height: 120px;
+    padding: 12px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    outline: none;
+    transition: 0.25s;
+}
+
+.comment-group textarea:focus {
+    border-color: #ff9800;
+    box-shadow: 0 0 6px rgba(255, 152, 0, 0.35);
+}
