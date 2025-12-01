@@ -26,4 +26,5 @@ urlpatterns = [
     path('policy-purchases', views.getPolicy),
     path('cat-food', views.getCatFood),
     path('health-cat', views.getHealthCat),
+    path('cat-toilet', views.getCatToilet),
 ]
