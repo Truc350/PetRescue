@@ -44,3 +44,5 @@ def getPolicy(request):
     return render(request, 'frontend/policy-purchases.html')
 def getCatFood(request):
     return render(request, 'frontend/cat-food.html')
+def getHealthCat(request):
+    return render(request, 'frontend/health-cat.html')
