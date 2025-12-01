@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -17,6 +18,8 @@
 
 </head>
 <body>
+
+{% include "frontend/header.html" %}
 
 
 <div id="header-container"></div>
@@ -375,109 +378,86 @@
 
 </body>
 <script>
-fetch('../templates/frontend/header.html')
-  .then(res => res.text())
-  .then(html => {
-      const container = document.getElementById('header-container');
-      const temp = document.createElement('div');
-      temp.innerHTML = html;
+/* ============ MENU SIDEBAR ============ */
+const menuItems = document.querySelectorAll('.sidebar .menu li');
+const sections = document.querySelectorAll('.content .section');
 
-      // Chèn HTML
-      Array.from(temp.childNodes).forEach(node => {
-          if(node.tagName !== 'SCRIPT') container.appendChild(node);
-      });
+menuItems.forEach(item => {
+    item.addEventListener('click', e => {
+        e.preventDefault();
 
-      // Chèn script
-      Array.from(temp.querySelectorAll('script')).forEach(oldScript => {
-          const newScript = document.createElement('script');
-          if(oldScript.src) newScript.src = oldScript.src;
-          else newScript.textContent = oldScript.textContent;
-          document.body.appendChild(newScript);
-      });
+        menuItems.forEach(i => i.classList.remove('active'));
+        sections.forEach(s => s.classList.remove('active'));
 
-      // ⭐ Gọi initHeaderDropdown sau khi load xong
-      if(typeof initHeaderDropdown === "function") initHeaderDropdown();
+        item.classList.add('active');
 
+        const sectionId = item.dataset.section;
+        document.getElementById(sectionId + '-section').classList.add('active');
+    });
+});
 
+/* ============ XEM CHI TIẾT ĐƠN ============ */
+let currentOrderId = null;
 
-      // ==== PHẦN CHO MENU SIDEBAR ====
-      const menuItems = document.querySelectorAll('.sidebar .menu li');
-      const sections = document.querySelectorAll('.content .section');
-
-      menuItems.forEach(item => {
-          item.addEventListener('click', e => {
-              e.preventDefault();
-
-              // Bỏ active ở tất cả menu
-              menuItems.forEach(i => i.classList.remove('active'));
-
-              // Ẩn tất cả section
-              sections.forEach(s => s.classList.remove('active'));
-
-              // active menu hiện tại
-              item.classList.add('active');
-
-              // Lấy section tương ứng và show
-              const sectionId = item.getAttribute('data-section');
-              const section = document.getElementById(sectionId + '-section');
-              if(section){
-                  section.classList.add('active');
-              }
-          });
-      });
-  });
-
-    let currentOrderId = null;
-
-// Hiển thị chi tiết đơn hàng đúng ID
 function showOrderDetail(orderId) {
     currentOrderId = orderId;
 
-    // Ẩn danh sách đơn
-    document.getElementById('order-list').style.display = 'none';
-    // Hiển thị khung chi tiết
-    const detail = document.getElementById('order-detail');
-    detail.style.display = 'block';
+    document.getElementById("order-list").style.display = "none";
+    document.getElementById("order-detail").style.display = "block";
 
-    // Cập nhật nội dung theo orderId (demo, bạn có thể thay bằng dữ liệu thực)
-    detail.querySelector('.order-date strong').textContent = "03 tháng 11 năm 2025";
+    // Update text theo mã đơn
+    const dateText = document.querySelector(".order-date strong");
+    if (dateText) {
+        dateText.textContent = "03 tháng 11 năm 2025 - Đơn #" + orderId;
+    }
 }
 
-// Quay lại danh sách đơn hàng
+/* ===== QUAY LẠI DANH SÁCH ===== */
 function showOrderList() {
-    document.getElementById('order-detail').style.display = 'none';
-    document.getElementById('order-list').style.display = 'block';
+    document.getElementById("order-detail").style.display = "none";
+    document.getElementById("order-list").style.display = "block";
 }
 
-// Mở popup hủy đơn
+/* ============ MODAL HUỶ ĐƠN ============ */
 function cancelOrder(orderId) {
     currentOrderId = orderId;
-    document.getElementById('cancelReason').value = '';
-    const modal = document.getElementById('cancelModal');
-    modal.style.display = 'block';
-    modal.classList.add('show');
+
+    document.getElementById("cancelReason").value = "";
+
+    const modal = document.getElementById("cancelModal");
+    modal.style.display = "block";
+    modal.classList.add("show");
 }
 
-// Đóng popup hủy đơn
+/* ===== ĐÓNG MODAL ===== */
 function closeCancelModal() {
-    const modal = document.getElementById('cancelModal');
-    modal.style.display = 'none';
-    modal.classList.remove('show');
+    const modal = document.getElementById("cancelModal");
+    modal.classList.remove("show");
+    modal.style.display = "none";
 }
 
-// Xác nhận hủy đơn
+/* ===== XÁC NHẬN HUỶ ===== */
 function confirmCancelOrder() {
-    const reason = document.getElementById('cancelReason').value.trim();
-    if(reason === ''){
-        alert("Vui lòng nhập lý do hủy đơn!");
+    const reason = document.getElementById("cancelReason").value.trim();
+
+    if (reason === "") {
+        alert("Vui lòng nhập lý do hủy!");
         return;
     }
-    alert(`Đơn hàng #${currentOrderId} đã được hủy!\nLý do: ${reason}`);
+
+    alert("✅ Đã hủy đơn #" + currentOrderId + "\nLý do: " + reason);
+
     closeCancelModal();
 
-    // TODO: Gọi API để hủy đơn thực tế
+    // TODO: Gửi API Django để hủy đơn
+    /*
+    fetch(`/cancel-order/${currentOrderId}/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reason })
+    });
+    */
 }
-
 </script>
 
 

@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from . import views
+
 # from my_app.views import get_home
 urlpatterns = [
     path('home', views.get_home),
@@ -20,6 +21,5 @@ urlpatterns = [
     path('DogKibbleView', views.getDogKibbleView),
     path('personal-page', views.getPersonal),
     path('homePage', views.getHomePage),
+    path('dashboard', views.getDashBoard),
 ]
-
-

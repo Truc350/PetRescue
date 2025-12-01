@@ -1,0 +1,221 @@
+body {
+    font-family: Inter, Inter Fallback, Arial, sans-serif;
+    background-color: #fff;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.khung-noi-dung {
+    max-width: calc(100% - 160px);
+    margin: 0 auto;
+    background: #0051c6;
+    padding: 30px 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.1);
+    margin-bottom: 50px;
+}
+
+.khung-tieu-de {
+    margin-top: 25px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+#ten-chuong-trinh {
+    color: #0051c6;
+    font-size: 2rem;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.mo-ta-chuong-trinh {
+    color: white;
+    font-size: 1rem;
+    background: #0051c6;
+    display: inline-block;
+    padding: 3px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+/* Lưới sản phẩm */
+.danh-sach-flycam {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 25px 15px; /* khoảng cách vừa khung */
+    justify-items: center;
+    margin-top: 15px;
+}
+
+/* === Thẻ sản phẩm (theo style content gốc) === */
+.the-san-pham {
+    position: relative;
+    background: #fff;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 260px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform .3s, box-shadow .3s;
+}
+
+.the-san-pham:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+
+/* Ribbon SALE giữ nguyên */
+.the-san-pham::before {
+    content: "SALE";
+    position: absolute;
+    top: 12px;
+    left: -38px;
+    background: #dc2626;
+    color: #fff;
+    padding: 4px 38px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    transform: rotate(-45deg);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Ảnh sản phẩm */
+.anh-san-pham {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+    border-radius: 12px 12px 0 0;
+}
+
+.the-san-pham:hover .anh-san-pham {
+    transform: scale(1.05);
+}
+
+/* Nội dung sản phẩm */
+.noi-dung-san-pham {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* đẩy nút mua xuống đáy */
+    flex-grow: 1; /* chiếm hết chiều cao còn lại */
+    padding: 12px 16px 16px;
+}
+
+/* Tên + mô tả */
+.ten-san-pham {
+    font-size: 1rem;
+    color: #111;
+    font-weight: 650;
+    text-align: left;
+    min-height: 44px;
+    margin-bottom: 6px;
+}
+
+.mo-ta-san-pham {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #444;
+    min-height: 38px; /* chiều cao cố định */
+    margin-bottom: 8px;
+}
+
+/* --- Giá sản phẩm (chuẩn content) --- */
+.gia-block {
+    margin-bottom: 6px;
+}
+
+.gia-moi {
+    color: #d32f2f;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-right: 6px;
+
+}
+
+.gia-cu {
+    color: #888;
+    font-size: 0.9rem;
+    text-decoration: line-through;
+}
+
+/* Ảnh sản phẩm */
+.anh-san-pham {
+    width: 100%;
+    height: 200px; /* cố định chiều cao ảnh để đồng đều */
+    object-fit: cover;
+    border-radius: 20px 20px 0 0;
+}
+
+.so-danh-gia {
+    font-size: 0.85rem;
+    color: #777;
+
+}
+
+/* --- Sao + Tim (chuẩn content) --- */
+.hang-danh-gia {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 6px;
+}
+
+.danh-gia-sao {
+    display: flex;
+    gap: 4px;
+    color: #ffb400;
+    font-size: 1rem;
+}
+
+.tim-yeu-thich {
+    font-size: 1.3rem;
+    color: #bbb;
+    cursor: pointer;
+    transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.tim-yeu-thich.yeu-thich {
+    color: #ff4d4d;
+}
+
+/* --- Nút mua ngay --- */
+.nut-mua-ngay {
+    align-self: center;
+    margin-top: 10px;
+    background-color: #0051c6;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all .3s;
+}
+
+.nut-mua-ngay:hover {
+    background-color: #003c94;
+    transform: scale(1.05);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .danh-sach-flycam {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .danh-sach-flycam {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .danh-sach-flycam {
+        grid-template-columns: 1fr;
+    }
+}
