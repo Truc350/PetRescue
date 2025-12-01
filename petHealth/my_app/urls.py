@@ -22,4 +22,5 @@ urlpatterns = [
     path('personal-page', views.getPersonal),
     path('homePage', views.getHomePage),
     path('dashboard', views.getDashBoard),
+    path('health-dog', views.getHealthDog),
 ]
