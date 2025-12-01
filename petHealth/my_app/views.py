@@ -38,3 +38,5 @@ def getHomePage(request):
     return render(request, 'frontend/homePage.html')
 def getDashBoard(request):
     return render(request, 'frontend/admin/dashboard.html')
+def getHealthDog(request):
+    return render(request, 'frontend/health-dog.html')
