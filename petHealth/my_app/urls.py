@@ -23,4 +23,6 @@ urlpatterns = [
     path('homePage', views.getHomePage),
     path('dashboard', views.getDashBoard),
     path('health-dog', views.getHealthDog),
+    path('policy-purchases', views.getPolicy),
+    path('cat-food', views.getCatFood),
 ]

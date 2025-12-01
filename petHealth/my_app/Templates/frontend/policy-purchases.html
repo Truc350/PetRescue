@@ -1,0 +1,214 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nút Chính Sách & Thanh Toán</title>
+
+    <style>
+        body {
+            background: #eef2f7;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        /* KHUNG CHÍNH – FIX LỖI */
+        .wrapper {
+            /* KHUNG CHÍNH */
+                max-width: 900px;
+                margin: 40px auto;
+                padding: 0 20px;
+
+        }
+
+        /* TAB BUTTONS */
+        .tab-container {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap; /* chống bể layout */
+        }
+
+        .tab-btn {
+            padding: 12px 26px;
+            background: #ffffff;
+            border: 1px solid #d1d9e6;
+            font-size: 17px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.25s ease;
+            font-weight: 500;
+        }
+
+        .tab-btn:hover {
+            background: #f1f5fb;
+        }
+
+        .tab-btn.active {
+            background: #0d6efd;
+            color: white;
+            border-color: #0d6efd;
+            box-shadow: 0 4px 12px rgba(0, 86, 179, 0.3);
+        }
+
+        /* BOX NỘI DUNG */
+        .content-box {
+            background: #ffffff;
+            padding: 28px;
+            border-radius: 16px;
+            border: 1px solid #d8e0eb;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: 0.3s ease;
+            display: none;
+        }
+
+        .content-box.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Nội dung */
+        h2 {
+            color: #0d6efd;
+        }
+
+        h3 {
+            color: #334155;
+            margin-top: 20px;
+        }
+
+        p, li {
+            line-height: 1.6;
+            color: #475569;
+        }
+
+        ul {
+            margin-left: 18px;
+        }
+    </style>
+
+
+</head>
+<body>
+
+{% include "frontend/header.html" %}
+
+<div class="wrapper">
+
+    <div class="tab-container">
+        <button class="tab-btn active" data-tab="privacy">Chính sách bảo mật</button>
+        <button class="tab-btn" data-tab="payment">Phương thức thanh toán</button>
+    </div>
+
+    <div class="tab-content">
+
+        <!-- Chính sách bảo mật -->
+        <div class="content-box show" id="privacy">
+            <h2>Chính sách bảo mật thông tin người dùng</h2>
+
+            <h3>1. Phạm vi thu thập</h3>
+            <p>
+                Website PetRescue.vn thu thập email, số điện thoại, địa chỉ để hỗ trợ khách hàng khi đăng ký hoặc đặt
+                hàng.
+            </p>
+
+            <h3>2. Phạm vi sử dụng</h3>
+            <ul>
+                <li>Cung cấp dịch vụ</li>
+                <li>Gửi thông báo</li>
+                <li>Liên hệ giải quyết vấn đề</li>
+                <li>Tuân thủ yêu cầu pháp luật</li>
+            </ul>
+
+            <h3>3. Lưu trữ thông tin</h3>
+            <p>Thông tin được lưu đến khi khách hàng yêu cầu xóa.</p>
+
+            <h3>4. Đơn vị quản lý</h3>
+            <p>
+                Công ty Cổ Phần Thương Mại Và Dịch Vụ PetRescue<br>
+                MST: 0359264247<br>
+                112 Nguyễn Văn Thủ, P. Đa Kao, Quận 1<br>
+                Hotline: 0374 41 41 42<br>
+                Email: petrescuestore@gmail.com
+            </p>
+
+            <h3>5. Bên thứ ba truy cập dữ liệu</h3>
+            <ul>
+                <li>Nhân viên công ty</li>
+                <li>Đơn vị vận chuyển</li>
+                <li>Cơ quan nhà nước khi có yêu cầu</li>
+            </ul>
+
+            <h3>6. Quyền của khách hàng</h3>
+            <p>Khách hàng có quyền xem, chỉnh sửa hoặc yêu cầu xóa dữ liệu của mình.</p>
+
+            <h3>7. Cam kết bảo mật</h3>
+            <p>Paddy cam kết bảo mật tuyệt đối thông tin khách hàng.</p>
+        </div>
+
+        <!-- Phương thức thanh toán -->
+        <div class="content-box" id="payment">
+            <h2>Phương thức thanh toán</h2>
+            <p>Pet Rescue Shop hỗ trợ các phương thức sau:</p>
+
+            <h3>1. Thanh toán tiền mặt</h3>
+            <p>Thanh toán khi nhận hàng.</p>
+
+            <h3>2. Chuyển khoản ngân hàng</h3>
+            <p>
+                BIDV – Chi nhánh TP.HCM<br>
+                <strong>Số tài khoản:</strong> 8800274007<br>
+                <strong>Chủ tài khoản:</strong> Công Ty TNHH TM VA DV PetRescue
+            </p>
+
+            <h3>3. Ví điện tử</h3>
+            <p>Momo và nhiều ví khác qua OnePay.</p>
+
+            <h3>4. Thẻ tín dụng/ghi nợ</h3>
+            <p>Thanh toán qua OnePay, hỗ trợ hầu hết ngân hàng.</p>
+        </div>
+
+    </div>
+
+</div>
+{% include "frontend/footer.html" %}
+<script>
+    const tabs = document.querySelectorAll(".tab-btn");
+    const contents = document.querySelectorAll(".content-box");
+
+    tabs.forEach(btn => {
+        btn.addEventListener("click", () => {
+
+            // bỏ active tab cũ
+            tabs.forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+
+            // ẩn toàn bộ nội dung
+            contents.forEach(c => {
+                c.style.display = "none";
+                c.classList.remove("show");
+            });
+
+            // hiện nội dung tương ứng
+            const id = btn.getAttribute("data-tab");
+            const content = document.getElementById(id);
+
+            content.style.display = "block";
+
+            setTimeout(() => {
+                content.classList.add("show");
+            }, 10);
+        });
+    });
+
+    /* MẶC ĐỊNH MỞ "CHÍNH SÁCH BẢO MẬT" */
+    document.getElementById("privacy").style.display = "block";
+    document.getElementById("privacy").classList.add("show");
+</script>
+
+
+
+</body>
+</html>
