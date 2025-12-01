@@ -40,3 +40,7 @@ def getDashBoard(request):
     return render(request, 'frontend/admin/dashboard.html')
 def getHealthDog(request):
     return render(request, 'frontend/health-dog.html')
+def getPolicy(request):
+    return render(request, 'frontend/policy-purchases.html')
+def getCatFood(request):
+    return render(request, 'frontend/cat-food.html')
