@@ -107,44 +107,167 @@
 
 
     <!-- ====== MÔ TẢ SẢN PHẨM ====== -->
-<section class="product-desc">
-  <div class="desc-header">
-    <h2>Mô Tả</h2>
-  </div>
+    <section class="product-desc">
+        <div class="desc-header">
+            <h2>Mô Tả</h2>
+        </div>
 
-  <div class="desc-body">
-    <div class="short-title">
-      Thức Ăn Cho Mèo Con Royal Canin Kitten 36
+        <div class="desc-body">
+            <div class="short-title">
+                Thức Ăn Cho Mèo Con Royal Canin Kitten 36
+            </div>
+
+            <ul>
+                <li>Thương hiệu: <a href="#" class="brand-link">Royal Canin</a></li>
+                <li>Phù hợp cho: Mèo con (từ 4 đến 12 tháng tuổi).</li>
+                <li><strong>Thức ăn cho mèo</strong> Royal Canin Kitten hỗ trợ sức khỏe của mèo con bằng việc cung cấp
+                    các chất dinh dưỡng chính xác dựa trên nghiên cứu của các nhà khoa học từ ROYAL CANIN. Trong giai
+                    đoạn tăng trưởng, hệ tiêu hóa của mèo con chưa phát triển đầy đủ, chính vì vậy ROYAL CANIN Kitten
+                    thúc đẩy sự cân bằng hệ vi sinh đường ruột, hỗ trợ sự phát triển khỏe mạnh.
+                </li>
+            </ul>
+
+            <div class="desc-subtitle">Lợi ích:</div>
+            <ul>
+                <li>Hỗ trợ quá trình tăng trưởng và phát triển toàn diện</li>
+                <li>Thúc đẩy phát triển xương và khớp</li>
+                <li>Giúp hệ tiêu hóa khỏe mạnh</li>
+                <li>Tăng cường sức đề kháng</li>
+                <li>Hạn chế mùi hôi phân</li>
+            </ul>
+
+            <div class="desc-subtitle">Thành phần</div>
+            <ul>
+                <li>Protein gia cầm, gạo, protein thực vật, chất béo động vật, bột bắp, protein động vật, bột lúa mì,
+                    gluten bắp,...
+                </li>
+            </ul>
+
+            <div class="desc-subtitle">Hướng dẫn sử dụng</div>
+            <ul>
+                <li>Cho ăn theo khuyến nghị trên bao bì, chia làm nhiều bữa trong ngày cho mèo con.</li>
+                <li>Bảo quản nơi khô ráo, tránh ánh nắng trực tiếp và đóng kín sau khi mở.</li>
+            </ul>
+        </div>
+    </section>
+    <!-- ========== ĐÁNH GIÁ SẢN PHẨM ========== -->
+    <section class="review-section">
+        <h4 class="review-title">ĐÁNH GIÁ SẢN PHẨM</h4>
+
+        <div class="rating-overview">
+            <div class="rating-score">
+            <span class="score">
+                <i class="bi bi-star-fill"></i> 4.9
+            </span><small>/5</small>
+
+                <p>24 đánh giá</p>
+            </div>
+
+            <div class="rating-filters">
+                <button class="filter-btn active" data-star="all">Tất Cả</button>
+                <button class="filter-btn" data-star="5">5 Sao (23)</button>
+                <button class="filter-btn" data-star="4">4 Sao (19)</button>
+                <button class="filter-btn" data-star="3">3 Sao (6)</button>
+                <button class="filter-btn" data-star="2">2 Sao (2)</button>
+                <button class="filter-btn" data-star="1">1 Sao (1)</button>
+                <button class="filter-btn">Có Bình Luận (51)</button>
+            </div>
+        </div>
+
+        <div id="review-list">
+            <div class="review" data-star="5">
+                <div class="review-avatar"></div>
+                <div class="review-content">
+                    <div class="review-header">
+                        <span class="review-name">Nguyễn Văn A</span>
+                        <div class="review-stars">
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                        </div>
+                    </div>
+                    <div class="review-date">2023-05-25 16:47</div>
+                    <p class="review-text">
+                        Thức ăn hợp khẩu vị mèo, mùi dịu, tiêu hoá tốt — mèo nhà không bị rối loạn tiêu hoá sau 1 tuần.
+                        Giao hàng nhanh, đóng gói kỹ. Rất an tâm khi mua hàng cho thú cưng.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="pagination">
+            <button class="active">1</button>
+            <button>2</button>
+            <button>3</button>
+            <span>...</span>
+            <button>5</button>
+        </div>
+
+        <button class="write-review-btn">Viết đánh giá</button>
+    </section>
+</div>
+
+<!-- POPUP REVIEW -->
+<div class="review-popup" id="reviewPopup">
+    <div class="popup-content">
+        <span class="close-btn">&times;</span>
+        <h2>Thêm một đánh giá</h2>
+        <p class="note">
+            Tài khoản email của bạn sẽ được công bố.
+            Trường bắt buộc được đánh dấu <span>*</span>
+        </p>
+
+        <form class="review-form">
+            <div class="rating-group">
+                <label>
+                    <input type="radio" name="rating" value="1">
+                    <div class="stars">
+                        <i class="bi bi-star-fill"></i>
+                    </div>
+                    <div>(1)</div>
+                </label>
+                <label>
+                    <input type="radio" name="rating" value="2">
+                    <div class="stars">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                    </div>
+                    <div>(2)</div>
+                </label>
+                <label>
+                    <input type="radio" name="rating" value="3" checked>
+                    <div class="stars">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                    </div>
+                    <div>(3)</div>
+                </label>
+                <label>
+                    <input type="radio" name="rating" value="4">
+                    <div class="stars">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                            class="bi bi-star-fill"></i>
+                    </div>
+                    <div>(4)</div>
+                </label>
+                <label>
+                    <input type="radio" name="rating" value="5">
+                    <div class="stars">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                            class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                    </div>
+                    <div>(5)</div>
+                </label>
+            </div>
+
+            <div class="comment-group">
+                <label for="comment-popup">Nhận xét của bạn <span>*</span></label>
+                <textarea id="comment-popup" placeholder="Viết nhận xét tại đây..."></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">Xác Nhận</button>
+        </form>
     </div>
-
-    <ul>
-      <li>Thương hiệu: <a href="#" class="brand-link">Royal Canin</a></li>
-      <li>Phù hợp cho: Mèo con (từ 4 đến 12 tháng tuổi).</li>
-      <li><strong>Thức ăn cho mèo</strong> Royal Canin Kitten hỗ trợ sức khỏe của mèo con bằng việc cung cấp các chất dinh dưỡng chính xác dựa trên nghiên cứu của các nhà khoa học từ ROYAL CANIN. Trong giai đoạn tăng trưởng, hệ tiêu hóa của mèo con chưa phát triển đầy đủ, chính vì vậy ROYAL CANIN Kitten thúc đẩy sự cân bằng hệ vi sinh đường ruột, hỗ trợ sự phát triển khỏe mạnh.</li>
-    </ul>
-
-    <div class="desc-subtitle">Lợi ích:</div>
-    <ul>
-      <li>Hỗ trợ quá trình tăng trưởng và phát triển toàn diện</li>
-      <li>Thúc đẩy phát triển xương và khớp</li>
-      <li>Giúp hệ tiêu hóa khỏe mạnh</li>
-      <li>Tăng cường sức đề kháng</li>
-      <li>Hạn chế mùi hôi phân</li>
-    </ul>
-
-    <div class="desc-subtitle">Thành phần</div>
-    <ul>
-      <li>Protein gia cầm, gạo, protein thực vật, chất béo động vật, bột bắp, protein động vật, bột lúa mì, gluten bắp,...</li>
-    </ul>
-
-    <div class="desc-subtitle">Hướng dẫn sử dụng</div>
-    <ul>
-      <li>Cho ăn theo khuyến nghị trên bao bì, chia làm nhiều bữa trong ngày cho mèo con.</li>
-      <li>Bảo quản nơi khô ráo, tránh ánh nắng trực tiếp và đóng kín sau khi mở.</li>
-    </ul>
-  </div>
-</section>
-
 </div>
 <div id="footer"></div>
 <script>
@@ -166,11 +289,52 @@
 </script>
 
 <script>
-document.querySelectorAll('.btn-outline-secondary').forEach(btn => {
-    btn.addEventListener('click', function() {
-        this.classList.toggle('liked');
+    document.querySelectorAll('.btn-outline-secondary').forEach(btn => {
+        btn.addEventListener('click', function () {
+            this.classList.toggle('liked');
+        });
     });
-});
+</script>
+<script>
+    // ====== JS lọc đánh giá theo số sao ======
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const reviews = document.querySelectorAll('.review');
+
+    filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+
+            const star = button.getAttribute('data-star');
+            reviews.forEach(review => {
+                if (star === 'all' || review.getAttribute('data-star') === star) {
+                    review.style.display = 'flex';
+                } else {
+                    review.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+<script>
+    const writeReviewBtn = document.querySelector('.write-review-btn');
+    const reviewPopup = document.getElementById('reviewPopup');
+    const closeBtn = reviewPopup.querySelector('.close-btn');
+
+    writeReviewBtn.addEventListener('click', () => {
+        reviewPopup.classList.add('active');
+    });
+
+    closeBtn.addEventListener('click', () => {
+        reviewPopup.classList.remove('active');
+    });
+
+    // Ấn bên ngoài popup cũng tắt
+    window.addEventListener('click', (e) => {
+        if (e.target === reviewPopup) {
+            reviewPopup.classList.remove('active');
+        }
+    });
 </script>
 </body>
 </html>
