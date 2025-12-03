@@ -752,3 +752,180 @@ a {
     border-color: #ff9800;
     box-shadow: 0 0 6px rgba(255, 152, 0, 0.35);
 }
+
+/*Sản phẩm liên quan*/
+.section-spacing{
+    margin-top: 100px;
+}
+
+
+/* ================== NÚT MUA NGAY ================== */
+.btn-danger {
+    background: linear-gradient(135deg, #234bbb, #1e40a3);
+    border: none !important;
+    color: white;
+    font-weight: 600;
+    transition: all 0.35s ease;
+    border-radius: 50px !important;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #1e3a9d, #1a3370);
+    transform: translateY(-3px);
+    color: white;
+}
+
+/* Đảm bảo nút luôn nằm dưới cùng của card */
+.product-card .p-3 {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.product-card .btn-danger {
+    margin-top: auto; /* đẩy nút xuống đáy */
+}
+/* ===================== NÚT MŨI TÊN TRÁI/PHẢI ===================== */
+.product-carousel-wrapper {
+    position: relative;
+    padding: 0 30px; /* để chừa chỗ cho 2 nút 2 bên */
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.product-scroll-container {
+    display: flex !important; /* BỎ row Bootstrap, dùng flex thuần */
+    gap: 1rem; /* thay cho g-3 */
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    padding: 10px 0;
+    margin: 0 !important;
+}
+
+.product-scroll-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Bỏ toàn bộ padding/margin của Bootstrap trong container này */
+.product-scroll-container > * {
+    flex: 0 0 auto;
+    width: calc(100% / 4 - 1rem); /* desktop: 4 sản phẩm */
+}
+
+@media (max-width: 992px) {
+    .product-scroll-container > * {
+        width: calc(100% / 3 - 1rem);
+    }
+}
+
+@media (max-width: 768px) {
+    .product-scroll-container > * {
+        width: calc(50% - 0.5rem);
+    }
+
+    .product-carousel-wrapper {
+        padding: 0 45px;
+    }
+
+}
+/* Nút mũi tên – đẹp, cố định, không làm lệch trang */
+.scroll-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 35px;
+    height: 35px;
+    background: #fff;
+    border: 2px solid #234bbb;
+    border-radius: 50%;
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.0rem;
+    color: #234bbb;
+    z-index: 100;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+
+.scroll-arrow.left {
+    left: 5px;
+}
+
+.scroll-arrow.right {
+    right: 5px;
+}
+
+@media (max-width: 768px) {
+    .scroll-arrow {
+        width: 44px;
+        height: 44px;
+        font-size: 1.5rem;
+    }
+
+    .scroll-arrow.left {
+        left: 3px;
+    }
+
+    .scroll-arrow.right {
+        right: 3px;
+    }
+}
+
+.section-header {
+    width: 100%;
+    margin-bottom: 15px;
+}
+/* ===================== NÚT YÊU THÍCH (TRÁI TIM) ===================== */
+.product-header {
+    position: relative;
+}
+
+.btn-wishlist {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #999;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-wishlist:hover {
+    color: #234bbb;
+    background: #f0f4ff;
+}
+
+.btn-wishlist:active,
+.btn-wishlist.liked {
+    color: #e74c3c !important;   /* đỏ đẹp */
+    background: #ffeaea;
+}
+
+.btn-wishlist:active {
+    transform: scale(0.92);
+}
+
+
+/* Đảm bảo brand không bị lệch */
+.brand-name {
+    font-size: 13px;
+    color: #666;
+    margin: 0;
+}
+
+/* Tùy chọn: thêm hiệu ứng nhấp */
+.btn-wishlist:active {
+    transform: scale(0.9);
+}

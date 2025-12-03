@@ -1,0 +1,290 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chăm sóc vệ sinh chó</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../static/css/dogHygiene.css">
+</head>
+<body>
+{% include "frontend/header.html" %}
+
+<h1>Vệ Sinh Cho Chó</h1>
+<!--Layout Chinh: Sidebar + contain -->
+<div class="main-layout">
+    <aside class="sidebar">
+        <div class="filter-section">
+
+            <div class="filter-group">
+                <h3 class="filter-title">Giá<span>-</span></h3>
+                <div class="filter-list">
+                    <label><input type="checkbox"> < 100,000</label>
+                    <label><input type="checkbox">100,000 - 200,000</label>
+                    <label><input type="checkbox">200,000 - 300,000</label>
+                    <label><input type="checkbox">300,000 - 400,000</label>
+                    <label><input type="checkbox">400,000 - 500,000</label>
+                    <label><input type="checkbox">500,000 - 600,000</label>
+                    <label><input type="checkbox">600,000 - 700,000</label>
+                    <label><input type="checkbox">700,000 - 800,000</label>
+                    <label><input type="checkbox">800,000 - 900,000</label>
+                    <label><input type="checkbox">900,000 - 1,000,000</label>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <h3 class="filter-title">Thương Hiệu<span>-</span></h3>
+                <div class="filter-list">
+                    <label><input type="checkbox">Royal Canin</label>
+                    <label><input type="checkbox">Zenith</label>
+                    <label><input type="checkbox">Taste Of The Wild</label>
+                    <label><input type="checkbox">Inaba</label>
+                    <label><input type="checkbox">Equilibrio</label>
+                </div>
+            </div>
+
+        </div>
+    </aside>
+
+    <div class="content">
+
+        <!--toolbar sắp xếp-->
+        <div class="toolbar">
+            <div class="sort-by">
+                <span>Sắp xếp theo:</span>
+                <select>
+                    <option>Bán chạy</option>
+                    <option>Giá: Thấp đến cao</option>
+                    <option>Giá: Cao đến thấp</option>
+                </select>
+            </div>
+        </div>
+
+
+        <section class="section-spacing content-padding">
+            <div class="d-flex justify-content-between align-items-center mb-4 position-relative">
+                <h4 class="fw-bold mb-0">Sản phẩm nổi bật</h4>
+            </div>
+
+
+            <!-- Sản phẩm 1 -->
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="product-card bg-white rounded shadow-sm overflow-hidden">
+                    <img src="https://paddy.vn/cdn/shop/files/nuoc-ve-sinh-rang-mieng-cho-tropiclean.png?v=1704521356"
+                         class="w-100" style="height: 200px; object-fit: contain;" alt="Royal Canin Indoor 27">
+                    <div class="p-3">
+                        <div class="product-header d-flex justify-content-between align-items-center">
+                            <p class="small text-muted mb-0 brand-name">Tropiclean</p>
+                            <button class="btn-wishlist">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <p class="fw-medium small line-clamp-2">Nước Vệ Sinh Răng Miệng Hỗ Trợ Sức Khỏe Cho Chó Tropiclean 473ml</p>
+                        <p class="text-danger fw-bold">340.000₫</p>
+                        <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
+                            <i class="bi bi-cart-plus me-1"></i> Mua ngay
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sản phẩm 2 -->
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="product-card bg-white rounded shadow-sm overflow-hidden">
+                    <img src="https://paddy.vn/cdn/shop/files/nho-ngua-viem-tai-otoklen-alkin-20ml-3.webp?v=1697451991"
+                         class="w-100" style="height: 200px; object-fit: contain;" alt="Royal Canin Kitten">
+                    <div class="p-3">
+                        <div class="product-header d-flex justify-content-between align-items-center ">
+                            <p class="small text-muted mb-0 brand-name">Alkin</p>
+                            <button class="btn-wishlist">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <p class="fw-medium small line-clamp-2">Thuốc Nhỏ Viêm Tai Cho Chó Mèo Otoklen Alkin 20ml</p>
+                        <p class="text-danger fw-bold">105.000₫</p>
+                        <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
+                            <i class="bi bi-cart-plus me-1"></i> Mua ngay
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sản phẩm 3 -->
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="product-card bg-white rounded shadow-sm overflow-hidden">
+                    <img src="https://paddy.vn/cdn/shop/files/kem-tay-o-vung-mat-cho-meo-tropiclean-tear-stain-remover-236ml.png?v=1704521422"
+                         class="w-100" style="height: 200px; object-fit: contain;" alt="Urinary S/O">
+                    <div class="p-3">
+                        <div class="product-header d-flex justify-content-between align-items-center ">
+                            <p class="small text-muted mb-0 brand-name">Tropiclean</p>
+                            <button class="btn-wishlist">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <p class="fw-medium small line-clamp-2">Kem Tẩy Ố Vùng Mắt Chó Mèo Tropiclean Tear Stain Remover 236ml</p>
+                        <p class="text-danger fw-bold">125.000đ</p>
+                        <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
+                            <i class="bi bi-cart-plus me-1"></i> Mua ngay
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!--Sản phẩm 4 -->
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="product-card bg-white rounded shadow-sm overflow-hidden">
+                    <img src="https://paddy.vn/cdn/shop/files/xit-xua-duoi-cho-meo-bioline_7a5d806e-63ac-4b7d-a21e-08818ec5c83a.jpg?v=1694500652"
+                         class="w-100" style="height: 200px; object-fit: contain;" alt="Pate Kitten">
+                    <div class="p-3">
+                        <div class="product-header d-flex justify-content-between align-items-center">
+                            <p class="small text-muted mb-0 brand-name">Bioline</p>
+                            <button class="btn-wishlist">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <p class="fw-medium small line-clamp-2">Xịt Xua Đuổi Chó Mèo Chống Cắn Phá Bioline</p>
+                        <p class="text-danger fw-bold">80.000đ</p>
+                        <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
+                            <i class="bi bi-cart-plus me-1"></i> Mua ngay
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Sản phẩm 5 -->
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="product-card bg-white rounded shadow-sm overflow-hidden">
+                    <img src="https://paddy.vn/cdn/shop/files/nuoc-uong-dental-fresh-thom-mieng-cho-meo-237ml.png?v=1712905083"
+                         class="w-100" style="height: 200px; object-fit: contain;" alt="Urinary S/O">
+                    <div class="p-3">
+                        <div class="product-header d-flex justify-content-between align-items-center ">
+                            <p class="small text-muted mb-0 brand-name">Dental Fresh</p>
+                            <button class="btn-wishlist">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <p class="fw-medium small line-clamp-2">Nước Uống Dental Fresh Thơm Miệng Giảm Mảng Bám Cho Chó 237ml</p>
+                        <p class="text-danger fw-bold">199.000đ</p>
+                        <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
+                            <i class="bi bi-cart-plus me-1"></i> Mua ngay
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sản phẩm 6 -->
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="product-card bg-white rounded shadow-sm overflow-hidden">
+                    <img src="https://paddy.vn/cdn/shop/files/dog-dental-water-jungle-monster-1.png?v=1753419895"
+                         class="w-100" style="height: 200px; object-fit: contain;" alt="Urinary S/O">
+                    <div class="p-3">
+                        <div class="product-header d-flex justify-content-between align-items-center ">
+                            <p class="small text-muted mb-0 brand-name">Jungle Monster</p>
+                            <button class="btn-wishlist">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <p class="fw-medium small line-clamp-2">Nước Vệ Sinh Răng Miệng Cho Chó Mèo Jungle Monster Dental Water 250ml</p>
+                        <p class="text-danger fw-bold">390.000đ</p>
+                        <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
+                            <i class="bi bi-cart-plus me-1"></i> Mua ngay
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Sản phẩm 7 -->
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="product-card bg-white rounded shadow-sm overflow-hidden">
+                    <img src="https://paddy.vn/cdn/shop/files/dung-dich-ve-sinh-tai-cho-meo-yoko-50ml.png?v=1718875701"
+                         class="w-100" style="height: 200px; object-fit: contain;" alt="Urinary S/O">
+                    <div class="p-3">
+                        <div class="product-header d-flex justify-content-between align-items-center ">
+                            <p class="small text-muted mb-0 brand-name">Yoko</p>
+                            <button class="btn-wishlist">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <p class="fw-medium small line-clamp-2">Dung Dịch Vệ Sinh Tai Chó Mèo Yoko 50ml</p>
+                        <p class="text-danger fw-bold">50.000đ</p>
+                        <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
+                            <i class="bi bi-cart-plus me-1"></i> Mua ngay
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Sản phẩm 8 -->
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="product-card bg-white rounded shadow-sm overflow-hidden">
+                    <img src="https://paddy.vn/cdn/shop/files/nho-tai-cho-cho-meo-earsol-ngua-viem-tai.png?v=1720176772"
+                         class="w-100" style="height: 200px; object-fit: contain;" alt="Urinary S/O">
+                    <div class="p-3">
+                        <div class="product-header d-flex justify-content-between align-items-center ">
+                            <p class="small text-muted mb-0 brand-name">Bossen</p>
+                            <button class="btn-wishlist">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <p class="fw-medium small line-clamp-2">Nhỏ Tai Cho Chó Mèo Earsol Ngừa Viêm Tai</p>
+                        <p class="text-danger fw-bold">100.000đ</p>
+                        <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
+                            <i class="bi bi-cart-plus me-1"></i> Mua ngay
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Sản phẩm 9 -->
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="product-card bg-white rounded shadow-sm overflow-hidden">
+                    <img src="https://paddy.vn/cdn/shop/files/ve-sinh-tai-cho-meo-prunus-aroma-ear-cleaner-120ml-han-quoc.jpg?v=1743069332"
+                         class="w-100" style="height: 200px; object-fit: contain;" alt="Urinary S/O">
+                    <div class="p-3">
+                        <div class="product-header d-flex justify-content-between align-items-center ">
+                            <p class="small text-muted mb-0 brand-name">Prunus</p>
+                            <button class="btn-wishlist">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <p class="fw-medium small line-clamp-2">Vệ Sinh Tai Chó Mèo Prunus Aroma Ear Cleaner 120ml (Hàn Quốc)</p>
+                        <p class="text-danger fw-bold">160.000đ</p>
+                        <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
+                            <i class="bi bi-cart-plus me-1"></i> Mua ngay
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Sản phẩm 10 -->
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="product-card bg-white rounded shadow-sm overflow-hidden">
+                    <img src="https://paddy.vn/cdn/shop/files/91.jpg?v=1690719065"
+                         class="w-100" style="height: 200px; object-fit: contain;" alt="Urinary S/O">
+                    <div class="p-3">
+                        <div class="product-header d-flex justify-content-between align-items-center ">
+                            <p class="small text-muted mb-0 brand-name">Tropiclean</p>
+                            <button class="btn-wishlist">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <p class="fw-medium small line-clamp-2">Dung Vệ Vệ Sinh Tai Chó Mèo Tropiclean Dual Action 118ml (Mỹ)</p>
+                        <p class="text-danger fw-bold">295.000đ</p>
+                        <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
+                            <i class="bi bi-cart-plus me-1"></i> Mua ngay
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</div>
+</div>
+{% include "frontend/footer.html" %}
+</body>
+
+<script>
+    document.querySelectorAll('.btn-wishlist').forEach(btn => {
+        btn.addEventListener('click', function () {
+            this.classList.toggle('liked');
+        });
+    });
+</script>
+</html>

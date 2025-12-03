@@ -27,4 +27,10 @@ urlpatterns = [
     path('cat-food', views.getCatFood),
     path('health-cat', views.getHealthCat),
     path('cat-toilet', views.getCatToilet),
+    path('promotion', views.getPromotion),
+    path('detailProduct', views.getDetailProduct),
+    path('promotion-manage', views.getPromotionManage),
+    path('statistics', views.getStatistic),
+    path('dogHygiene', views.getDogHygiene),
+
 ]
