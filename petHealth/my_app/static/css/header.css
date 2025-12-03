@@ -117,7 +117,7 @@ ul {
 .menu-bg {
     background-color: var(--primary);
     color: white;
-    padding: 10px 15px 15px;
+    padding: 10px;
 }
 
 .menu-bg .header-wrapper{
