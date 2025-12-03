@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,12 +10,8 @@
 
 </head>
 <body>
-<div class="container">
-    <!--    Breadcrumb-->
-    <a href="#">PetRescue</a>
-    <a href="">Collections</a>
-    <span>Sức khỏe cho chó</span>
-</div>
+{% include "frontend/header.html" %}
+
 <h1>Gel Dinh Dưỡng Cho Chó</h1>
 <!--Layout Chinh: Sidebar + contain -->
 <div class="main-layout">
@@ -285,6 +282,7 @@
 <div class="support-btn">
     <i class="fas fa-comment-dots"></i> Hỗ trợ
 </div>
+{% include "frontend/footer.html" %}
 </body>
 
 <script>
