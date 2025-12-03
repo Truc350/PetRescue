@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,17 +15,13 @@
 
     <link rel="stylesheet" href="../../static/css/promotion.css">
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
-            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
-            crossorigin="anonymous"></script>
 </head>
 <body>
-<div id="header"></div>
+{% include "frontend/header.html" %}
+
 <header class="khung-tieu-de">
     <h1 id="ten-chuong-trinh">KHUYẾN MÃI THÁNG NÀY</h1>
-<!--    <p class="mo-ta-chuong-trinh">-->
-<!--        Ưu đãi đặc biệt cho dòng flycam chính hãng — giảm giá sập sàn!-->
-<!--    </p>-->
+
 </header>
 
 <main class="khung-noi-dung">
@@ -314,5 +311,7 @@
         }
     });
 </script>
+
+{% include "frontend/footer.html" %}
 </body>
 </html>

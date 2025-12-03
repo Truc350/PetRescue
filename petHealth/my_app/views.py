@@ -48,3 +48,13 @@ def getHealthCat(request):
     return render(request, 'frontend/health-cat.html')
 def getCatToilet(request):
     return render(request, 'frontend/cat-toilet.html')
+def getPromotion(request):
+    return render(request, 'frontend/promotion.html')
+def getDetailProduct(request):
+    return render(request, 'frontend/detailProduct.html')
+def getPromotionManage(request):
+    return render(request, 'frontend/admin/promotion-manage.html')
+def getStatistic(request):
+    return render(request, 'frontend/admin/statistics.html')
+def getDogHygiene(request):
+    return render(request, 'frontend/dogHygiene.html')
