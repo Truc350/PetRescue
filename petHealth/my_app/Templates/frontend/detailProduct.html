@@ -118,9 +118,6 @@
         </div>
 
         <div class="desc-body">
-            {% if product.short_description %}
-                <div class="short-title">{{ product.short_description }}</div>
-            {% endif %}
 
             {% if product.description %}
                 <div class="description mt-3">
@@ -440,15 +437,18 @@
 </div>
 
 <script>
-    let price = 132000;
+    let price = Number("{{ product.final_price }}");
 
     function changeQty(n) {
         let q = parseInt(document.getElementById("qty").innerText);
         q = Math.max(1, q + n);
+
         document.getElementById("qty").innerText = q;
-        document.getElementById("total").innerText = (q * price).toLocaleString("vi-VN") + "đ";
+        document.getElementById("total").innerText =
+            (q * price).toLocaleString("vi-VN") + "đ";
     }
 </script>
+
 
 <script>
     $(document).ready(function () {

@@ -64,7 +64,7 @@ def shoppingcart(request):
     return render(request, 'frontend/shoppingcart.html')
 
 from django.shortcuts import render, get_object_or_404
-from .models import Product, Category
+from .models_Product import Product, Category
 
 def category_view(request, slug):
     category = get_object_or_404(Category, slug=slug)
@@ -76,7 +76,7 @@ def category_view(request, slug):
     })
 
 from django.shortcuts import render, get_object_or_404
-from .models import Product
+from .models_Product import Product
 
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug)

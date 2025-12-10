@@ -19,7 +19,6 @@ class Product(models.Model):
         blank=True
     )
 
-    short_description = models.CharField(max_length=500, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
 
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
