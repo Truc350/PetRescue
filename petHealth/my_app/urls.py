@@ -8,7 +8,7 @@ urlpatterns = [
     path('ChatWithAI', views.getChatWithAI),
     path('footer', views.getFooter),
     path('header', views.getHeader),
-    path('login', views.getLogin),
+    path('login', views.getLogin, name='login'),
     path('register', views.getRegister),
     path('forgot-password', views.getForgotPassword),
     path('payment', views.getPayment),
@@ -34,6 +34,5 @@ urlpatterns = [
     path('dogHygiene', views.getDogHygiene),
     path('wishlist', views.wishlist, name='wishlist'),
     path('shoppingcart', views.shoppingcart, name='shoppingcart'),
-
 
 ]
