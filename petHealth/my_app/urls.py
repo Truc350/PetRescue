@@ -8,7 +8,7 @@ urlpatterns = [
     path('ChatWithAI', views.getChatWithAI),
     path('footer', views.getFooter),
     path('header', views.getHeader),
-    path('login', views.getLogin),
+    path('login', views.getLogin, name='login'),
     path('register', views.getRegister),
     path('forgot-password', views.getForgotPassword),
     path('payment', views.getPayment),
