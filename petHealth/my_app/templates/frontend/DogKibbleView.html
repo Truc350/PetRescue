@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,12 +10,7 @@
 
 </head>
 <body>
-<div class="container">
-    <!--    Breadcrumb-->
-    <a href="#">PetRescue</a>
-    <a href="">Collections</a>
-    <span>Thức ăn hạt cho chó</span>
-</div>
+{% include "frontend/header.html" %}
 <h1>{{ category.name }}</h1>
 <!--Layout Chinh: Sidebar + contain -->
 <div class="main-layout">
@@ -109,9 +105,6 @@
     </div>
 </div>
 </div>
-<div class="support-btn">
-    <i class="fas fa-comment-dots"></i> Hỗ trợ
-</div>
 </body>
 
 <script>
@@ -121,4 +114,5 @@
         });
     });
 </script>
+{% include "frontend/footer.html" %}
 </html>
