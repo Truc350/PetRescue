@@ -1,15 +1,18 @@
-
+    {% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Chat With AI</title>
-    {% load static %}
+
 
  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'css/ChatWithAI.css' %}">
+<!--    <link rel="stylesheet" href="{% static 'css/ChatWithAI.css' %}">-->
+    <link rel="stylesheet" href="../../static/css/ChatWithAI.css">
+
 </head>
 <body>
+{% include "frontend/header.html" %}
   <div class="chat-container">
         <div class="chat-header">
             <h1>PetCare AI</h1>
@@ -39,5 +42,6 @@
             </div>
         </div>
     </div>
+{% include "frontend/footer.html" %}
 </body>
 </html>

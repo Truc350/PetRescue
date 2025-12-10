@@ -60,3 +60,7 @@ def getDogHygiene(request):
     return render(request, 'frontend/dogHygiene.html')
 def wishlist(request):
     return render(request, 'frontend/wishlist.html')
+def shoppingcart(request):
+    return render(request, 'frontend/shoppingcart.html')
+
+
