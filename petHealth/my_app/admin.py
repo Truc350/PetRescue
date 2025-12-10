@@ -8,6 +8,7 @@ class ProductImageInline(admin.TabularInline):
 class ProductSizeInline(admin.TabularInline):
     model = ProductSize
     extra = 1
+    fields = ("size_name", "price")
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
@@ -26,6 +27,7 @@ class ProductAdmin(admin.ModelAdmin):
         "discount_price",
         "description",
         "category",
+        "size_label",  # nhập tên nhóm Size tại đây
     )
 
     inlines = [ProductImageInline, ProductSizeInline]
@@ -45,3 +47,21 @@ class ProductImageAdmin(admin.ModelAdmin):
 @admin.register(ProductSize)
 class ProductSizeAdmin(admin.ModelAdmin):
     list_display = ("product", "size_name", "price")
+
+from .models_Product import ProductReview
+
+@admin.register(ProductReview)
+class ProductReviewAdmin(admin.ModelAdmin):
+    list_display = ("product", "user", "email", "rating", "approved", "created_at")
+    list_filter = ("rating", "approved", "created_at")
+    search_fields = ("product__name", "user__username", "email", "comment")
+    readonly_fields = ("created_at",)
+    actions = ["approve_reviews", "disapprove_reviews"]
+
+    def approve_reviews(self, request, queryset):
+        queryset.update(approved=True)
+    approve_reviews.short_description = "Duyệt các đánh giá đã chọn"
+
+    def disapprove_reviews(self, request, queryset):
+        queryset.update(approved=False)
+    disapprove_reviews.short_description = "Bỏ duyệt các đánh giá đã chọn"
