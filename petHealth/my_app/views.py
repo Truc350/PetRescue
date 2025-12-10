@@ -58,3 +58,5 @@ def getStatistic(request):
     return render(request, 'frontend/admin/statistics.html')
 def getDogHygiene(request):
     return render(request, 'frontend/dogHygiene.html')
+def wishlist(request):
+    return render(request, 'frontend/wishlist.html')
