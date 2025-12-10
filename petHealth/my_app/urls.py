@@ -28,11 +28,11 @@ urlpatterns = [
     path('health-cat', views.getHealthCat),
     path('cat-toilet', views.getCatToilet, name='cat-toilet'),
     path('promotion', views.getPromotion, name='promotion'),
-    path('detailProduct', views.getDetailProduct),
+    path('detailProduct', views.getDetailProduct, name='detailProduct'),
     path('promotion-manage', views.getPromotionManage),
     path('statistics', views.getStatistic),
     path('dogHygiene', views.getDogHygiene),
     path('wishlist', views.wishlist, name='wishlist'),
     path('shoppingcart', views.shoppingcart, name='shoppingcart'),
-
+    path('delivery-infor', views.getPaymentInfor, name='delivery-infor'),
 ]
