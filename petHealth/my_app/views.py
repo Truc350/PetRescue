@@ -63,4 +63,17 @@ def wishlist(request):
 def shoppingcart(request):
     return render(request, 'frontend/shoppingcart.html')
 
+from django.shortcuts import render, get_object_or_404
+from .models import Product, Category
+
+def category_view(request, slug):
+    category = get_object_or_404(Category, slug=slug)
+    products = Product.objects.filter(category=category)
+
+    return render(request, "frontend/DogKibbleView.html", {
+        "category": category,
+        "products": products
+    })
+
+
 
