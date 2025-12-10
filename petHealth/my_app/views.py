@@ -75,5 +75,18 @@ def category_view(request, slug):
         "products": products
     })
 
+from django.shortcuts import render, get_object_or_404
+from .models import Product
+
+def product_detail(request, slug):
+    product = get_object_or_404(Product, slug=slug)
+    related = Product.objects.filter(brand=product.brand).exclude(id=product.id)[:10]
+
+    return render(request, "frontend/detailProduct.html", {
+        "product": product,
+        "related": related,
+    })
+
+
 
 

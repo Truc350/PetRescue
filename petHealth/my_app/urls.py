@@ -36,4 +36,6 @@ urlpatterns = [
     path('shoppingcart', views.shoppingcart, name='shoppingcart'),
     path('delivery-infor', views.getPaymentInfor, name='delivery-infor'),
 path('categories/<slug:slug>/', views.category_view, name="category-detail"),
+path("product/<slug:slug>/", views.product_detail, name="product_detail"),
+
 ]

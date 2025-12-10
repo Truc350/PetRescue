@@ -13,82 +13,89 @@
 </head>
 <body>
 {% include "frontend/header.html" %}
-
 <div class="container product-page">
     <div class="row g-4">
 
         <!-- CỘT 1: THUMBNAILS -->
         <div class="col-lg-1 gallery-col">
             <div class="thumbs">
-                <div class="thumb"><img
-                        src="https://paddy.vn/cdn/shop/files/thuc-an-cho-meo-royal-canin-indoor.jpg?v=1724921575"></div>
-                <div class="thumb"><img
-                        src="https://paddy.vn/cdn/shop/products/hat-royal-canin-indoor-cho-meo-truong-thanh-nuoi-trong-nha-paddy-7.jpg?v=1724921575">
-                </div>
-                <div class="thumb"><img
-                        src="https://paddy.vn/cdn/shop/files/Indoor-10kg-tang-hairball.png?v=1728448411"></div>
-                <div class="thumb"><img
-                        src="https://paddy.vn/cdn/shop/files/thuc-an-cho-meo-royal-canin-fit-32-d7c4087b77fa.jpg?v=1747718257">
-                </div>
-                <div class="thumb"><img src="https://paddy.vn/cdn/shop/files/indoor.jpg?v=1724921575"></div>
+                {% for img in product.images.all %}
+                    <div class="thumb"><img src="{{ img.url }}" alt=""></div>
+                {% endfor %}
             </div>
         </div>
 
-        <!-- CỘT 2: ẢNH CHÍNH + BUBBLE -->
+        <!-- CỘT 2: ẢNH CHÍNH -->
         <div class="col-lg-5 position-relative main-image">
             <div class="img-wrap">
-                <img src="https://paddy.vn/cdn/shop/files/thuc-an-cho-meo-royal-canin-indoor.jpg?v=1724921575">
+                <img src="{{ product.image }}" alt="{{ product.name }}">
             </div>
         </div>
 
         <!-- CỘT 3: THÔNG TIN -->
         <div class="col-lg-6 product-info">
+            <h1>{{ product.name }}</h1>
 
-            <h1>Thức Ăn Hạt Cho Mèo Trưởng Thành Nuôi Trong Nhà Royal Canin Indoor 27</h1>
+            <div class="brand">Thương hiệu: {{ product.brand }}</div>
 
-            <div class="rating mt-1">
-                <i class="bi bi-star-fill"></i>
-                <i class="bi bi-star-fill"></i>
-                <i class="bi bi-star-fill"></i>
-                <i class="bi bi-star-fill"></i>
-                <i class="bi bi-star-fill"></i>
-                <span class="text-muted">5 đánh giá</span>
-            </div>
-
-            <div class="brand">Thương hiệu: Royal Canin</div>
-
-            <div class="price">132.000đ</div>
+            <!-- GIÁ -->
+            {% if product.discount_price %}
+                <div class="price text-danger fw-bold" style="font-size: 24px">
+                    {{ product.discount_price|floatformat:0 }}đ
+                    <span class="text-muted old-price" style="text-decoration: line-through;">
+                        {{ product.price }}đ
+                    </span>
+                    <span class="badge bg-danger ms-2">
+                        -{{ product.discount_percent }}%
+                    </span>
+                </div>
+            {% else %}
+                <div class="price fw-bold" style="font-size:24px">
+                    {{ product.price }}đ
+                </div>
+            {% endif %}
 
             <!-- SIZE -->
+            {% if product.sizes.all %}
             <div class="mt-3">
-                <div class="fw-semibold mb-1">Size: 400g</div>
+                <div class="fw-semibold mb-1">Size:</div>
                 <div class="btn-group size-buttons" role="group">
-                    <button class="btn">400g</button>
-                    <button class="btn">2kg</button>
-                    <button class="btn">4kg</button>
-                    <button class="btn">10kg</button>
+                    {% for s in product.sizes.all %}
+                        <button class="btn">{{ s.size_name }}</button>
+                    {% endfor %}
                 </div>
             </div>
+            {% endif %}
 
             <!-- SỐ LƯỢNG -->
             <div class="mt-3">
                 <div class="fw-semibold mb-1">Số lượng:</div>
                 <div class="qty">
-                    <button class="btn btn-outline-secondary" onclick="changeQty(-1)"><i class="bi bi-dash"></i>
+                    <button class="btn btn-outline-secondary" onclick="changeQty(-1)">
+                        <i class="bi bi-dash"></i>
                     </button>
                     <span id="qty" class="fs-5">1</span>
-                    <button class="btn btn-outline-secondary" onclick="changeQty(1)"><i class="bi bi-plus"></i></button>
+                    <button class="btn btn-outline-secondary" onclick="changeQty(1)">
+                        <i class="bi bi-plus"></i>
+                    </button>
                 </div>
             </div>
 
             <!-- TỔNG TIỀN -->
-            <div class="total-line">Tổng số tiền: <span id="total">132.000đ</span></div>
+            <div class="total-line">
+                Tổng số tiền:
+                <span id="total">
+                    {{ product.final_price }}đ
+                </span>
+            </div>
 
             <!-- NÚT THÊM GIỎ -->
             <div class="d-flex align-items-center gap-3 mt-3">
-                <a href="{% url 'shoppingcart' %}">
-                <button class="add-cart">Thêm Vào Giỏ Hàng</button>
-                    </a>
+                <form method="post">
+                    {% csrf_token %}
+                    <button class="add-cart">Thêm Vào Giỏ Hàng</button>
+                </form>
+
                 <button class="btn btn-outline-secondary rounded-circle" style="width:50px;height:50px">
                     <i class="bi bi-heart"></i>
                 </button>
@@ -100,10 +107,7 @@
                 <div>Tối đa 30K cho đơn hàng từ 500K</div>
                 <div>Hoả tốc 4h trong nội thành HCM</div>
             </div>
-
-
         </div>
-
     </div>
 
 
@@ -114,261 +118,265 @@
         </div>
 
         <div class="desc-body">
-            <div class="short-title">
-                Thức Ăn Cho Mèo Con Royal Canin Kitten 36
-            </div>
+            {% if product.short_description %}
+                <div class="short-title">{{ product.short_description }}</div>
+            {% endif %}
 
-            <ul>
-                <li>Thương hiệu: <a href="#" class="brand-link">Royal Canin</a></li>
-                <li>Phù hợp cho: Mèo con (từ 4 đến 12 tháng tuổi).</li>
-                <li><strong>Thức ăn cho mèo</strong> Royal Canin Kitten hỗ trợ sức khỏe của mèo con bằng việc cung cấp
-                    các chất dinh dưỡng chính xác dựa trên nghiên cứu của các nhà khoa học từ ROYAL CANIN. Trong giai
-                    đoạn tăng trưởng, hệ tiêu hóa của mèo con chưa phát triển đầy đủ, chính vì vậy ROYAL CANIN Kitten
-                    thúc đẩy sự cân bằng hệ vi sinh đường ruột, hỗ trợ sự phát triển khỏe mạnh.
-                </li>
-            </ul>
-
-            <div class="desc-subtitle">Lợi ích:</div>
-            <ul>
-                <li>Hỗ trợ quá trình tăng trưởng và phát triển toàn diện</li>
-                <li>Thúc đẩy phát triển xương và khớp</li>
-                <li>Giúp hệ tiêu hóa khỏe mạnh</li>
-                <li>Tăng cường sức đề kháng</li>
-                <li>Hạn chế mùi hôi phân</li>
-            </ul>
-
-            <div class="desc-subtitle">Thành phần</div>
-            <ul>
-                <li>Protein gia cầm, gạo, protein thực vật, chất béo động vật, bột bắp, protein động vật, bột lúa mì,
-                    gluten bắp,...
-                </li>
-            </ul>
-
-            <div class="desc-subtitle">Hướng dẫn sử dụng</div>
-            <ul>
-                <li>Cho ăn theo khuyến nghị trên bao bì, chia làm nhiều bữa trong ngày cho mèo con.</li>
-                <li>Bảo quản nơi khô ráo, tránh ánh nắng trực tiếp và đóng kín sau khi mở.</li>
-            </ul>
+            {% if product.description %}
+                <div class="description mt-3">
+                    {{ product.description|safe }}
+                </div>
+            {% endif %}
         </div>
     </section>
     <!-- ========== ĐÁNH GIÁ SẢN PHẨM ========== -->
-    <section class="review-section">
-        <h4 class="review-title">ĐÁNH GIÁ SẢN PHẨM</h4>
-
-        <div class="rating-overview">
-            <div class="rating-score">
-            <span class="score">
-                <i class="bi bi-star-fill"></i> 4.9
-            </span><small>/5</small>
-
-                <p>24 đánh giá</p>
-            </div>
-
-            <div class="rating-filters">
-                <button class="filter-btn active" data-star="all">Tất Cả</button>
-                <button class="filter-btn" data-star="5">5 Sao (23)</button>
-                <button class="filter-btn" data-star="4">4 Sao (19)</button>
-                <button class="filter-btn" data-star="3">3 Sao (6)</button>
-                <button class="filter-btn" data-star="2">2 Sao (2)</button>
-                <button class="filter-btn" data-star="1">1 Sao (1)</button>
-                <button class="filter-btn">Có Bình Luận (51)</button>
-            </div>
-        </div>
-
-        <div id="review-list">
-            <div class="review" data-star="5">
-                <div class="review-avatar"></div>
-                <div class="review-content">
-                    <div class="review-header">
-                        <span class="review-name">Nguyễn Văn A</span>
-                        <div class="review-stars">
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                        </div>
-                    </div>
-                    <div class="review-date">2023-05-25 16:47</div>
-                    <p class="review-text">
-                        Thức ăn hợp khẩu vị mèo, mùi dịu, tiêu hoá tốt — mèo nhà không bị rối loạn tiêu hoá sau 1 tuần.
-                        Giao hàng nhanh, đóng gói kỹ. Rất an tâm khi mua hàng cho thú cưng.
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <div class="pagination">
-            <button class="active">1</button>
-            <button>2</button>
-            <button>3</button>
-            <span>...</span>
-            <button>5</button>
-        </div>
-
-        <button class="write-review-btn">Viết đánh giá</button>
-    </section>
+<section class="review-section">
+   <h4 class="review-title">ĐÁNH GIÁ SẢN PHẨM</h4>
 
 
-    <section class="container section-spacing content-padding">
-        <div class="position-relative w-100">
-            <div class="d-flex justify-content-center align-items-center mb-3 section-header">
-                <h4 class="fw-bold mb-0">Sản phẩm liên quan</h4>
-            </div>
-        </div>
+   <div class="rating-overview">
+       <div class="rating-score">
+       <span class="score">
+           <i class="bi bi-star-fill"></i> 4.9
+       </span><small>/5</small>
 
-        <div class="product-carousel-wrapper">
-            <!-- Nút trái -->
-            <button class="scroll-arrow left" onclick="scrollProduct(this, -1)">
-                <i class="bi bi-chevron-left"></i>
-            </button>
-            <!-- Nút phải -->
-            <button class="scroll-arrow right" onclick="scrollProduct(this, 1)">
-                <i class="bi bi-chevron-right"></i>
-            </button>
 
-            <div class="product-scroll-container">
-                <!-- Sản phẩm 1 -->
-                <div class="col-6 col-md-4 col-lg-3 flex-shrink-0">
-                    <div class="product-card bg-white rounded shadow-sm overflow-hidden">
-                        <img src="https://paddy.vn/cdn/shop/files/thuc-an-cho-meo-royal-canin-indoor.jpg?v=1724921575"
-                             class="w-100" style="height: 200px; object-fit: contain;" alt="Royal Canin Indoor 27">
-                        <div class="p-3">
-                            <div class="product-header d-flex justify-content-between align-items-center mb-2">
-                                <p class="small text-muted mb-0 brand-name">Royal Canin</p>
-                                <button class="btn-wishlist">
-                                    <i class="bi bi-heart"></i>
-                                </button>
-                            </div>
+           <p>24 đánh giá</p>
+       </div>
 
-                            <p class="fw-medium small line-clamp-2">Thức Ăn Hạt Cho Mèo Trưởng Thành Nuôi Trong Nhà
-                                Royal
-                                Canin Indoor 27</p>
-                            <p class="text-danger fw-bold">132.000đ</p>
 
-                            <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
-                                <i class="bi bi-cart-plus me-1"></i> Mua ngay</a>
-                        </div>
-                    </div>
-                </div>
+       <div class="rating-filters">
+           <button class="filter-btn active" data-star="all">Tất Cả</button>
+           <button class="filter-btn" data-star="5">5 Sao (23)</button>
+           <button class="filter-btn" data-star="4">4 Sao (19)</button>
+           <button class="filter-btn" data-star="3">3 Sao (6)</button>
+           <button class="filter-btn" data-star="2">2 Sao (2)</button>
+           <button class="filter-btn" data-star="1">1 Sao (1)</button>
+           <button class="filter-btn">Có Bình Luận (51)</button>
+       </div>
+   </div>
 
-                <!-- Sản phẩm 2 -->
-                <div class="col-6 col-md-4 col-lg-3 flex-shrink-0">
-                    <div class="product-card bg-white rounded shadow-sm overflow-hidden">
-                        <img src="https://paddy.vn/cdn/shop/products/thuc-an-hat-meo-con-royal-canin-kitten-36-paddy-1.jpg?v=1759747164"
-                             class="w-100" style="height: 200px; object-fit: contain;" alt="Royal Canin Kitten">
-                        <div class="p-3">
-                            <div class="product-header d-flex justify-content-between align-items-center mb-2">
-                                <p class="small text-muted mb-0 brand-name">Royal Canin</p>
-                                <button class="btn-wishlist">
-                                    <i class="bi bi-heart"></i>
-                                </button>
-                            </div>
 
-                            <p class="fw-medium small line-clamp-2">Thức Ăn Hạt Cho Mèo Con Royal Canin Kitten
-                                36</p>
-                            <p class="text-danger fw-bold">135.000đ</p>
+   <div id="review-list">
+       <div class="review" data-star="5">
+           <div class="review-avatar"></div>
+           <div class="review-content">
+               <div class="review-header">
+                   <span class="review-name">Nguyễn Văn A</span>
+                   <div class="review-stars">
+                       <i class="bi bi-star-fill"></i>
+                       <i class="bi bi-star-fill"></i>
+                       <i class="bi bi-star-fill"></i>
+                       <i class="bi bi-star-fill"></i>
+                       <i class="bi bi-star-fill"></i>
+                   </div>
+               </div>
+               <div class="review-date">2023-05-25 16:47</div>
+               <p class="review-text">
+                   Thức ăn hợp khẩu vị mèo, mùi dịu, tiêu hoá tốt — mèo nhà không bị rối loạn tiêu hoá sau 1 tuần.
+                   Giao hàng nhanh, đóng gói kỹ. Rất an tâm khi mua hàng cho thú cưng.
+               </p>
+           </div>
+       </div>
+   </div>
 
-                            <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
-                                <i class="bi bi-cart-plus me-1"></i> Mua ngay</a>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Sản phẩm 3 -->
-                <div class="col-6 col-md-4 col-lg-3 flex-shrink-0">
-                    <div class="product-card bg-white rounded shadow-sm overflow-hidden">
-                        <img src="https://paddy.vn/cdn/shop/files/thuc-an-cho-meo-soi-than-royal-canin-urinary-so.jpg?v=1694499674"
-                             class="w-100" style="height: 200px; object-fit: contain;" alt="Urinary S/O">
-                        <div class="p-3">
-                            <div class="product-header d-flex justify-content-between align-items-center mb-2">
-                                <p class="small text-muted mb-0 brand-name">Royal Canin</p>
-                                <button class="btn-wishlist">
-                                    <i class="bi bi-heart"></i>
-                                </button>
-                            </div>
+   <div class="pagination">
+       <button class="active">1</button>
+       <button>2</button>
+       <button>3</button>
+       <span>...</span>
+       <button>5</button>
+   </div>
 
-                            <p class="fw-medium small line-clamp-2">Thức Ăn Hạt Cho Mèo Sỏi Thận Royal Canin Urinary
-                                S/O</p>
-                            <p class="text-danger fw-bold">185.000đ</p>
 
-                            <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
-                                <i class="bi bi-cart-plus me-1"></i> Mua ngay</a>
-                        </div>
-                    </div>
-                </div>
+   <button class="write-review-btn">Viết đánh giá</button>
+</section>
 
-                <!-- Sản phẩm 4 -->
-                <div class="col-6 col-md-4 col-lg-3 flex-shrink-0">
-                    <div class="product-card bg-white rounded shadow-sm overflow-hidden">
-                        <img src="https://paddy.vn/cdn/shop/files/royal-canin_88d0e834-94a8-4917-a074-34fda22ccc82.jpg?v=1730286373"
-                             class="w-100" style="height: 200px; object-fit: contain;" alt="Pate Kitten">
-                        <div class="p-3">
-                            <div class="product-header d-flex justify-content-between align-items-center mb-2">
-                                <p class="small text-muted mb-0 brand-name">Royal Canin</p>
-                                <button class="btn-wishlist">
-                                    <i class="bi bi-heart"></i>
-                                </button>
-                            </div>
 
-                            <p class="fw-medium small line-clamp-2">Pate Cho Mèo Con Royal Canin Kitten Instinctive
-                                85g</p>
-                            <p class="text-danger fw-bold">30.000đ</p>
 
-                            <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
-                                <i class="bi bi-cart-plus me-1"></i> Mua ngay</a>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- san pham 5 -->
-                <div class="col-6 col-md-4 col-lg-3 flex-shrink-0">
-                    <div class="product-card bg-white rounded shadow-sm overflow-hidden">
-                        <img src="https://paddy.vn/cdn/shop/files/royal-canin_6.jpg?v=1730181155" class="w-100"
-                             style="height: 200px; object-fit: contain;" alt="">
-                        <div class="p-3">
-                            <div class="product-header d-flex justify-content-between align-items-center mb-2">
-                                <p class="small text-muted mb-0 brand-name">Royal Canin</p>
-                                <button class="btn-wishlist">
-                                    <i class="bi bi-heart"></i>
-                                </button>
-                            </div>
+<section class="container section-spacing content-padding">
+   <div class="position-relative w-100">
+       <div class="d-flex justify-content-center align-items-center mb-3 section-header">
+           <h4 class="fw-bold mb-0">Sản phẩm liên quan</h4>
+       </div>
+   </div>
 
-                            <p class="fw-medium small line-clamp-2">Thức Ăn Hạt Cho Mèo Con Dưới 4 Tháng Tuổi</p>
-                            <p class="text-danger fw-bold">135.000đ</p>
 
-                            <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
-                                <i class="bi bi-cart-plus me-1"></i> Mua ngay</a>
-                        </div>
-                    </div>
-                </div>
+   <div class="product-carousel-wrapper">
+       <!-- Nút trái -->
+       <button class="scroll-arrow left" onclick="scrollProduct(this, -1)">
+           <i class="bi bi-chevron-left"></i>
+       </button>
+       <!-- Nút phải -->
+       <button class="scroll-arrow right" onclick="scrollProduct(this, 1)">
+           <i class="bi bi-chevron-right"></i>
+       </button>
 
-                <!-- san pham 6 -->
-                <div class="col-6 col-md-4 col-lg-3 flex-shrink-0">
-                    <div class="product-card bg-white rounded shadow-sm overflow-hidden">
-                        <img src="https://paddy.vn/cdn/shop/files/RoyalCaninMeoHairball.jpg?v=1754455984"
-                             class="w-100"
-                             style="height: 200px; object-fit: contain;" alt="">
-                        <div class="p-3">
-                            <div class="product-header d-flex justify-content-between align-items-center mb-2">
-                                <p class="small text-muted mb-0 brand-name">Royal Canin</p>
-                                <button class="btn-wishlist">
-                                    <i class="bi bi-heart"></i>
-                                </button>
-                            </div>
 
-                            <p class="fw-medium small line-clamp-2">Thức Ăn Hạt Cho Mèo Con Dưới 4 Tháng Tuổi</p>
-                            <p class="text-danger fw-bold">135.000đ</p>
+       <div class="product-scroll-container">
+           <!-- Sản phẩm 1 -->
+           <div class="col-6 col-md-4 col-lg-3 flex-shrink-0">
+               <div class="product-card bg-white rounded shadow-sm overflow-hidden">
+                   <img src="https://paddy.vn/cdn/shop/files/thuc-an-cho-meo-royal-canin-indoor.jpg?v=1724921575"
+                        class="w-100" style="height: 200px; object-fit: contain;" alt="Royal Canin Indoor 27">
+                   <div class="p-3">
+                       <div class="product-header d-flex justify-content-between align-items-center mb-2">
+                           <p class="small text-muted mb-0 brand-name">Royal Canin</p>
+                           <button class="btn-wishlist">
+                               <i class="bi bi-heart"></i>
+                           </button>
+                       </div>
 
-                            <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
-                                <i class="bi bi-cart-plus me-1"></i> Mua ngay</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+
+                       <p class="fw-medium small line-clamp-2">Thức Ăn Hạt Cho Mèo Trưởng Thành Nuôi Trong Nhà
+                           Royal
+                           Canin Indoor 27</p>
+                       <p class="text-danger fw-bold">132.000đ</p>
+
+
+                       <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
+                           <i class="bi bi-cart-plus me-1"></i> Mua ngay</a>
+                   </div>
+               </div>
+           </div>
+
+
+           <!-- Sản phẩm 2 -->
+           <div class="col-6 col-md-4 col-lg-3 flex-shrink-0">
+               <div class="product-card bg-white rounded shadow-sm overflow-hidden">
+                   <img src="https://paddy.vn/cdn/shop/products/thuc-an-hat-meo-con-royal-canin-kitten-36-paddy-1.jpg?v=1759747164"
+                        class="w-100" style="height: 200px; object-fit: contain;" alt="Royal Canin Kitten">
+                   <div class="p-3">
+                       <div class="product-header d-flex justify-content-between align-items-center mb-2">
+                           <p class="small text-muted mb-0 brand-name">Royal Canin</p>
+                           <button class="btn-wishlist">
+                               <i class="bi bi-heart"></i>
+                           </button>
+                       </div>
+
+
+                       <p class="fw-medium small line-clamp-2">Thức Ăn Hạt Cho Mèo Con Royal Canin Kitten
+                           36</p>
+                       <p class="text-danger fw-bold">135.000đ</p>
+
+
+                       <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
+                           <i class="bi bi-cart-plus me-1"></i> Mua ngay</a>
+                   </div>
+               </div>
+           </div>
+
+
+           <!-- Sản phẩm 3 -->
+           <div class="col-6 col-md-4 col-lg-3 flex-shrink-0">
+               <div class="product-card bg-white rounded shadow-sm overflow-hidden">
+                   <img src="https://paddy.vn/cdn/shop/files/thuc-an-cho-meo-soi-than-royal-canin-urinary-so.jpg?v=1694499674"
+                        class="w-100" style="height: 200px; object-fit: contain;" alt="Urinary S/O">
+                   <div class="p-3">
+                       <div class="product-header d-flex justify-content-between align-items-center mb-2">
+                           <p class="small text-muted mb-0 brand-name">Royal Canin</p>
+                           <button class="btn-wishlist">
+                               <i class="bi bi-heart"></i>
+                           </button>
+                       </div>
+
+
+                       <p class="fw-medium small line-clamp-2">Thức Ăn Hạt Cho Mèo Sỏi Thận Royal Canin Urinary
+                           S/O</p>
+                       <p class="text-danger fw-bold">185.000đ</p>
+
+
+                       <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
+                           <i class="bi bi-cart-plus me-1"></i> Mua ngay</a>
+                   </div>
+               </div>
+           </div>
+
+
+           <!-- Sản phẩm 4 -->
+           <div class="col-6 col-md-4 col-lg-3 flex-shrink-0">
+               <div class="product-card bg-white rounded shadow-sm overflow-hidden">
+                   <img src="https://paddy.vn/cdn/shop/files/royal-canin_88d0e834-94a8-4917-a074-34fda22ccc82.jpg?v=1730286373"
+                        class="w-100" style="height: 200px; object-fit: contain;" alt="Pate Kitten">
+                   <div class="p-3">
+                       <div class="product-header d-flex justify-content-between align-items-center mb-2">
+                           <p class="small text-muted mb-0 brand-name">Royal Canin</p>
+                           <button class="btn-wishlist">
+                               <i class="bi bi-heart"></i>
+                           </button>
+                       </div>
+
+
+                       <p class="fw-medium small line-clamp-2">Pate Cho Mèo Con Royal Canin Kitten Instinctive
+                           85g</p>
+                       <p class="text-danger fw-bold">30.000đ</p>
+
+
+                       <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
+                           <i class="bi bi-cart-plus me-1"></i> Mua ngay</a>
+                   </div>
+               </div>
+           </div>
+
+
+           <!-- san pham 5 -->
+           <div class="col-6 col-md-4 col-lg-3 flex-shrink-0">
+               <div class="product-card bg-white rounded shadow-sm overflow-hidden">
+                   <img src="https://paddy.vn/cdn/shop/files/royal-canin_6.jpg?v=1730181155" class="w-100"
+                        style="height: 200px; object-fit: contain;" alt="">
+                   <div class="p-3">
+                       <div class="product-header d-flex justify-content-between align-items-center mb-2">
+                           <p class="small text-muted mb-0 brand-name">Royal Canin</p>
+                           <button class="btn-wishlist">
+                               <i class="bi bi-heart"></i>
+                           </button>
+                       </div>
+
+
+                       <p class="fw-medium small line-clamp-2">Thức Ăn Hạt Cho Mèo Con Dưới 4 Tháng Tuổi</p>
+                       <p class="text-danger fw-bold">135.000đ</p>
+
+
+                       <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
+                           <i class="bi bi-cart-plus me-1"></i> Mua ngay</a>
+                   </div>
+               </div>
+           </div>
+
+
+           <!-- san pham 6 -->
+           <div class="col-6 col-md-4 col-lg-3 flex-shrink-0">
+               <div class="product-card bg-white rounded shadow-sm overflow-hidden">
+                   <img src="https://paddy.vn/cdn/shop/files/RoyalCaninMeoHairball.jpg?v=1754455984"
+                        class="w-100"
+                        style="height: 200px; object-fit: contain;" alt="">
+                   <div class="p-3">
+                       <div class="product-header d-flex justify-content-between align-items-center mb-2">
+                           <p class="small text-muted mb-0 brand-name">Royal Canin</p>
+                           <button class="btn-wishlist">
+                               <i class="bi bi-heart"></i>
+                           </button>
+                       </div>
+
+
+                       <p class="fw-medium small line-clamp-2">Thức Ăn Hạt Cho Mèo Con Dưới 4 Tháng Tuổi</p>
+                       <p class="text-danger fw-bold">135.000đ</p>
+
+
+                       <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
+                           <i class="bi bi-cart-plus me-1"></i> Mua ngay</a>
+                   </div>
+               </div>
+           </div>
+       </div>
+   </div>
+</section>
+
+
 </div>
+
 
 <!-- POPUP REVIEW -->
 <div class="review-popup" id="reviewPopup">
