@@ -137,6 +137,7 @@
 
             <div class="product-scroll-container">
                 <!-- Sản phẩm 1 -->
+                <a href="{% url 'detailProduct' %}">
                 <div class="col-6 col-md-4 col-lg-3 flex-shrink-0">
                     <div class="product-card bg-white rounded shadow-sm overflow-hidden">
                         <img src="https://paddy.vn/cdn/shop/files/thuc-an-cho-meo-royal-canin-indoor.jpg?v=1724921575"
@@ -144,9 +145,11 @@
                         <div class="p-3">
                             <div class="product-header d-flex justify-content-between align-items-center mb-2">
                                 <p class="small text-muted mb-0 brand-name">Royal Canin</p>
+                                <a href="{% url 'wishlist' %}">
                                 <button class="btn-wishlist">
                                     <i class="bi bi-heart"></i>
                                 </button>
+                                    </a>
                             </div>
 
                             <p class="fw-medium small line-clamp-2">Thức Ăn Hạt Cho Mèo Trưởng Thành Nuôi Trong Nhà
@@ -154,11 +157,12 @@
                                 Canin Indoor 27</p>
                             <p class="text-danger fw-bold">132.000đ</p>
 
-                            <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
+                            <a href="{% url 'delivery-infor' %}" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
                                 <i class="bi bi-cart-plus me-1"></i> Mua ngay</a>
                         </div>
                     </div>
                 </div>
+                </a>
 
                 <!-- Sản phẩm 2 -->
                 <div class="col-6 col-md-4 col-lg-3 flex-shrink-0">
