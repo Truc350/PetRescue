@@ -35,4 +35,5 @@ urlpatterns = [
     path('wishlist', views.wishlist, name='wishlist'),
     path('shoppingcart', views.shoppingcart, name='shoppingcart'),
     path('delivery-infor', views.getPaymentInfor, name='delivery-infor'),
+path('categories/<slug:slug>/', views.category_view, name="category-detail"),
 ]
