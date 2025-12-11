@@ -76,20 +76,23 @@ def category_view(request, slug):
     })
 
 from django.shortcuts import render, get_object_or_404
-from .models_Product import Product, ProductReview  # import model review
+from .models_Product import Product, ProductReview
 
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug)
-    related = Product.objects.filter(brand=product.brand).exclude(id=product.id)[:10]
+
+    # Lấy danh sách sản phẩm liên quan theo logic của model
+    related = product.get_related_products(limit=10)
 
     # Lấy review đã duyệt
-    reviews = product.reviews.filter(approved=True)  # reviews liên kết với product
+    reviews = product.reviews.filter(approved=True)
 
     return render(request, "frontend/detailProduct.html", {
         "product": product,
         "related": related,
-        "reviews": reviews,  # truyền vào template
+        "reviews": reviews,
     })
+
 
 
 
