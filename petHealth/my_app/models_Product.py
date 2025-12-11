@@ -31,6 +31,14 @@ class Product(models.Model):
         help_text="Tên hiển thị cho nhóm Size (ví dụ 'Huong')"
     )
 
+    # NEW: Sản phẩm liên quan do admin tự chọn
+    related_products = models.ManyToManyField(
+        "self",
+        blank=True,
+        symmetrical=False,
+        related_name="related_to"
+    )
+
     def __str__(self):
         return self.name
 
@@ -43,6 +51,26 @@ class Product(models.Model):
         if self.discount_price:
             return int((1 - self.discount_price / self.price) * 100)
         return 0
+
+
+    def get_related_products(self, limit=10):
+        # 1. Ưu tiên sản phẩm admin gán thủ công
+        manual = self.related_products.all()
+        if manual.exists():
+            return manual[:limit]
+
+        # 2. Fallback: cùng thương hiệu
+        same_brand = Product.objects.filter(
+            brand=self.brand
+        ).exclude(id=self.id)
+        if same_brand.exists():
+            return same_brand[:limit]
+
+        # 3. Fallback: cùng category
+        same_category = Product.objects.filter(
+            category=self.category
+        ).exclude(id=self.id)
+        return same_category[:limit]
 
 
 class ProductImage(models.Model):
