@@ -16,11 +16,13 @@
     <div class="left">
         <!-- Logo + breadcrumb -->
         <div class="text-start mb-4">
-            <img src="https://res.cloudinary.com/dwnbmfhel/image/upload/v1764038017/z7195574147136_4515011aa6bd8fb3801ff37f93280684_gahjde.jpg" alt="Logo" height="100">
+            <img src="https://res.cloudinary.com/dwnbmfhel/image/upload/v1764038017/z7195574147136_4515011aa6bd8fb3801ff37f93280684_gahjde.jpg"
+                 alt="Logo" height="100">
+
             <nav class="breadcrumb mt-2">
-                <a href="shoppingcart.html">Giỏ hàng</a> &nbsp;>&nbsp;
+                <a href="{% url 'shoppingcart' %}">Giỏ hàng</a> &nbsp;>&nbsp;
                 <span class="current">Thông tin giao hàng</span> &nbsp;>&nbsp;
-                <a href="#">Phương thức thanh toán</a>
+                <span>Phương thức thanh toán</span>
             </nav>
         </div>
 
@@ -32,85 +34,100 @@
                 <i class="bi bi-person fs-3 text-secondary"></i>
             </div>
             <div>
-                <p class="mb-0 fw-semibold">Mạc Chí Nguyên</p>
-                <small>23130211@st.hcmuaf.edu.vn</small><br>
-
+                <p class="mb-0 fw-semibold">{{ request.user.get_full_name }}</p>
+                <small>{{ request.user.email }}</small>
             </div>
         </div>
 
-        <!-- Form -->
-        <form id="checkoutForm">
+        <!-- FORM -->
+        <form method="POST" action="{% url 'orders:checkout_shipping' %}">
+            {% csrf_token %}
+
+            <!-- Địa chỉ đã lưu -->
             <div class="mb-3">
-                <select id="savedAddress" class="form-select">
+                <select name="saved_address" id="savedAddress" class="form-select">
                     <option value="">Thêm địa chỉ mới...</option>
-                    <option>0948088315, 70000, Việt Nam</option>
-                    <option>0948088315, Xã Trần Hợi, Huyện Trần Văn Thời, Cà Mau</option>
+                    {% for addr in saved_addresses %}
+                    <option value="{{ addr.id }}">
+                        {{ addr.phone }} - {{ addr.address }}
+                    </option>
+                    {% endfor %}
                 </select>
             </div>
 
             <div class="mb-3">
-                <input type="text" class="form-control" placeholder="Họ và tên" value="Mạc Chí Nguyên" required>
+                <input type="text" name="full_name"
+                       class="form-control"
+                       placeholder="Họ và tên"
+                       value="{{ request.user.get_full_name }}"
+                       required>
             </div>
 
             <div class="mb-3">
-                <input type="tel" class="form-control" placeholder="Số điện thoại" value="0948088315" required>
+                <input type="tel" name="phone"
+                       class="form-control"
+                       placeholder="Số điện thoại"
+                       required>
             </div>
 
             <div class="mb-3">
-                <input type="text" class="form-control" placeholder="Địa chỉ cụ thể (Số nhà, đường...)" required>
+                <input type="text" name="address"
+                       class="form-control"
+                       placeholder="Địa chỉ cụ thể (Số nhà, đường...)"
+                       required>
             </div>
 
-            <div class="address-select-group">
-                <select id="province">
+            <div class="address-select-group mb-3">
+                <select name="province" id="province" class="form-select">
                     <option value="">-- Chọn Tỉnh/Thành phố --</option>
                 </select>
-                <select id="ward">
+
+                <select name="ward" id="ward" class="form-select mt-2">
                     <option value="">-- Chọn Phường/Xã --</option>
                 </select>
             </div>
-            <div>
-                <textarea id="comment-form" name="comment" rows="5" placeholder="Nhập ghi chú của bạn..."></textarea>
+
+            <div class="mb-3">
+            <textarea name="note"
+                      rows="4"
+                      class="form-control"
+                      placeholder="Nhập ghi chú của bạn..."></textarea>
             </div>
 
-            <a href="payment.html" class="btn btn-primary w-100 mt-3">
+            <!-- SUBMIT -->
+            <button type="submit" class="btn btn-primary w-100 mt-3">
                 Tiếp tục đến phương thức thanh toán
-            </a>
+            </button>
         </form>
     </div>
+
 
     <!-- PHẢI -->
     <div class="right">
         <h5 class="fw-bold mb-4">Đơn hàng của bạn</h5>
 
+        {% for item in items %}
         <div class="d-flex align-items-center mb-3">
-            <img src="https://paddy.vn/cdn/shop/files/thuc-an-cho-meo-royal-canin-indoor.jpg?v=1724921575"
-                 alt="thuc an cho meo truong thanh" width="60" class="me-3 prod-img">
+            <img src="{{ item.product.image.url }}" width="60">
             <div>
-                <p class="mb-0 fw-semibold">Thức Ăn Hạt Cho Mèo Trưởng Thành Nuôi Trong Nhà Royal</p>
-                <small class="text-muted">Số lượng: 1</small>
+                <p>{{ item.product.name }}</p>
+                <small>Số lượng: {{ item.quantity }}</small>
             </div>
-            <span class="ms-auto fw-semibold">132.000₫</span>
+            <span class="ms-auto">{{ item.subtotal }}₫</span>
         </div>
-
-        <div class="d-flex align-items-center mb-3">
-            <img src="https://paddy.vn/cdn/shop/files/thuc-an-cho-meo-soi-than-royal-canin-urinary-so.jpg?v=1694499674"
-                 alt="Rapoo N200" width="60" class="me-3 prod-img">
-            <div>
-                <p class="mb-0 fw-semibold">Thức Ăn Hạt Cho Mèo Sỏi Thận Royal Canin Urinary S/O</p>
-                <small class="text-muted">Số lượng: 1</small>
-            </div>
-            <span class="ms-auto fw-semibold">185.000đ</span>
-        </div>
+        {% endfor %}
 
         <div class="d-flex justify-content-between">
-            <span>Tạm tính</span><span>317,000₫</span>
+            <span>Tạm tính</span>
+            <span>{{ total|floatformat:0 }}₫</span>
         </div>
         <div class="d-flex justify-content-between mb-2">
             <span>Phí vận chuyển</span><span>—</span>
         </div>
         <hr>
         <div class="d-flex justify-content-between fw-bold total">
-            <span>Tổng cộng</span><span>317,000₫</span>
+            <span>Tổng cộng</span>
+            <span>{{ total|floatformat:0 }}₫</span>
         </div>
     </div>
 </div>

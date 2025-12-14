@@ -99,16 +99,37 @@
                     </h5>
 
 
-                    <a href="{% url 'payment' %}">
+                    <button class="btn btn-primary nut_thanh_toan">
+                        Mua ngay
+                    </button>
 
-                        <button class="btn btn-primary nut_thanh_toan">Mua ngay</button>
-                    </a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script>
+document.querySelector(".nut_thanh_toan").addEventListener("click", () => {
+    const ids = [...document.querySelectorAll(".chon_san_pham:checked")]
+        .map(cb => cb.dataset.id);
 
+    if (ids.length === 0) {
+        alert("Vui lòng chọn ít nhất 1 sản phẩm");
+        return;
+    }
+
+    fetch("{% url 'orders:save_checkout_items' %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ ids })
+    }).then(() => {
+        window.location.href = "{% url 'orders:delivery_info' %}";
+    });
+});
+</script>
 <script>
     const chonTatCa = document.getElementById("chon_tat_ca");
     const nutXoaDaChon = document.querySelector(".nut_xoa_da_chon");
@@ -155,8 +176,6 @@
         }
 
 
-
-
         // Tick chọn sản phẩm
         if (e.target.classList.contains("chon_san_pham")) {
             const tatCa = document.querySelectorAll(".chon_san_pham").length;
@@ -168,21 +187,21 @@
 
     // Xóa các sản phẩm đã chọn
     nutXoaDaChon.addEventListener("click", () => {
-    const ids = [...document.querySelectorAll(".chon_san_pham:checked")]
-        .map(cb => cb.dataset.id);
+        const ids = [...document.querySelectorAll(".chon_san_pham:checked")]
+            .map(cb => cb.dataset.id);
 
-    if (ids.length === 0) return;
+        if (ids.length === 0) return;
 
-    fetch("{% url 'remove_multiple_cart' %}", {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": "{{ csrf_token }}",
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ ids })
-    })
-    .then(() => location.reload());
-});
+        fetch("{% url 'remove_multiple_cart' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ids})
+        })
+            .then(() => location.reload());
+    });
 
 
 </script>
