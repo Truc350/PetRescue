@@ -94,10 +94,12 @@
 
             <!-- NÚT THÊM GIỎ -->
             <div class="d-flex align-items-center gap-3 mt-3">
-                <form method="post">
+                <form method="post" action="{% url 'add_to_cart' product.id %}">
                     {% csrf_token %}
+                    <input type="hidden" name="quantity" id="qtyInput" value="1">
                     <button class="add-cart">Thêm Vào Giỏ Hàng</button>
                 </form>
+
 
                 <button class="btn btn-outline-secondary rounded-circle" style="width:50px;height:50px">
                     <i class="bi bi-heart"></i>
@@ -192,72 +194,71 @@
         <button class="write-review-btn">Viết đánh giá</button>
     </section>
 
-<section class="container section-spacing content-padding">
-    <div class="position-relative w-100">
-        <div class="d-flex justify-content-center align-items-center mb-3 section-header">
-            <h4 class="fw-bold mb-0">Sản phẩm liên quan</h4>
+    <section class="container section-spacing content-padding">
+        <div class="position-relative w-100">
+            <div class="d-flex justify-content-center align-items-center mb-3 section-header">
+                <h4 class="fw-bold mb-0">Sản phẩm liên quan</h4>
+            </div>
         </div>
-    </div>
 
-    <div class="product-carousel-wrapper">
+        <div class="product-carousel-wrapper">
 
-        <!-- Nút trái -->
-        <button class="scroll-arrow left" onclick="scrollProduct(this, -1)">
-            <i class="bi bi-chevron-left"></i>
-        </button>
+            <!-- Nút trái -->
+            <button class="scroll-arrow left" onclick="scrollProduct(this, -1)">
+                <i class="bi bi-chevron-left"></i>
+            </button>
 
-        <!-- Nút phải -->
-        <button class="scroll-arrow right" onclick="scrollProduct(this, 1)">
-            <i class="bi bi-chevron-right"></i>
-        </button>
+            <!-- Nút phải -->
+            <button class="scroll-arrow right" onclick="scrollProduct(this, 1)">
+                <i class="bi bi-chevron-right"></i>
+            </button>
 
-        <!-- List Sản phẩm -->
-        <div class="product-scroll-container">
+            <!-- List Sản phẩm -->
+            <div class="product-scroll-container">
 
-            {% for p in related %}
-            <div class="col-6 col-md-4 col-lg-3 flex-shrink-0">
-                <div class="product-card bg-white rounded shadow-sm overflow-hidden">
+                {% for p in related %}
+                <div class="col-6 col-md-4 col-lg-3 flex-shrink-0">
+                    <div class="product-card bg-white rounded shadow-sm overflow-hidden">
 
-                    <!-- Ảnh -->
-                    <img src="{{ p.image }}"
-                         class="w-100"
-                         style="height:200px; object-fit:contain;"
-                         alt="{{ p.name }}">
+                        <!-- Ảnh -->
+                        <img src="{{ p.image }}"
+                             class="w-100"
+                             style="height:200px; object-fit:contain;"
+                             alt="{{ p.name }}">
 
-                    <div class="p-3">
+                        <div class="p-3">
 
-                        <div class="product-header d-flex justify-content-between align-items-center mb-2">
-                            <p class="small text-muted mb-0 brand-name">{{ p.brand }}</p>
+                            <div class="product-header d-flex justify-content-between align-items-center mb-2">
+                                <p class="small text-muted mb-0 brand-name">{{ p.brand }}</p>
 
-                            <button class="btn-wishlist">
-                                <i class="bi bi-heart"></i>
-                            </button>
+                                <button class="btn-wishlist">
+                                    <i class="bi bi-heart"></i>
+                                </button>
+                            </div>
+
+                            <!-- Tên SP -->
+                            <p class="fw-medium small line-clamp-2">{{ p.name }}</p>
+
+                            <!-- Giá -->
+                            <p class="text-danger fw-bold">
+                                {{ p.final_price|floatformat:0 }}đ
+                            </p>
+
+                            <!-- Link -->
+                            <a href="{% url 'product_detail' p.slug %}"
+                               class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
+                                <i class="bi bi-cart-plus me-1"></i>
+                                Xem sản phẩm
+                            </a>
                         </div>
 
-                        <!-- Tên SP -->
-                        <p class="fw-medium small line-clamp-2">{{ p.name }}</p>
-
-                        <!-- Giá -->
-                        <p class="text-danger fw-bold">
-                            {{ p.final_price|floatformat:0 }}đ
-                        </p>
-
-                        <!-- Link -->
-                        <a href="{% url 'product_detail' p.slug %}"
-                           class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
-                            <i class="bi bi-cart-plus me-1"></i>
-                            Xem sản phẩm
-                        </a>
                     </div>
-
                 </div>
+                {% endfor %}
+
             </div>
-            {% endfor %}
-
         </div>
-    </div>
-</section>
-
+    </section>
 
 
 </div>
@@ -323,7 +324,6 @@
         </form>
     </div>
 </div>
-
 <script>
     let price = Number("{{ product.final_price }}");
 
@@ -332,6 +332,8 @@
         q = Math.max(1, q + n);
 
         document.getElementById("qty").innerText = q;
+        document.getElementById("qtyInput").value = q;
+
         document.getElementById("total").innerText =
             (q * price).toLocaleString("vi-VN") + "đ";
     }
