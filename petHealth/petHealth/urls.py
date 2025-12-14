@@ -25,4 +25,5 @@ urlpatterns = [
     path('', include('accounts.urls')),
     # path('home', get_home)
     path('', include('my_app.urls')),
+    path('', include('orders.urls')),
 ]
