@@ -125,22 +125,30 @@ def wishlist(request):
 
 
 from django.shortcuts import render, get_object_or_404
-from .models_Product import Product, Category
-
+from .models_Product import Product, Category, Wishlist
 
 def category_view(request, slug):
     category = get_object_or_404(Category, slug=slug)
     products = Product.objects.filter(category=category)
 
+    if request.user.is_authenticated:
+        liked_ids = set(
+            Wishlist.objects.filter(
+                user=request.user
+            ).values_list("product_id", flat=True)
+        )
+    else:
+        liked_ids = set()
+
     return render(request, "frontend/DogKibbleView.html", {
         "category": category,
-        "products": products
+        "products": products,
+        "liked_ids": liked_ids
     })
-
 
 from django.shortcuts import render, get_object_or_404
 from .models_Product import Product, ProductReview
-
+from .models_Product import Wishlist
 
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug)
@@ -151,10 +159,18 @@ def product_detail(request, slug):
     # Lấy review đã duyệt
     reviews = product.reviews.filter(approved=True)
 
+    liked_ids = set()
+    if request.user.is_authenticated:
+        liked_ids = set(
+            Wishlist.objects.filter(user=request.user)
+            .values_list("product_id", flat=True)
+        )
+
     return render(request, "frontend/detailProduct.html", {
         "product": product,
         "related": related,
         "reviews": reviews,
+        "liked_ids": liked_ids,
     })
 
 
@@ -221,3 +237,46 @@ def remove_multiple_cart(request):
     request.session.modified = True
 
     return JsonResponse({"success": True})
+
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def toggle_wishlist_ajax(request, product_id):
+    if request.method == "POST":
+        product = get_object_or_404(Product, id=product_id)
+
+        item, created = Wishlist.objects.get_or_create(
+            user=request.user,
+            product=product
+        )
+
+        if not created:
+            item.delete()
+            return JsonResponse({"liked": False})
+
+        return JsonResponse({"liked": True})
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def wishlist(request):
+    wishlist_items = Wishlist.objects.filter(
+        user=request.user
+    ).select_related("product")
+
+    return render(request, "frontend/wishlist.html", {
+        "wishlist_items": wishlist_items
+    })
+
+@login_required
+def remove_from_wishlist(request, product_id):
+    if request.method == "POST":
+        Wishlist.objects.filter(
+            user=request.user,
+            product_id=product_id
+        ).delete()
+
+    return redirect("wishlist")

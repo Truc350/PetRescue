@@ -83,9 +83,18 @@
                             <div class="product-header d-flex justify-content-between align-items-center">
                                 <p class="small text-muted mb-0 brand-name">{{ p.brand }}</p>
 
-                                <button class="btn-wishlist">
+                                <button
+                                        class="btn-wishlist"
+                                        data-id="{{ p.id }}"
+                                >
+                                    {% if p.id in liked_ids %}
+                                    <i class="bi bi-heart-fill text-danger"></i>
+                                    {% else %}
                                     <i class="bi bi-heart"></i>
+                                    {% endif %}
                                 </button>
+
+
                             </div>
 
                             <p class="fw-medium small line-clamp-2">{{ p.name }}</p>
@@ -106,7 +115,46 @@
 </div>
 </div>
 </body>
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+            const cookies = document.cookie.split(";");
+            for (let c of cookies) {
+                c = c.trim();
+                if (c.startsWith(name + "=")) {
+                    cookieValue = decodeURIComponent(c.slice(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 
+    const csrftoken = getCookie("csrftoken");
+
+    document.querySelectorAll(".btn-wishlist").forEach(btn => {
+        btn.addEventListener("click", function () {
+            const productId = this.dataset.id;
+
+            fetch(`/wishlist/toggle/${productId}/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrftoken,
+                },
+            })
+                .then(res => res.json())
+                .then(data => {
+                    const icon = this.querySelector("i");
+                    if (data.liked) {
+                        icon.className = "bi bi-heart-fill text-danger";
+                    } else {
+                        icon.className = "bi bi-heart";
+                    }
+                });
+        });
+    });
+</script>
 <script>
     document.querySelectorAll('.btn-wishlist').forEach(btn => {
         btn.addEventListener('click', function () {

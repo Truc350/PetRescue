@@ -101,8 +101,16 @@
                 </form>
 
 
-                <button class="btn btn-outline-secondary rounded-circle" style="width:50px;height:50px">
+                <button
+                        class="btn btn-outline-secondary rounded-circle btn-wishlist"
+                        style="width:50px;height:50px"
+                        data-id="{{ product.id }}"
+                >
+                    {% if product.id in liked_ids %}
+                    <i class="bi bi-heart-fill text-danger"></i>
+                    {% else %}
                     <i class="bi bi-heart"></i>
+                    {% endif %}
                 </button>
             </div>
 
@@ -338,7 +346,44 @@
             (q * price).toLocaleString("vi-VN") + "đ";
     }
 </script>
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+            document.cookie.split(";").forEach(cookie => {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name + "=")) {
+                    cookieValue = decodeURIComponent(cookie.slice(name.length + 1));
+                }
+            });
+        }
+        return cookieValue;
+    }
 
+    const csrftoken = getCookie("csrftoken");
+
+    document.querySelectorAll(".btn-wishlist").forEach(btn => {
+        btn.addEventListener("click", function () {
+            const productId = this.dataset.id;
+            const icon = this.querySelector("i");
+
+            fetch(`/wishlist/toggle/${productId}/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrftoken,
+                },
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.liked) {
+                        icon.className = "bi bi-heart-fill text-danger";
+                    } else {
+                        icon.className = "bi bi-heart";
+                    }
+                });
+        });
+    });
+</script>
 
 <script>
     $(document).ready(function () {

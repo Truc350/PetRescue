@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <title>Giỏ hàng PetRescue</title>
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -12,7 +12,7 @@
 <body>
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
+{% include "frontend/header.html" %}
 <div class="gio-hang">
     <!-- Bao toàn bộ phần giỏ hàng -->
     <div class="gio-hang-noi-dung">
@@ -34,81 +34,66 @@
 
             <!-- Danh sách sản phẩm -->
             <div id="danh_sach_san_pham">
-                <!-- Sản phẩm 1 -->
+
+                {% for item in wishlist_items %}
                 <div class="khung_san_pham p-3 mb-3 bg-white shadow-sm rounded d-flex align-items-center justify-content-between">
+
                     <div class="d-flex align-items-center">
                         <input type="checkbox" class="chon_san_pham form-check-input me-3">
-                        <a href="#"><img src="https://paddy.vn/cdn/shop/files/thuc-an-dinh-duong-cho-cho-meo-gel-virbac-nutri-plus_1.jpg?v=1732869568" alt="DJI Mini 3" class="anh_san_pham me-3" width="120"></a>
+
+                        <a href="{% url 'product_detail' item.product.slug %}">
+                            <img src="{{ item.product.image }}"
+                                 alt="{{ item.product.name }}"
+                                 class="anh_san_pham me-3"
+                                 width="120">
+                        </a>
+
                         <div>
-                            <h5 class="ten_san_pham mb-2">Gel Dinh Dưỡng Cho Chó Mèo Virbac Nutri-Plus 120g</h5>
+                            <h5 class="ten_san_pham mb-2">{{ item.product.name }}</h5>
                             <div>
-                                <span class="gia_hien_tai text-danger fw-bold me-2">230.000₫</span>
-                                <span class="gia_goc text-muted text-decoration-line-through">300.000₫</span>
+                <span class="gia_hien_tai text-danger fw-bold me-2">
+                    {{ item.product.final_price }}₫
+                </span>
+
+                                {% if item.product.discount_price %}
+                                <span class="gia_goc text-muted text-decoration-line-through">
+                    {{ item.product.price }}₫
+                </span>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        <a href=""><button class="btn btn-primary btn-sm nut_them_vao_gio">
-                            <i class="bi bi-cart-plus"></i> Thêm vào giỏ hàng
-                        </button></a>
-                        <button class="btn btn-outline-danger btn-sm nut_xoa">
-                            <i class="bi bi-trash"></i>
-                        </button>
+
+                        <!-- Thêm vào giỏ hàng (sau này gắn cart) -->
+                        <a href="#">
+                            <button class="btn btn-primary btn-sm nut_them_vao_gio">
+                                <i class="bi bi-cart-plus"></i> Thêm vào giỏ hàng
+                            </button>
+                        </a>
+
+                        //Xoá
+                        <form method="post" action="{% url 'remove-wishlist' item.product.id %}">
+                            {% csrf_token %}
+                            <button class="btn btn-outline-danger btn-sm">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+
+
                     </div>
                 </div>
+                {% empty %}
+                <p class="text-center text-muted">Bạn chưa có sản phẩm yêu thích nào ❤️</p>
+                {% endfor %}
 
-                <!-- Sản phẩm 2 -->
-                <div class="khung_san_pham p-3 mb-3 bg-white shadow-sm rounded d-flex align-items-center justify-content-between">
-                    <div class="d-flex align-items-center">
-                        <input type="checkbox" class="chon_san_pham form-check-input me-3">
-                        <a href=""><img src="https://paddy.vn/cdn/shop/files/6f0bef1155b63ddd2b62458b8bd1454a.jpg?v=1692494934" alt="DJI Mini 4K" class="anh_san_pham me-3" width="120"></a>
-                        <div>
-                            <h5 class="ten_san_pham mb-2">Gel Vệ Sinh Răng Miệng Chó Mèo Pha Nước Uống Cature Rollon Oral Care</h5>
-                            <div>
-                                <span class="gia_hien_tai text-danger fw-bold me-2">5.000₫</span>
-                                <span class="gia_goc text-muted text-decoration-line-through">7.000₫</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="d-flex align-items-center gap-2">
-                        <a href=""><button class="btn btn-primary btn-sm nut_them_vao_gio">
-                            <i class="bi bi-cart-plus"></i> Thêm vào giỏ hàng
-                        </button></a>
-                        <button class="btn btn-outline-danger btn-sm nut_xoa">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Sản phẩm 3 -->
-                <div class="khung_san_pham p-3 mb-3 bg-white shadow-sm rounded d-flex align-items-center justify-content-between">
-                    <div class="d-flex align-items-center">
-                        <input type="checkbox" class="chon_san_pham form-check-input me-3">
-                        <a href=""><img src="https://paddy.vn/cdn/shop/files/ganadorchickern.jpg?v=1711013439" alt="Hạt Ganador Adult Cho Chó Trưởng Thành Vị Gà Quay" class="anh_san_pham me-3" width="120"></a>
-                        <div>
-                            <h5 class="ten_san_pham mb-2">Hạt Ganador Adult Cho Chó Trưởng Thành Vị Gà Quay</h5>
-                            <div>
-                                <span class="gia_hien_tai text-danger fw-bold me-2">17.000₫</span>
-                                <span class="gia_goc text-muted text-decoration-line-through">22.000₫</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="d-flex align-items-center gap-2">
-                        <a href="shoppingcart.html"><button class="btn btn-primary btn-sm nut_them_vao_gio">
-                            <i class="bi bi-cart-plus"></i> Thêm vào giỏ hàng
-                        </button></a>
-                        <button class="btn btn-outline-danger btn-sm nut_xoa">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </div>
-                </div>
             </div>
+
         </div>
     </div>
 </div>
+{% include "frontend/footer.html" %}
 <script>
     const chonTatCa = document.getElementById("chon_tat_ca");
     const nutXoaDaChon = document.querySelector(".nut_xoa_da_chon");

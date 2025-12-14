@@ -40,5 +40,21 @@ urlpatterns = [
     path('delivery-infor', views.getPaymentInfor, name='delivery-infor'),
     path('categories/<slug:slug>/', views.category_view, name="category-detail"),
     path("product/<slug:slug>/", views.product_detail, name="product_detail"),
+    path(
+        "wishlist/toggle/<int:product_id>/",
+        views.toggle_wishlist_ajax,
+        name="toggle-wishlist"
+    ),
+
+    path(
+        "wishlist/",
+        views.wishlist,
+        name="wishlist"
+    ),
+    path(
+        "wishlist/remove/<int:product_id>/",
+        views.remove_from_wishlist,
+        name="remove-wishlist"
+    ),
 
 ]
