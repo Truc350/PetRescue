@@ -8,6 +8,9 @@ def checkout_shipping(request):
         user=request.user,
         status="cart"
     )
+    items = order.items.select_related("product")
+
+    total = sum(item.price * item.quantity for item in items)
 
     if request.method == "POST":
         ShippingAddress.objects.update_or_create(
@@ -30,7 +33,9 @@ def checkout_shipping(request):
     return render(request, "frontend/delivery-infor.html", {
         "order": order,
         "items": order.items.all(),
-        "saved_addresses": []
+        "saved_addresses": [],
+        "total": total,
+
     })
 
 from django.shortcuts import get_object_or_404
