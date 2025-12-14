@@ -18,11 +18,14 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib import admin
 from django.urls import path, include
+from my_app import views as my_views
 
 # from my_app.views import get_home
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('accounts.urls')),
+    # 👇 ROOT URL
+    path('', my_views.home, name='home'),
     # path('home', get_home)
     path('', include('my_app.urls')),
     path('', include('orders.urls')),

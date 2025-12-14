@@ -349,3 +349,5 @@ def search_view(request):
         "products": products,
         "total": products.count(),
     })
+def home(request):
+    return render(request, "frontend/homePage.html")
