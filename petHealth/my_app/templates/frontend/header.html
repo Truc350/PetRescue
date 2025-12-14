@@ -32,15 +32,31 @@
             </a>
 
             <!-- THANH TÌM KIẾM -->
-            <div class="search-bar position-relative">
-                <i class="bi bi-search"></i>
+            <div class="search-container flex-grow-1 mx-4">
+                <form action="{% url 'search' %}" method="get" class="w-100">
+                    <div class="search-bar position-relative w-100">
+                        <button type="submit"
+                                class="btn position-absolute top-50 start-0 translate-middle-y ms-2 border-0 bg-transparent">
+                            <i class="bi bi-search"></i>
+                        </button>
 
-                <input id="searchInput" type="text" autocomplete="off">
+                        <!--                <input id="searchInput" type="text" autocomplete="off">-->
+                        <input
+                                id="searchInput"
+                                class="form-control ps-5"
+                                type="text"
+                                name="q"
+                                autocomplete="off"
+                                placeholder="Tìm sản phẩm..."
+                                value="{{ keyword|default:'' }}"
+                        >
 
-                <!-- Danh sách gợi ý xổ xuống -->
-                <ul id="suggestList" class="list-group position-absolute w-100 shadow-sm"
-                    style="top: 100%; left: 0; z-index: 1000; display: none;">
-                </ul>
+                        <!-- Danh sách gợi ý xổ xuống -->
+                        <ul id="suggestList" class="list-group position-absolute w-100 shadow-sm"
+                            style="top: 100%; left: 0; z-index: 1000; display: none;">
+                        </ul>
+                    </div>
+                </form>
             </div>
 
 
@@ -88,7 +104,7 @@
                     </div>
 
                     <div class="dropdown-column">
-                       <a href="{% url 'category-detail' 'cho-care' %}"><h4>Chăm Sóc Vệ Sinh Chó</h4></a>
+                        <a href="{% url 'category-detail' 'cho-care' %}"><h4>Chăm Sóc Vệ Sinh Chó</h4></a>
                     </div>
 
                     <div class="dropdown-column">
@@ -111,11 +127,12 @@
                     </div>
 
                     <div class="dropdown-column">
-                        <a href="{% url 'category-detail' 'cham-soc-sc-kho-cho-meo' %}"> <h4>Chăm Sóc Sức Khỏe Cho Mèo</h4></a>
+                        <a href="{% url 'category-detail' 'cham-soc-sc-kho-cho-meo' %}"><h4>Chăm Sóc Sức Khỏe Cho
+                            Mèo</h4></a>
                     </div>
 
                     <div class="dropdown-column">
-                        <a href="{% url 'category-detail' 'v-sinh-cho-meo' %}"> <h4>Vệ Sinh Cho Mèo</h4></a>
+                        <a href="{% url 'category-detail' 'v-sinh-cho-meo' %}"><h4>Vệ Sinh Cho Mèo</h4></a>
                     </div>
 
                 </div>
@@ -134,15 +151,15 @@
                 </button>
             </a>
             <a href="">
-            <button class="nav-item" onclick="location.href='support.html'">
-                <i class="bi bi-headset"></i> Hỗ trợ
-            </button>
-                </a>
+                <button class="nav-item" onclick="location.href='support.html'">
+                    <i class="bi bi-headset"></i> Hỗ trợ
+                </button>
+            </a>
             <a href="{% url 'policy-purchases' %}">
-            <button class="nav-item" onclick="location.href='policy.html'">
-                <i class="bi bi-journal-text"></i> Chính sách mua hàng
-            </button>
-                </a>
+                <button class="nav-item" onclick="location.href='policy.html'">
+                    <i class="bi bi-journal-text"></i> Chính sách mua hàng
+                </button>
+            </a>
 
         </nav>
     </div>
@@ -218,8 +235,20 @@
 <script>
     window.onload = function () {
         const height = document.body.scrollHeight;
-        parent.postMessage({ type: "header-height", height }, "*");
+        parent.postMessage({type: "header-height", height}, "*");
     };
+</script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const icon = document.getElementById("searchIcon");
+        if (icon) {
+            icon.addEventListener("click", function () {
+                this.closest("form").submit();
+            });
+        }
+    });
 </script>
 
 
