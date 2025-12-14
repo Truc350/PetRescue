@@ -97,3 +97,12 @@ class ProductReviewAdmin(admin.ModelAdmin):
     def disapprove_reviews(self, request, queryset):
         queryset.update(approved=False)
     disapprove_reviews.short_description = "Bỏ duyệt đánh giá đã chọn"
+
+from django.contrib import admin
+from .models_Product import Wishlist
+
+@admin.register(Wishlist)
+class WishlistAdmin(admin.ModelAdmin):
+    list_display = ("user", "product", "created_at")
+    search_fields = ("user__username", "product__name")
+    ordering = ("-created_at",)
