@@ -34,8 +34,11 @@ urlpatterns = [
     path('dogHygiene', views.getDogHygiene),
     path('wishlist', views.wishlist, name='wishlist'),
     path('shoppingcart', views.shoppingcart, name='shoppingcart'),
+    path('add-to-cart/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
+    path('remove-cart/<int:product_id>/', views.remove_cart, name='remove_cart'),
+    path("cart/remove-multiple/", views.remove_multiple_cart, name="remove_multiple_cart"),
     path('delivery-infor', views.getPaymentInfor, name='delivery-infor'),
-path('categories/<slug:slug>/', views.category_view, name="category-detail"),
-path("product/<slug:slug>/", views.product_detail, name="product_detail"),
+    path('categories/<slug:slug>/', views.category_view, name="category-detail"),
+    path("product/<slug:slug>/", views.product_detail, name="product_detail"),
 
 ]
