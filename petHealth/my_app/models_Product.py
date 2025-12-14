@@ -110,3 +110,4 @@ class ProductReview(models.Model):
     def __str__(self):
         user_info = self.user.username if self.user else self.email
         return f"{user_info} - {self.product.name} ({self.rating} sao)"
+
