@@ -1,3 +1,4 @@
+{% load humanize %}
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -10,7 +11,13 @@
 </head>
 <body>
 {% include "frontend/header.html" %}
-<h1>Tìm Thấy 94 Kết Quả</h1>
+<h1>
+    Tìm thấy {{ total }} kết quả
+    {% if keyword %}
+    cho “{{ keyword }}”
+    {% endif %}
+</h1>
+
 <!--Layout Chinh: Sidebar + contain -->
 <div class="main-layout">
     <aside class="sidebar">
@@ -60,211 +67,50 @@
                 </select>
             </div>
         </div>
-        <section class="section-spacing content-padding">
-            <!-- Sản phẩm 1 -->
+
+
+        <section class="row g-4 section-spacing content-padding">
+
+            {% if products %}
+            {% for product in products %}
             <div class="col-lg-3 col-md-4 col-6">
                 <div class="product-card bg-white rounded shadow-sm overflow-hidden">
-                    <img src="https://paddy.vn/cdn/shop/files/cat-meo-dat-set-moon-cat-von-cuc-khu-mui-8l.png?v=1704520991"
-                         class="w-100" style="height: 200px; object-fit: contain;" alt="Royal Canin Indoor 27">
+
+                    <img src="{{ product.image }}"
+                         class="w-100"
+                         style="height: 200px; object-fit: contain;"
+                         alt="{{ product.name }}">
+
                     <div class="p-3">
                         <div class="product-header d-flex justify-content-between align-items-center">
-                            <p class="small text-muted mb-0 brand-name">Royal Canin</p>
-                            <button class="btn-wishlist">
-                                <i class="bi bi-heart"></i>
-                            </button>
+                            <p class="small text-muted mb-0">
+                                {{ product.brand }}
+                            </p>
                         </div>
-                        <p class="fw-medium small line-clamp-2">Cát Mèo Đất Sét Moon Cat Vón Cục Khử Mùi Tốt (8L)</p>
-                        <p class="text-danger fw-bold">55.000đ</p>
-                        <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
-                            <i class="bi bi-cart-plus me-1"></i> Mua ngay
-                        </a>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Sản phẩm 2 -->
-            <div class="col-lg-3 col-md-4 col-6">
-                <div class="product-card bg-white rounded shadow-sm overflow-hidden">
-                    <img src="https://paddy.vn/cdn/shop/files/cat-meo-lapaw-dat-set-mix-than-hat-tinh_4.webp?v=1757562729"
-                         class="w-100" style="height: 200px; object-fit: contain;" alt="Royal Canin Kitten">
-                    <div class="p-3">
-                        <div class="product-header d-flex justify-content-between align-items-center ">
-                            <p class="small text-muted mb-0 brand-name">Zenith</p>
-                            <button class="btn-wishlist">
-                                <i class="bi bi-heart"></i>
-                            </button>
-                        </div>
-                        <p class="fw-medium small line-clamp-2">Cát Mèo LaPaw Đất Sét Mix Than Hoạt Tính</p>
-                        <p class="text-danger fw-bold">70.000đ</p>
-                        <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
-                            <i class="bi bi-cart-plus me-1"></i> Mua ngay
-                        </a>
-                    </div>
-                </div>
-            </div>
+                        <p class="fw-medium small line-clamp-2">
+                            {{ product.name }}
+                        </p>
 
-            <!-- Sản phẩm 3 -->
-            <div class="col-lg-3 col-md-4 col-6">
-                <div class="product-card bg-white rounded shadow-sm overflow-hidden">
-                    <img src="https://paddy.vn/cdn/shop/files/cat-dau-nanh-cho-meo-cature-tofu.png?v=1704520844"
-                         class="w-100" style="height: 200px; object-fit: contain;" alt="Urinary S/O">
-                    <div class="p-3">
-                        <div class="product-header d-flex justify-content-between align-items-center ">
-                            <p class="small text-muted mb-0 brand-name">Royal Canin</p>
-                            <button class="btn-wishlist">
-                                <i class="bi bi-heart"></i>
-                            </button>
-                        </div>
-                        <p class="fw-medium small line-clamp-2">Cát Đậu Nành Cho Mèo Cature Tofu</p>
-                        <p class="text-danger fw-bold">180.000đ</p>
-                        <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
-                            <i class="bi bi-cart-plus me-1"></i> Mua ngay
-                        </a>
-                    </div>
-                </div>
-            </div>
+                        <p class="text-danger fw-bold">
+                            {{ product.final_price|intcomma }}đ
+                        </p>
 
-            <!--Sản phẩm 4 -->
-            <div class="col-lg-3 col-md-4 col-6">
-                <div class="product-card bg-white rounded shadow-sm overflow-hidden">
-                    <img src="https://paddy.vn/cdn/shop/files/cat-meo-dau-nanh-acro-pet-5l.jpg?v=1694500819"
-                         class="w-100" style="height: 200px; object-fit: contain;" alt="Pate Kitten">
-                    <div class="p-3">
-                        <div class="product-header d-flex justify-content-between align-items-center">
-                            <p class="small text-muted mb-0 brand-name">Inaba</p>
-                            <button class="btn-wishlist">
-                                <i class="bi bi-heart"></i>
-                            </button>
-                        </div>
-                        <p class="fw-medium small line-clamp-2">Cát Mèo Đậu Nành Acro Pet 5L</p>
-                        <p class="text-danger fw-bold">80.000đ</p>
-                        <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
-                            <i class="bi bi-cart-plus me-1"></i> Mua ngay
+                        <a href="{% url 'product_detail' product.slug %}"
+                           class="btn btn-danger w-100 rounded-pill py-2">
+                            <i class="bi bi-cart-plus"></i> Mua ngay
                         </a>
                     </div>
-                </div>
-            </div>
-            <!-- Sản phẩm 5 -->
-            <div class="col-lg-3 col-md-4 col-6">
-                <div class="product-card bg-white rounded shadow-sm overflow-hidden">
-                    <img src="https://paddy.vn/cdn/shop/files/cat-ve-sinh-cho-meo-aatas.jpg?v=1764234428"
-                         class="w-100" style="height: 200px; object-fit: contain;" alt="Urinary S/O">
-                    <div class="p-3">
-                        <div class="product-header d-flex justify-content-between align-items-center ">
-                            <p class="small text-muted mb-0 brand-name">Royal Canin</p>
-                            <button class="btn-wishlist">
-                                <i class="bi bi-heart"></i>
-                            </button>
-                        </div>
-                        <p class="fw-medium small line-clamp-2">Cát Vệ Sinh Cho Mèo AATAS Mẫu Mới [5-10L]</p>
-                        <p class="text-danger fw-bold">49.000đ</p>
-                        <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
-                            <i class="bi bi-cart-plus me-1"></i> Mua ngay
-                        </a>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Sản phẩm 6 -->
-            <div class="col-lg-3 col-md-4 col-6">
-                <div class="product-card bg-white rounded shadow-sm overflow-hidden">
-                    <img src="https://paddy.vn/cdn/shop/files/cat-dau-nanh-cho-meo-lapaw-cao-cap-2-5kg_ef394bdc-c038-4b3a-b35b-54eba4f8ba90.jpg?v=1763010398"
-                         class="w-100" style="height: 200px; object-fit: contain;" alt="Urinary S/O">
-                    <div class="p-3">
-                        <div class="product-header d-flex justify-content-between align-items-center ">
-                            <p class="small text-muted mb-0 brand-name">Royal Canin</p>
-                            <button class="btn-wishlist">
-                                <i class="bi bi-heart"></i>
-                            </button>
-                        </div>
-                        <p class="fw-medium small line-clamp-2">Cát Đậu Nành Cho Mèo LaPaw Cao Cấp 2.5kg</p>
-                        <p class="text-danger fw-bold">105.000đ</p>
-                        <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
-                            <i class="bi bi-cart-plus me-1"></i> Mua ngay
-                        </a>
-                    </div>
                 </div>
             </div>
-            <!-- Sản phẩm 7 -->
-            <div class="col-lg-3 col-md-4 col-6">
-                <div class="product-card bg-white rounded shadow-sm overflow-hidden">
-                    <img src="https://paddy.vn/cdn/shop/files/Thi_tk_ch_acoten_2.png?v=1690719510"
-                         class="w-100" style="height: 200px; object-fit: contain;" alt="Urinary S/O">
-                    <div class="p-3">
-                        <div class="product-header d-flex justify-content-between align-items-center ">
-                            <p class="small text-muted mb-0 brand-name">Royal Canin</p>
-                            <button class="btn-wishlist">
-                                <i class="bi bi-heart"></i>
-                            </button>
-                        </div>
-                        <p class="fw-medium small line-clamp-2">Cát Mèo Đất Sét Mix Đậu Nành Cature Bentonite 2.8kg (7L)</p>
-                        <p class="text-danger fw-bold">145.000đ</p>
-                        <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
-                            <i class="bi bi-cart-plus me-1"></i> Mua ngay
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <!-- Sản phẩm 8 -->
-            <div class="col-lg-3 col-md-4 col-6">
-                <div class="product-card bg-white rounded shadow-sm overflow-hidden">
-                    <img src="https://paddy.vn/cdn/shop/files/cat-go-meo-cats-best-original.png?v=1704521521"
-                         class="w-100" style="height: 200px; object-fit: contain;" alt="Urinary S/O">
-                    <div class="p-3">
-                        <div class="product-header d-flex justify-content-between align-items-center ">
-                            <p class="small text-muted mb-0 brand-name">Equilibrio</p>
-                            <button class="btn-wishlist">
-                                <i class="bi bi-heart"></i>
-                            </button>
-                        </div>
-                        <p class="fw-medium small line-clamp-2">Cát Gỗ Cho Mèo Cat's Best ORIGINAL Vón Cục Khử Mùi & Vi Trùng</p>
-                        <p class="text-danger fw-bold">670.000đ</p>
-                        <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
-                            <i class="bi bi-cart-plus me-1"></i> Mua ngay
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <!-- Sản phẩm 9 -->
-            <div class="col-lg-3 col-md-4 col-6">
-                <div class="product-card bg-white rounded shadow-sm overflow-hidden">
-                    <img src="https://paddy.vn/cdn/shop/files/cat-dau-nanh-cho-meo-on25-2-5kg_0904b476-8f93-4215-811d-274c8d94c199.jpg?v=1756372234"
-                         class="w-100" style="height: 200px; object-fit: contain;" alt="Urinary S/O">
-                    <div class="p-3">
-                        <div class="product-header d-flex justify-content-between align-items-center ">
-                            <p class="small text-muted mb-0 brand-name">Royal Canin</p>
-                            <button class="btn-wishlist">
-                                <i class="bi bi-heart"></i>
-                            </button>
-                        </div>
-                        <p class="fw-medium small line-clamp-2">Cát Đậu Nành Cho Mèo ON25 2.5kg</p>
-                        <p class="text-danger fw-bold">99.000đ</p>
-                        <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
-                            <i class="bi bi-cart-plus me-1"></i> Mua ngay
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <!-- Sản phẩm 10 -->
-            <div class="col-lg-3 col-md-4 col-6">
-                <div class="product-card bg-white rounded shadow-sm overflow-hidden">
-                    <img src="https://paddy.vn/cdn/shop/files/hat-khu-mui-cat-meo-hysen-clean-450g-2-1692006769892.webp?v=1697452572"
-                         class="w-100" style="height: 200px; object-fit: contain;" alt="Urinary S/O">
-                    <div class="p-3">
-                        <div class="product-header d-flex justify-content-between align-items-center ">
-                            <p class="small text-muted mb-0 brand-name">Royal Canin</p>
-                            <button class="btn-wishlist">
-                                <i class="bi bi-heart"></i>
-                            </button>
-                        </div>
-                        <p class="fw-medium small line-clamp-2">Hạt Khử Mùi Cát Mèo Hysen Clean 450g</p>
-                        <p class="text-danger fw-bold">50.000đ</p>
-                        <a href="#" class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
-                            <i class="bi bi-cart-plus me-1"></i> Mua ngay
-                        </a>
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
+            {% else %}
+            <p class="text-muted">
+                Không tìm thấy sản phẩm nào phù hợp.
+            </p>
+            {% endif %}
+
         </section>
 
     </div>

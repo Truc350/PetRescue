@@ -280,3 +280,72 @@ def remove_from_wishlist(request, product_id):
         ).delete()
 
     return redirect("wishlist")
+
+from django.db.models import Q
+from .models_Product import Product
+
+def search_view(request):
+    keyword_raw = request.GET.get("q", "").strip()
+    keyword = keyword_raw.lower()
+
+    products = Product.objects.none()
+
+    # ====== TẦNG 1: HIỂU Ý (NHẸ – KHÔNG ÉP) ======
+    ANIMAL_MAP = {
+        "chó": "cho",
+        "cho": "cho",
+        "mèo": "meo",
+        "meo": "meo",
+    }
+
+    TYPE_MAP = {
+        "thức ăn": ["pate", "hạt"],
+        "pate": ["pate"],
+        "hạt": ["hạt"],
+        "vệ sinh": ["cát", "sữa tắm", "kem đánh răng"],
+        "sữa tắm": ["sữa tắm"],
+        "cát": ["cát"],
+    }
+
+    animal = None
+    types = []
+
+    for k, v in ANIMAL_MAP.items():
+        if k in keyword:
+            animal = v
+            break
+
+    for k, v in TYPE_MAP.items():
+        if k in keyword:
+            types = v
+            break
+
+    query = Q()
+
+    # ====== TẦNG 2: SEARCH MỀM ======
+    if animal:
+        query &= Q(category__slug__icontains=animal)
+
+    if types:
+        type_query = Q()
+        for t in types:
+            type_query |= Q(name__icontains=t)
+            type_query |= Q(category__name__icontains=t)
+        query &= type_query
+
+    # ====== TẦNG 3: CỨU VỚT ======
+    if not query:
+        query = (
+            Q(name__icontains=keyword_raw) |
+            Q(brand__icontains=keyword_raw) |
+            Q(category__name__icontains=keyword_raw) |
+            Q(description__icontains=keyword_raw)
+        )
+
+    products = Product.objects.filter(query).distinct()
+
+    return render(request, "frontend/search.html", {
+        "keyword": keyword_raw,
+        "products": products,
+        "total": products.count(),
+    })
