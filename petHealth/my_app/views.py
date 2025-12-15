@@ -5,8 +5,6 @@ import json
 from django.http import JsonResponse
 
 
-
-
 def getChatWithAI(request):
     return render(request, 'frontend/chatWithAI.html')
 
@@ -95,7 +93,6 @@ def getHomePage(request):
     return render(request, 'frontend/homePage.html', context)
 
 
-
 def getDashBoard(request):
     return render(request, 'frontend/admin/dashboard.html')
 
@@ -118,6 +115,7 @@ def getHealthCat(request):
 
 def getCatToilet(request):
     return render(request, 'frontend/cat-toilet.html')
+
 
 from django.utils import timezone
 from .models_Product import Promotion
@@ -142,7 +140,6 @@ def getPromotion(request):
     })
 
 
-
 def getDetailProduct(request):
     return render(request, 'frontend/detailProduct.html')
 
@@ -163,14 +160,34 @@ def wishlist(request):
     return render(request, 'frontend/wishlist.html')
 
 
-
-
 from django.shortcuts import render, get_object_or_404
 from .models_Product import Product, Category, Wishlist
+
 
 def category_view(request, slug):
     category = get_object_or_404(Category, slug=slug)
     products = Product.objects.filter(category=category)
+
+    selected_prices = request.GET.getlist("price")
+    selected_brands = request.GET.getlist("brand")
+
+    # ===== LỌC GIÁ =====
+    if selected_prices:
+        price_q = Q()
+        for p in selected_prices:
+            try:
+                min_price, max_price = p.split("-")
+                price_q |= Q(
+                    price__gte=int(min_price),
+                    price__lte=int(max_price)
+                )
+            except ValueError:
+                pass
+        products = products.filter(price_q)
+
+        # ===== LỌC THƯƠNG HIỆU =====
+        if selected_brands:
+            products = products.filter(brand__in=selected_brands)
 
     if request.user.is_authenticated:
         liked_ids = set(
@@ -184,11 +201,15 @@ def category_view(request, slug):
     return render(request, "frontend/DogKibbleView.html", {
         "category": category,
         "products": products,
-        "liked_ids": liked_ids
+        "liked_ids": liked_ids,
+        "selected_prices": selected_prices,
+        "selected_brands": selected_brands,
     })
+
 
 from django.shortcuts import render, get_object_or_404
 from .models_Product import Wishlist
+
 
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug)
@@ -278,8 +299,10 @@ def remove_multiple_cart(request):
 
     return JsonResponse({"success": True})
 
+
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+
 
 @login_required
 def toggle_wishlist_ajax(request, product_id):
@@ -299,7 +322,9 @@ def toggle_wishlist_ajax(request, product_id):
 
     return JsonResponse({"error": "Invalid request"}, status=400)
 
+
 from django.contrib.auth.decorators import login_required
+
 
 @login_required
 def wishlist(request):
@@ -311,6 +336,7 @@ def wishlist(request):
         "wishlist_items": wishlist_items
     })
 
+
 @login_required
 def remove_from_wishlist(request, product_id):
     if request.method == "POST":
@@ -321,8 +347,10 @@ def remove_from_wishlist(request, product_id):
 
     return redirect("wishlist")
 
+
 from django.db.models import Q
 from .models_Product import Product
+
 
 def search_view(request):
     keyword_raw = request.GET.get("q", "").strip()
@@ -376,10 +404,10 @@ def search_view(request):
     # ====== TẦNG 3: CỨU VỚT ======
     if not query:
         query = (
-            Q(name__icontains=keyword_raw) |
-            Q(brand__icontains=keyword_raw) |
-            Q(category__name__icontains=keyword_raw) |
-            Q(description__icontains=keyword_raw)
+                Q(name__icontains=keyword_raw) |
+                Q(brand__icontains=keyword_raw) |
+                Q(category__name__icontains=keyword_raw) |
+                Q(description__icontains=keyword_raw)
         )
 
     products = Product.objects.filter(query).distinct()

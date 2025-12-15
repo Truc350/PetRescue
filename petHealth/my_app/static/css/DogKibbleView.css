@@ -49,7 +49,7 @@ h1 {
     font-size: 40px;
     margin: 20px 0 30px;
     font-weight: bold;
-      color: #000; /* chữ màu đen */
+    color: #000; /* chữ màu đen */
 }
 
 /* Layout chính */
@@ -82,7 +82,7 @@ h1 {
     font-size: 15px;
     display: flex;
     justify-content: space-between;
-    cursor: pointer;
+    cursor: default;
     padding: 8px 0;
     border-bottom: 1px solid #eee;
 }
@@ -183,7 +183,6 @@ h1 {
 }
 
 
-
 /* Nút hỗ trợ */
 .support-btn {
     position: fixed;
@@ -231,20 +230,34 @@ h1 {
 section.section-spacing.content-padding > .col-lg-3 {
     display: inline-block;
     vertical-align: top;
-    width: 25%;            /* 4 cái = 100% */
-    padding: 0 12px;       /* thay cho g-3 của Bootstrap */
+    width: 25%; /* 4 cái = 100% */
+    padding: 0 12px; /* thay cho g-3 của Bootstrap */
     margin-bottom: 20px;
 }
 
 /* Responsive chuẩn */
 @media (max-width: 1200px) {
-    section.section-spacing.content-padding > .col-lg-3 { width: 33.333%; } /* 3 cái */
+    section.section-spacing.content-padding > .col-lg-3 {
+        width: 33.333%;
+    }
+
+    /* 3 cái */
 }
+
 @media (max-width: 992px) {
-    section.section-spacing.content-padding > .col-lg-3 { width: 50%; }    /* 2 cái */
+    section.section-spacing.content-padding > .col-lg-3 {
+        width: 50%;
+    }
+
+    /* 2 cái */
 }
+
 @media (max-width: 576px) {
-    section.section-spacing.content-padding > .col-lg-3 { width: 100%; }   /* 1 cái */
+    section.section-spacing.content-padding > .col-lg-3 {
+        width: 100%;
+    }
+
+    /* 1 cái */
 }
 
 /* Đảm bảo card đầy đủ chiều cao + nút Mua ngay nằm dưới cùng */
@@ -254,32 +267,37 @@ section.section-spacing .product-card {
     flex-direction: column;
     transition: all 0.3s ease;
 }
+
 section.section-spacing .product-card:hover {
-    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
 }
+
 section.section-spacing .product-card .p-3 {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
 }
+
 section.section-spacing .product-card .btn-danger {
     /*margin-top: auto;*/
 }
 
 /* Căn giữa nội dung trong section (rất quan trọng) */
 section.section-spacing.content-padding {
-    text-align: left;               /* căn giữa các col */
-    font-size: 0;                     /* bỏ khoảng trắng thừa giữa inline-block */
+    text-align: left; /* căn giữa các col */
+    font-size: 0; /* bỏ khoảng trắng thừa giữa inline-block */
 }
+
 section.section-spacing.content-padding > * {
-    font-size: 16px;                  /* trả lại font-size */
+    font-size: 16px; /* trả lại font-size */
 }
 
 /* Fix "Xem tất cả" bị lệch (đẹp như Shopee/Paddy) */
 section.section-spacing .d-flex.justify-content-between {
     position: relative;
-    padding-right: 100px;             /* chừa chỗ cho nút Xem tất cả */
+    padding-right: 100px; /* chừa chỗ cho nút Xem tất cả */
 }
+
 section.section-spacing .d-flex a {
     position: absolute;
     right: 0;
@@ -288,10 +306,11 @@ section.section-spacing .d-flex a {
     background: white;
     padding: 8px 20px;
     border-radius: 30px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     font-weight: 600;
     transition: all 0.3s;
 }
+
 section.section-spacing .d-flex a:hover {
     background: #234bbb;
     color: white !important;
@@ -340,7 +359,7 @@ section.section-spacing .fw-medium {
     font-size: 13px;
     color: #666;
     flex-shrink: 1;
-    min-width: 0;                     /* quan trọng: cho phép text bị cắt */
+    min-width: 0; /* quan trọng: cho phép text bị cắt */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -369,7 +388,7 @@ section.section-spacing .fw-medium {
 
 .btn-wishlist:active,
 .btn-wishlist.liked {
-    color: #e74c3c !important;   /* đỏ đẹp */
+    color: #e74c3c !important; /* đỏ đẹp */
     background: #ffeaea;
 }
 
@@ -388,4 +407,19 @@ section.section-spacing .fw-medium {
 /* Tùy chọn: thêm hiệu ứng nhấp */
 .btn-wishlist:active {
     transform: scale(0.9);
+}
+
+.filter-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: default;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.filter-title h3 {
+    font-size: 15px;
+    font-weight: bold;
+    margin: 0;
 }
