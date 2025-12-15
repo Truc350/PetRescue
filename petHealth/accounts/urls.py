@@ -1,11 +1,12 @@
 # accounts/urls.py
 from django.urls import path
-from .views import CustomLoginView, forgot_password  # sẽ tạo view này ở bước sau
+from .views import CustomLoginView, forgot_password, RegisterView  # sẽ tạo view này ở bước sau
 
 urlpatterns = [
     path('login/', CustomLoginView.as_view(), name='login'),
     # Sau này thêm đăng ký, logout, v.v.
     # path('register/', RegisterView.as_view(), name='register'),
     # path('logout/', LogoutView.as_view(), name='logout'),
-path('forgot-password/', forgot_password, name='forgot-password'),
+    path('forgot-password/', forgot_password, name='forgot-password'),
+    path('register/', RegisterView.as_view(), name='register'),
 ]

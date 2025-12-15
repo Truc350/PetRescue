@@ -1,87 +1,132 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <title>Đăng ký trở thành SMEMBER</title>
-    <link rel="stylesheet" href="../../static/css/register.css">
 
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
 </head>
 <body>
 <div class="container">
     <h1 class="title">Đăng ký trở thành <span>SKYDroneMember</span></h1>
 
-    <img src="https://res.cloudinary.com/dwnbmfhel/image/upload/v1764038017/z7195574147136_4515011aa6bd8fb3801ff37f93280684_gahjde.jpg" alt="SKYDRONE Logo" class="mascot">
+    <img src="https://res.cloudinary.com/dwnbmfhel/image/upload/v1764038017/z7195574147136_4515011aa6bd8fb3801ff37f93280684_gahjde.jpg"
+         alt="SKYDRONE Logo" class="mascot">
 
-    <p class="subtitle">Đăng ký bằng tài khoản mạng xã hội</p><div class="social-buttons">
-    <div class="d-flex justify-content-center social-login">
-        <button type="button" class="social-btn">
-            <img src="https://www.svgrepo.com/show/355037/google.svg" width="20" alt="Google"> Đăng nhập bằng Google
-        </button>
+    <p class="subtitle">Đăng ký bằng tài khoản mạng xã hội</p>
+    <div class="social-buttons">
+        <div class="d-flex justify-content-center social-login">
+            <button type="button" class="social-btn">
+                <img src="https://www.svgrepo.com/show/355037/google.svg" width="20" alt="Google">
+                Đăng nhập bằng Google
+            </button>
+        </div>
     </div>
-</div>
-
-
-
 
     <p class="or">Hoặc điền thông tin sau</p>
 
-    <form class="register-form"
-          method="POST">
+    <form class="register-form" method="POST">
+        {% csrf_token %}
+
+        <!-- Lỗi chung -->
+        {% if form.non_field_errors %}
+        <div style="color: red; background: #ffe6e6; padding: 15px; border-radius: 8px; margin-bottom: 25px; text-align: center;">
+            {% for error in form.non_field_errors %}
+            {{ error }}<br>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         <div class="field">
             <h2>Tên đăng nhập</h2>
-
-            <input type="text" id="local" name="localname" placeholder="Nhập vào tên đăng nhập" required>
+            <div>{{ form.username }}</div>
+            {% if form.username.errors %}
+            <p style="color: red; font-size: 14px; margin-top: 5px;">{{ form.username.errors|join:", " }}</p>
+            {% endif %}
         </div>
+
         <h2>Thông tin cá nhân</h2>
         <div class="grid">
             <div class="field">
-                <label for="fullname">Họ và tên</label>
-                <input type="text" id="fullname" name="fullname" placeholder="Nhập họ và tên" required>
+                <label>Họ và tên</label>
+                <div>{{ form.fullname }}</div>
+                {% if form.fullname.errors %}
+                <p style="color: red; font-size: 14px;">{{ form.fullname.errors|join:", " }}</p>
+                {% endif %}
             </div>
+
             <div class="field">
-                <label for="birthday">Ngày sinh</label>
-                <input type="date" id="birthday" name="birthday" required>
+                <label>Ngày sinh</label>
+                <div>{{ form.birthday }}</div>
+                {% if form.birthday.errors %}
+                <p style="color: red; font-size: 14px;">{{ form.birthday.errors|join:", " }}</p>
+                {% endif %}
             </div>
+
             <div class="field">
-                <label for="phone">Số điện thoại</label>
-                <input type="tel" id="phone" name="phone" placeholder="Nhập số điện thoại" required>
+                <label>Số điện thoại</label>
+                <div>{{ form.phone }}</div>
+                {% if form.phone.errors %}
+                <p style="color: red; font-size: 14px;">{{ form.phone.errors|join:", " }}</p>
+                {% endif %}
             </div>
+
             <div class="field">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="Nhập email">
+                <label>Email</label>
+                <div>{{ form.email }}</div>
                 <p class="hint">✔ Hóa đơn VAT khi mua hàng sẽ được gửi qua email này</p>
+                {% if form.email.errors %}
+                <p style="color: red; font-size: 14px;">{{ form.email.errors|join:", " }}</p>
+                {% endif %}
             </div>
         </div>
 
         <h2>Tạo mật khẩu</h2>
         <div class="grid">
             <div class="field">
-                <label for="password">Mật khẩu</label>
-                <input type="password" id="password" name="password" placeholder="Nhập mật khẩu của bạn" required>
+                <label>Mật khẩu</label>
+                <div>{{ form.password1 }}</div>
                 <p class="hint">Mật khẩu tối thiểu 6 ký tự, có ít nhất 1 chữ số và 1 chữ cái</p>
+                {% if form.password1.errors %}
+                <p style="color: red; font-size: 14px;">{{ form.password1.errors|join:", " }}</p>
+                {% endif %}
             </div>
+
             <div class="field">
-                <label for="confirm">Nhập lại mật khẩu</label>
-                <input type="password" id="confirm" name="confirm" placeholder="Nhập lại mật khẩu" required>
+                <label>Nhập lại mật khẩu</label>
+                <div>{{ form.password2 }}</div>
+                {% if form.password2.errors %}
+                <p style="color: red; font-size: 14px;">{{ form.password2.errors|join:", " }}</p>
+                {% endif %}
             </div>
         </div>
 
         <div class="checkbox">
-            <input type="checkbox" id="promo" name="promo">
-            <label for="promo">Tôi đồng ý với điều khoản và chính sách đến từ SKYDrone</label>
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px;">
+                {{ form.agree_terms }}
+                {{ form.agree_terms.label_tag }}
+            </div>
+
+            {% if form.agree_terms.errors %}
+            <p style="color: red; font-size: 14px; margin-top: 5px;">
+                {{ form.agree_terms.errors|join:", " }}
+            </p>
+            {% endif %}
         </div>
+
 
         <p class="terms">
             Bằng việc Đăng ký, bạn đã đọc và đồng ý với
-            <a href="payment-policy.html">Điều khoản sử dụng</a> và
-            <a href="warranty.html">Chính sách bảo mật</a> của SKYDrone.
+            <a href="#">Điều khoản sử dụng</a> và
+            <a href="#">Chính sách bảo mật</a> của SKYDrone.
         </p>
 
         <div class="actions">
             <a href="{% url 'login' %}">
-                <button type="button" class="btn secondary">⟵ Quay lại đăng nhập</button></a>
-            <a href="{% url 'homePage' %}">
-                <button type="button" class="btn primary">Hoàn tất đăng ký</button></a>
+                <button type="button" class="btn secondary">⟵ Quay lại đăng nhập</button>
+            </a>
+            <button type="submit" class="btn primary">Hoàn tất đăng ký</button>
         </div>
     </form>
 </div>
