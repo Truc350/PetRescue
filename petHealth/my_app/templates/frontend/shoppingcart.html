@@ -109,26 +109,30 @@
     </div>
 </div>
 <script>
-document.querySelector(".nut_thanh_toan").addEventListener("click", () => {
-    const ids = [...document.querySelectorAll(".chon_san_pham:checked")]
-        .map(cb => cb.dataset.id);
+    document.querySelector(".nut_thanh_toan").addEventListener("click", () => {
+        const ids = [...document.querySelectorAll(".chon_san_pham:checked")]
+            .map(cb => cb.dataset.id);
 
-    if (ids.length === 0) {
-        alert("Vui lòng chọn ít nhất 1 sản phẩm");
-        return;
-    }
+        if (ids.length === 0) {
+            alert("Vui lòng chọn ít nhất 1 sản phẩm");
+            return;
+        }
 
-    fetch("{% url 'orders:save_checkout_items' %}", {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": "{{ csrf_token }}",
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ ids })
-    }).then(() => {
-        window.location.href = "{% url 'orders:delivery_info' %}";
+        fetch("{% url 'orders:checkout_from_cart' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ids})
+        })
+            .then(res => res.json())
+            .then(() => {
+                // 👉 CHUYỂN THẲNG TỚI SHIPPING
+                window.location.href = "{% url 'orders:checkout_shipping' %}";
+            });
     });
-});
+
 </script>
 <script>
     const chonTatCa = document.getElementById("chon_tat_ca");

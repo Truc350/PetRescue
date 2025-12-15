@@ -28,5 +28,5 @@ urlpatterns = [
     path('', my_views.getHomePage, name='homePage'),
     # path('home', get_home)
     path('', include('my_app.urls')),
-    path('', include('orders.urls')),
+    path('checkout/', include('orders.urls')),
 ]

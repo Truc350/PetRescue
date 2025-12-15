@@ -16,8 +16,9 @@ body {
 a {
     text-decoration: none;
     color: inherit;
-    display: contents;
+    display: inline-block; /* hoặc block */
 }
+
 .left {
     flex: 7;
     background: #fff;
@@ -103,7 +104,6 @@ border-radius: 100px;
     background: rgba(0,0,0,0.5);
     z-index: 9999;
 }
-
 .vnpay-box {
     background: #fff;
     border-radius: 12px;

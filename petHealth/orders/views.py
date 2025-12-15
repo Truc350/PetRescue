@@ -4,12 +4,14 @@ from .models import Order, ShippingAddress
 
 @login_required
 def checkout_shipping(request):
-    order, created = Order.objects.get_or_create(
-        user=request.user,
-        status="cart"
-    )
-    items = order.items.select_related("product")
+    order_id = request.session.get('checkout_order_id')
 
+    if not order_id:
+        # Nếu không có order trong session → redirect về buy_now hoặc giỏ hàng
+        return redirect("orders:cart_view")  # thay cart_view bằng view giỏ hàng của bạn
+
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    items = order.items.select_related("product")
     total = sum(item.price * item.quantity for item in items)
 
     if request.method == "POST":
@@ -28,14 +30,13 @@ def checkout_shipping(request):
         order.status = "pending"
         order.save()
 
-        return redirect("payments:checkout")
+        return redirect("orders:checkout_payment")
 
     return render(request, "frontend/delivery-infor.html", {
         "order": order,
-        "items": order.items.all(),
-        "saved_addresses": [],
+        "items": items,
         "total": total,
-
+        "saved_addresses": [],
     })
 
 from django.shortcuts import get_object_or_404
@@ -46,7 +47,7 @@ from .models import Order, OrderItem
 def buy_now(request, product_id):
     product = get_object_or_404(Product, id=product_id)
 
-    # Xóa cart cũ nếu có (optional)
+    # Xóa cart cũ nếu có
     Order.objects.filter(user=request.user, status="cart").delete()
 
     # Tạo order mới
@@ -59,6 +60,9 @@ def buy_now(request, product_id):
         quantity=1,
         price=product.price
     )
+
+    # Lưu order.id vào session
+    request.session['checkout_order_id'] = order.id
 
     return redirect("orders:checkout_shipping")
 
@@ -95,6 +99,7 @@ class CheckoutItem:
         self.subtotal = product.price * quantity
 
 
+@login_required
 def delivery_info(request):
     cart = request.session.get("cart", {})
     selected_ids = request.session.get("checkout_product_ids", [])
@@ -114,3 +119,88 @@ def delivery_info(request):
         "items": items,
         "total": total
     })
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .models import Order
+
+@login_required
+def checkout_payment(request):
+    order_id = request.session.get('checkout_order_id')
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+
+    items = order.items.select_related("product")
+    total = sum(item.price * item.quantity for item in items)
+
+    return render(request, "frontend/payment.html", {
+        "order": order,
+        "items": items,
+        "total": total
+    })
+
+from django.shortcuts import redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Order
+
+@login_required
+def complete_payment(request):
+    if request.method == "POST":
+        order_id = request.session.get('checkout_order_id')
+        order = get_object_or_404(Order, id=order_id, user=request.user)
+
+        payment_method = request.POST.get("payment_method")
+        if payment_method in ["cod", "vnpay"]:
+            order.status = "paid"
+        order.save()
+
+        if 'checkout_order_id' in request.session:
+            del request.session['checkout_order_id']
+
+        # Redirect trực tiếp bằng name của URL, không cần namespace
+        return redirect('personal-page')
+
+    return redirect('checkout_payment')
+
+# orders/views.py
+import json
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
+from my_app.models_Product import Product
+from .models import Order, OrderItem
+
+
+@require_POST
+@login_required
+def checkout_from_cart(request):
+    data = json.loads(request.body)
+    ids = data.get("ids", [])
+
+    if not ids:
+        return JsonResponse({"error": "no items"}, status=400)
+
+    cart = request.session.get("cart", {})
+
+    # ❌ Xóa order cart cũ
+    Order.objects.filter(user=request.user, status="cart").delete()
+
+    # ✅ Tạo order mới
+    order = Order.objects.create(user=request.user, status="cart")
+
+    for pid in ids:
+        pid = str(pid)
+        if pid in cart:
+            product = Product.objects.get(id=pid)
+
+            OrderItem.objects.create(
+                order=order,
+                product=product,
+                quantity=cart[pid]["quantity"],  # ✅ LẤY SỐ LƯỢNG
+                price=product.discount_price           # ✅ LẤY GIÁ TỪ DB
+            )
+
+    # ✅ Lưu order id vào session
+    request.session["checkout_order_id"] = order.id
+
+    return JsonResponse({"ok": True})
