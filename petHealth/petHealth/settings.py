@@ -36,7 +36,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'my_app', 'accounts','orders',
+    'my_app', 'accounts', 'orders',
+    'django.contrib.sites',  # cần thiết
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',  # provider Google
 ]
 
 MIDDLEWARE = [
@@ -45,8 +50,10 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 ]
 
 ROOT_URLCONF = 'petHealth.urls'
@@ -112,7 +119,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    BASE_DIR / 'my_app' / 'static',
+    BASE_DIR / "my_app" / "static",
 ]
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/homePage'  # 👈 giữ nguyên ở login
@@ -122,3 +129,22 @@ LOGOUT_REDIRECT_URL = '/login/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# cai dat google
+SITE_ID = 1
+# Cấu hình allauth
+# AUTHENTICATION_BACKENDS = [
+#     'django.contrib.auth.backends.ModelBackend',
+#     'allauth.account.auth_backends.AuthenticationBackend',
+# ]
+# Redirect sau login/logout
+LOGIN_REDIRECT_URL = '/'  # hoặc URL bạn muốn
+LOGOUT_REDIRECT_URL = '/'
+
+# Allauth settings
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'  # cho phép login bằng username hoặc email
+ACCOUNT_EMAIL_VERIFICATION = 'optional'  # không bắt buộc verify email
+SOCIALACCOUNT_QUERY_EMAIL = True
+SOCIALACCOUNT_AUTO_SIGNUP = True
