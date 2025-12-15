@@ -66,7 +66,7 @@ def getPersonal(request):
 
 
 from django.shortcuts import render
-from my_app.models_Product import Product
+from .models_Product import Product
 from django.db import models
 from django.db.models import Count
 
@@ -162,6 +162,7 @@ def wishlist(request):
 
 from django.shortcuts import render, get_object_or_404
 from .models_Product import Product, Category, Wishlist
+from django.db.models import Q
 
 
 def category_view(request, slug):
@@ -170,24 +171,28 @@ def category_view(request, slug):
 
     selected_prices = request.GET.getlist("price")
     selected_brands = request.GET.getlist("brand")
+    sort = request.GET.get("sort", "")
 
     # ===== LỌC GIÁ =====
     if selected_prices:
         price_q = Q()
         for p in selected_prices:
-            try:
-                min_price, max_price = p.split("-")
-                price_q |= Q(
-                    price__gte=int(min_price),
-                    price__lte=int(max_price)
-                )
-            except ValueError:
-                pass
+            min_price, max_price = p.split("-")
+            price_q |= Q(
+                price__gte=int(min_price),
+                price__lte=int(max_price)
+            )
         products = products.filter(price_q)
 
-        # ===== LỌC THƯƠNG HIỆU =====
-        if selected_brands:
-            products = products.filter(brand__in=selected_brands)
+    # ===== LỌC BRAND =====
+    if selected_brands:
+        products = products.filter(brand__in=selected_brands)
+
+    # ===== SORT =====
+    if sort == "price_asc":
+        products = products.order_by("price")
+    elif sort == "price_desc":
+        products = products.order_by("-price")
 
     if request.user.is_authenticated:
         liked_ids = set(
@@ -204,6 +209,7 @@ def category_view(request, slug):
         "liked_ids": liked_ids,
         "selected_prices": selected_prices,
         "selected_brands": selected_brands,
+        "sort": sort,
     })
 
 
