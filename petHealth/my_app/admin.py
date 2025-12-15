@@ -48,7 +48,66 @@ class ProductAdmin(admin.ModelAdmin):
 
     inlines = [ProductImageInline, ProductSizeInline]
 
+    # ===== PROMOTION THEO CATEGORY =====
+    def get_promotion(self, obj):
+        now = timezone.now()
 
+        # 1️⃣ promotion theo product
+        promo = obj.promotions.filter(
+            is_active=True,
+            start_date__lte=now,
+            end_date__gte=now,
+        ).order_by("-discount_percent").first()
+
+        if promo:
+            return f"-{promo.discount_percent}% (SP)"
+
+        # 2️⃣ promotion theo category
+        if obj.category:
+            promo = obj.category.promotions.filter(
+                is_active=True,
+                start_date__lte=now,
+                end_date__gte=now,
+            ).order_by("-discount_percent").first()
+
+            if promo:
+                return f"-{promo.discount_percent}% (DM)"
+
+        return "-"
+
+    get_promotion.short_description = "Khuyến mãi"
+
+    def final_price(self, obj):
+        now = timezone.now()
+
+        # 1️⃣ theo product
+        promo = obj.promotions.filter(
+            is_active=True,
+            start_date__lte=now,
+            end_date__gte=now,
+        ).order_by("-discount_percent").first()
+
+        if promo:
+            return int(obj.price * (100 - promo.discount_percent) / 100)
+
+        # 2️⃣ theo category
+        if obj.category:
+            promo = obj.category.promotions.filter(
+                is_active=True,
+                start_date__lte=now,
+                end_date__gte=now,
+            ).order_by("-discount_percent").first()
+
+            if promo:
+                return int(obj.price * (100 - promo.discount_percent) / 100)
+
+        # 3️⃣ fallback logic cũ
+        if obj.discount_price and obj.discount_price > 0:
+            return obj.discount_price
+
+        return obj.price
+
+    final_price.short_description = "Giá sau KM"
 # ======================
 # CATEGORY ADMIN
 # ======================
@@ -106,3 +165,49 @@ class WishlistAdmin(admin.ModelAdmin):
     list_display = ("user", "product", "created_at")
     search_fields = ("user__username", "product__name")
     ordering = ("-created_at",)
+
+
+from django.contrib import admin
+from django import forms
+from django.core.exceptions import ValidationError
+from .models_Product import Promotion, Product
+
+class PromotionAdminForm(forms.ModelForm):
+    class Meta:
+        model = Promotion
+        fields = "__all__"
+
+    def clean(self):
+        cleaned_data = super().clean()
+        categories = cleaned_data.get("categories")
+        products = cleaned_data.get("products")
+
+        if categories and products:
+            raise ValidationError(
+                "Chỉ chọn Danh mục HOẶC Sản phẩm, không được chọn cả hai."
+            )
+
+        if not categories and not products:
+            raise ValidationError(
+                "Phải chọn ít nhất 1 Danh mục hoặc 1 Sản phẩm."
+            )
+
+        return cleaned_data
+
+
+# admin.py
+from django.contrib import admin
+from django.utils import timezone
+from .models_Product import Promotion
+
+@admin.register(Promotion)
+class PromotionAdmin(admin.ModelAdmin):
+    form = PromotionAdminForm
+
+    list_display = ("name", "discount_percent", "is_active")
+    filter_horizontal = ("categories", "products")
+    list_filter = ("is_active",)
+    search_fields = ("name",)
+
+
+

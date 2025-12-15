@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
@@ -18,6 +19,7 @@ class Product(models.Model):
         null=True,
         blank=True
     )
+
 
     description = models.TextField(blank=True, null=True)
 
@@ -43,8 +45,17 @@ class Product(models.Model):
         return self.name
 
     def final_price(self):
-        """Trả về giá cuối cùng: giá giảm hoặc giá gốc"""
-        return self.discount_price if self.discount_price else self.price
+        now = timezone.now()
+        promo = self.category.promotions.filter(
+            is_active=True,
+            start_date__lte=now,
+            end_date__gte=now
+        ).first()
+
+        if promo:
+            return int(self.price * (100 - promo.discount_percent) / 100)
+
+        return self.price
 
     def discount_percent(self):
         """Tính % giảm tự động"""
@@ -72,6 +83,20 @@ class Product(models.Model):
         ).exclude(id=self.id)
         return same_category[:limit]
 
+
+
+    def get_active_promotion(self):
+        return self.promotions.filter(
+            is_active=True,
+            start_date__lte=timezone.now(),
+            end_date__gte=timezone.now(),
+        ).first()
+
+    def get_final_price(self):
+        promo = self.get_active_promotion()
+        if promo:
+            return int(self.price * (100 - promo.discount_percent) / 100)
+        return self.discount_price or self.price
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
@@ -132,3 +157,30 @@ class Wishlist(models.Model):
 
     def __str__(self):
         return f"{self.user.username} ❤️ {self.product.name}"
+
+
+# models.py
+from django.db import models
+from django.core.exceptions import ValidationError
+
+class Promotion(models.Model):
+    name = models.CharField(max_length=255)
+    discount_percent = models.PositiveIntegerField()
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    is_active = models.BooleanField(default=True)
+
+    categories = models.ManyToManyField(
+        Category,
+        blank=True,
+        related_name="promotions"
+    )
+
+    products = models.ManyToManyField(
+        Product,
+        blank=True,
+        related_name="promotions"
+    )
+
+    def __str__(self):
+        return self.name

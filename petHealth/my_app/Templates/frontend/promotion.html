@@ -1,8 +1,9 @@
 {% load static %}
+{% load humanize %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
     <title>Khuyến mãi</title>
 
 
@@ -25,255 +26,49 @@
 </header>
 
 <main class="khung-noi-dung">
-    <section class="danh-sach-flycam" id="danh-sach-flycam">
+    <section class="danh-sach-flycam">
 
-        <!-- Mỗi sản phẩm -->
+        {% for product in products %}
         <article class="the-san-pham">
-            <img class="anh-san-pham" src="https://paddy.vn/cdn/shop/files/preview_images/c024e722f9384a71acd2e31b4527e7a3.thumbnail.0000000000.jpg?v=1719993835" alt="Flycam Pro X">
+
+            <img class="anh-san-pham"
+                 src="{{ product.image }}"
+                 alt="{{ product.name }}">
+
             <div class="noi-dung-san-pham">
-                <h2 class="ten-san-pham">Nekko</h2>
-                <p class="mo-ta-san-pham">Pate Mèo Dạng Thạch Nekko Jelly 70g</p>
+                <h2 class="ten-san-pham">{{ product.brand }}</h2>
+                <p class="mo-ta-san-pham">{{ product.name }}</p>
+
                 <div class="gia-block">
-                    <span class="gia-moi">16.000₫</span>
-                    <span class="gia-cu">20.000₫</span>
+                    {% with final_price=product.get_final_price %}
+                    {% if final_price < product.price %}
+                    <span class="gia-moi">{{ product.get_final_price|intcomma }}₫</span>
+                    <span class="gia-cu">{{ product.price|intcomma }}₫</span>
+                    {% else %}
+                    <span class="gia-moi">{{ product.price|intcomma }}₫</span>
+                    {% endif %}
+                    {% endwith %}
                 </div>
+
                 <div class="hang-danh-gia">
                     <div class="danh-gia-sao">
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star"></i>
-
-                    </div>
-                    <i class="bi bi-heart tim-yeu-thich"></i>
-                </div>
-                <span class="so-danh-gia">(204 đánh giá)</span>
-                <a href="product-details.html">
-                <button class="nut-mua-ngay">Mua Ngay</button>
-                </a>
-            </div>
-        </article>
-
-        <article class="the-san-pham">
-            <img class="anh-san-pham" src="https://paddy.vn/cdn/shop/files/hat-me-o-tuna-cho-meo-truong-thanh-vi-ca-ngu.png?v=1704521688" alt="Flycam Mini S">
-            <div class="noi-dung-san-pham">
-                <h2 class="ten-san-pham">Me-O</h2>
-                <p class="mo-ta-san-pham">Hạt Cho Mèo Trưởng Thành Me-O Tuna Vị Cá Ngừ</p>
-                <div class="gia-block">
-                    <span class="gia-moi">26.000₫</span>
-                    <span class="gia-cu">33.000₫</span>
-                </div>
-                <div class="hang-danh-gia">
-                    <div class="danh-gia-sao">
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star"></i>
-                    </div>
-                    <i class="bi bi-heart tim-yeu-thich"></i>
-                </div>
-                <span class="so-danh-gia">(128 đánh giá)</span>
-                <a href="product-details.html">
-                <button class="nut-mua-ngay">Mua Ngay</button>
-                </a>
-            </div>
-        </article>
-
-        <article class="the-san-pham">
-            <img class="anh-san-pham" src="https://paddy.vn/cdn/shop/files/hat-cho-meo-truong-thanh-me-o-vi-hai-san.png?v=1705055338" alt="Flycam Ultra Max">
-            <div class="noi-dung-san-pham">
-                <h2 class="ten-san-pham">Me-O</h2>
-                <p class="mo-ta-san-pham">Hạt Cho Mèo Trưởng Thành Me-O Vị Hải Sản</p>
-                <div class="gia-block">
-                    <span class="gia-moi">26.000₫</span>
-                    <span class="gia-cu">35.000₫</span>
-                </div>
-                <div class="hang-danh-gia">
-                    <div class="danh-gia-sao">
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star"></i>
-                    </div>
-                    <i class="bi bi-heart tim-yeu-thich"></i>
-                </div>
-                <span class="so-danh-gia">(97 đánh giá)</span>
-                <a href="product-details.html">
-                <button class="nut-mua-ngay">Mua Ngay</button>
-                </a>
-            </div>
-        </article>
-
-        <article class="the-san-pham">
-            <img class="anh-san-pham" src="https://paddy.vn/cdn/shop/files/hat-me-o-tuna-cho-meo-truong-thanh-vi-ca-ngu.png?v=1704521688" alt="Flycam Sky Lite">
-            <div class="noi-dung-san-pham">
-                <h2 class="ten-san-pham">Me-O</h2>
-                <p class="mo-ta-san-pham">Hạt Cho Mèo Trưởng Thành Me-O Tuna Vị Cá Ngừ</p>
-                <div class="gia-block">
-                    <span class="gia-moi">27.000₫</span>
-                    <span class="gia-cu">36.000₫</span>
-                </div>
-                <div class="hang-danh-gia">
-                    <div class="danh-gia-sao">
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star"></i>
-                    </div>
-                    <i class="bi bi-heart tim-yeu-thich"></i>
-                </div>
-                <span class="so-danh-gia">(112 đánh giá)</span>
-                <a href="product-details.html">
-                <button class="nut-mua-ngay">Mua Ngay</button>
-                </a>
-            </div>
-        </article>
-
-        <article class="the-san-pham">
-            <img class="anh-san-pham" src="https://paddy.vn/cdn/shop/files/sup-thuong-cho-meo-silver-spoon-thailand-56g-4-tuyp.jpg?v=1758599228" alt="Flycam Explorer 5G">
-            <div class="noi-dung-san-pham">
-                <h2 class="ten-san-pham">Royal Canin</h2>
-                <p class="mo-ta-san-pham">Thức Ăn Hạt Mới Cho Mèo Lông Dài Persian</p>
-                <div class="gia-block">
-                    <span class="gia-moi">390.000₫</span>
-                    <span class="gia-cu">450.000₫</span>
-                </div>
-                <div class="hang-danh-gia">
-                    <div class="danh-gia-sao">
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star"></i>
-                    </div>
-                    <i class="bi bi-heart tim-yeu-thich"></i>
-                </div>
-                <span class="so-danh-gia">(156 đánh giá)</span>
-                <a href="product-details.html">
-                <button class="nut-mua-ngay">Mua Ngay</button>
-                </a>
-            </div>
-        </article>
-
-        <!-- 6. Flycam Vision Air -->
-        <article class="the-san-pham">
-            <img class="anh-san-pham" src="https://paddy.vn/cdn/shop/files/preview_images/c024e722f9384a71acd2e31b4527e7a3.thumbnail.0000000000.jpg?v=1719993835" alt="Flycam Vision Air">
-            <div class="noi-dung-san-pham">
-                <h2 class="ten-san-pham">Nekko</h2>
-                <p class="mo-ta-san-pham">Pate Mèo Dạng Thạch Nekko Jelly 70g</p>
-                <div class="gia-block">
-                    <span class="gia-moi">16.000₫</span>
-                    <span class="gia-cu">20.000₫</span>
-                </div>
-                <div class="hang-danh-gia">
-                    <div class="danh-gia-sao">
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-half"></i>
-                    </div>
-                    <i class="bi bi-heart tim-yeu-thich"></i>
-                </div>
-                <span class="so-danh-gia">(87 đánh giá)</span>
-                <a href="product-details.html">
-                <button class="nut-mua-ngay">Mua Ngay</button>
-                </a>
-            </div>
-        </article>
-
-        <!-- 7. Flycam Nano Z -->
-        <article class="the-san-pham">
-            <img class="anh-san-pham" src="https://paddy.vn/cdn/shop/files/hat-me-o-tuna-cho-meo-truong-thanh-vi-ca-ngu.png?v=1704521688" alt="Flycam Nano Z">
-            <div class="noi-dung-san-pham">
-                <h2 class="ten-san-pham">Me-O</h2>
-                <p class="mo-ta-san-pham">Hạt Cho Mèo Trưởng Thành Me-O Tuna Vị Cá Ngừ</p>
-                <div class="gia-block">
-                    <span class="gia-moi">26.000₫</span>
-                    <span class="gia-cu">33.000₫</span>
-                </div>
-                <div class="hang-danh-gia">
-                    <div class="danh-gia-sao">
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star"></i>
-                        <i class="bi bi-star"></i>
-                    </div>
-                    <i class="bi bi-heart tim-yeu-thich"></i>
-                </div>
-                <span class="so-danh-gia">(65 đánh giá)</span>
-                <a href="product-details.html">
-                <button class="nut-mua-ngay">Mua Ngay</button>
-                </a>
-            </div>
-        </article>
-
-        <!-- 8. Flycam Storm X -->
-        <article class="the-san-pham">
-            <img class="anh-san-pham" src="https://paddy.vn/cdn/shop/files/hat-me-o-tuna-cho-meo-truong-thanh-vi-ca-ngu.png?v=1704521688" alt="Flycam Storm X">
-            <div class="noi-dung-san-pham">
-                <h2 class="ten-san-pham">Me-O</h2>
-                <p class="mo-ta-san-pham">Hạt Cho Mèo Trưởng Thành Me-O Tuna Vị Cá Ngừ</p>
-                <div class="gia-block">
-                    <span class="gia-moi">26.000₫</span>
-                    <span class="gia-cu">33.000₫</span>
-                </div>
-                <div class="hang-danh-gia">
-                    <div class="danh-gia-sao">
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star"></i>
-                    </div>
-                    <i class="bi bi-heart tim-yeu-thich"></i>
-                </div>
-                <span class="so-danh-gia">(143 đánh giá)</span>
-                <a href="product-details.html">
-                <button class="nut-mua-ngay">Mua Ngay</button>
-                </a>
-            </div>
-        </article>
-
-        <!-- 9. Flycam Phantom V -->
-        <article class="the-san-pham">
-            <img class="anh-san-pham" src="https://paddy.vn/cdn/shop/files/hat-me-o-tuna-cho-meo-truong-thanh-vi-ca-ngu.png?v=1704521688" alt="Flycam Phantom V">
-            <div class="noi-dung-san-pham">
-                <h2 class="ten-san-pham">Me-O</h2>
-                <p class="mo-ta-san-pham">Hạt Cho Mèo Trưởng Thành Me-O Tuna Vị Cá Ngừ</p>
-                <div class="gia-block">
-                    <span class="gia-moi">27.000₫</span>
-                    <span class="gia-cu">36.000₫</span>
-                </div>
-                <div class="hang-danh-gia">
-                    <div class="danh-gia-sao">
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
-                        <i class="bi bi-star"></i>
-                    </div>
-                    <i class="bi bi-heart tim-yeu-thich"></i>
-                </div>
-                <span class="so-danh-gia">(172 đánh giá)</span>
-                <a href="product-details.html">
-                <button class="nut-mua-ngay">Mua Ngay</button>
-                </a>
-            </div>
-        </article>
-
-        <!-- 10. Flycam Infinity One -->
-        <article class="the-san-pham">
-            <img class="anh-san-pham" src="https://paddy.vn/cdn/shop/files/sup-thuong-cho-meo-silver-spoon-thailand-56g-4-tuyp.jpg?v=1758599228" alt="Flycam Infinity One">
-            <div class="noi-dung-san-pham">
-                <h2 class="ten-san-pham">Royal Canin</h2>
-                <p class="mo-ta-san-pham">Thức Ăn Hạt Mới Cho Mèo Lông Dài Persian</p>
-                <div class="gia-block">
-                    <span class="gia-moi">390.000₫</span>
-                    <span class="gia-cu">450.000₫</span>
-                </div>
-                <div class="hang-danh-gia">
-                    <div class="danh-gia-sao">
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
                         <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star"></i>
                     </div>
                     <i class="bi bi-heart tim-yeu-thich"></i>
                 </div>
-                <span class="so-danh-gia">(312 đánh giá)</span>
-                <a href="product-details.html">
-                <button class="nut-mua-ngay">Mua Ngay</button>
+
+                <a href="{% url 'product_detail' product.slug %}">
+                    <button class="nut-mua-ngay">Mua Ngay</button>
                 </a>
             </div>
         </article>
-
+        {% empty %}
+        <p>Hiện chưa có sản phẩm khuyến mãi</p>
+        {% endfor %}
 
     </section>
 
