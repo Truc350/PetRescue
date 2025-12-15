@@ -185,6 +185,7 @@ body {
 /* --- Nút mua ngay --- */
 .nut-mua-ngay {
     align-self: center;
+    align-items: center;
     margin-top: 10px;
     background-color: #0051c6;
     color: #fff;

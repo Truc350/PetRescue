@@ -141,22 +141,41 @@
                 {% for product in favorite_products %}
                 <div class="col-6 col-md-4 col-lg-3 flex-shrink-0">
                     <div class="product-card bg-white rounded shadow-sm overflow-hidden">
-                        <img src="{{ product.image }}"
-                             class="w-100" style="height: 200px; object-fit: contain;">
+
+                        <!-- CLICK HÌNH → CHI TIẾT -->
+                        <a href="{% url 'product_detail' product.slug %}">
+                            <img src="{{ product.image }}"
+                                 class="w-100"
+                                 style="height: 200px; object-fit: contain;"
+                                 alt="{{ product.name }}">
+                        </a>
+
                         <div class="p-3">
                             <div class="product-header d-flex justify-content-between align-items-center mb-2">
                                 <p class="small text-muted mb-0">{{ product.brand }}</p>
-                                <button class="btn-wishlist"><i class="bi bi-heart"></i></button>
+                                <button class="btn-wishlist">
+                                    <i class="bi bi-heart"></i>
+                                </button>
                             </div>
 
-                            <p class="fw-medium small line-clamp-2">{{ product.name }}</p>
+                            <!-- CLICK TÊN → CHI TIẾT -->
+                            <a href="{% url 'product_detail' product.slug %}"
+                               class="text-decoration-none text-dark">
+                                <p class="fw-medium small line-clamp-2">{{ product.name }}</p>
+                            </a>
+
                             <p class="text-danger fw-bold">{{ product.price|intcomma }}đ</p>
 
-                            <a href="#" class="btn btn-danger w-100 rounded-pill">Mua ngay</a>
+                            <!-- MUA NGAY -->
+                            <a href="{% url 'orders:buy_now' product.id %}"
+                               class="btn btn-danger w-100 rounded-pill">
+                                Mua ngay
+                            </a>
                         </div>
                     </div>
                 </div>
                 {% endfor %}
+
             </div>
 
         </div>
@@ -189,11 +208,21 @@
                     <span class="badge bg-danger position-absolute top-0 start-0 m-2">Giảm giá</span>
 
                     <div class="product-card bg-white rounded shadow-sm overflow-hidden">
-                        <img src="{{ product.image }}"
-                             class="w-100" style="height: 200px; object-fit: contain;">
+
+                        <!-- CLICK HÌNH -->
+                        <a href="{% url 'product_detail' product.slug %}">
+                            <img src="{{ product.image }}"
+                                 class="w-100"
+                                 style="height: 200px; object-fit: contain;">
+                        </a>
+
                         <div class="p-3">
                             <p class="small text-muted">{{ product.brand }}</p>
-                            <p class="fw-medium small line-clamp-2">{{ product.name }}</p>
+
+                            <a href="{% url 'product_detail' product.slug %}"
+                               class="text-decoration-none text-dark">
+                                <p class="fw-medium small line-clamp-2">{{ product.name }}</p>
+                            </a>
 
                             <del class="small text-muted">{{ product.price|intcomma }}đ</del>
 
@@ -205,12 +234,16 @@
                             {% endif %}
                             {% endwith %}
 
-
-                            <a href="#" class="btn btn-danger w-100 rounded-pill">Mua ngay</a>
+                            <!-- MUA NGAY -->
+                            <a href="{% url 'orders:buy_now' product.id %}"
+                               class="btn btn-danger w-100 rounded-pill">
+                                Mua ngay
+                            </a>
                         </div>
                     </div>
                 </div>
                 {% endfor %}
+
             </div>
 
 
@@ -243,14 +276,29 @@
                     <span class="badge bg-success position-absolute top-0 start-0 m-2">Mới</span>
 
                     <div class="product-card bg-white rounded shadow-sm overflow-hidden">
-                        <img src="{{ product.image }}"
-                             class="w-100" style="height: 200px; object-fit: contain;">
+
+                        <!-- CLICK HÌNH -->
+                        <a href="{% url 'product_detail' product.slug %}">
+                            <img src="{{ product.image }}"
+                                 class="w-100"
+                                 style="height: 200px; object-fit: contain;">
+                        </a>
+
                         <div class="p-3">
                             <p class="small text-muted">{{ product.brand }}</p>
-                            <p class="fw-medium small line-clamp-2">{{ product.name }}</p>
+
+                            <a href="{% url 'product_detail' product.slug %}"
+                               class="text-decoration-none text-dark">
+                                <p class="fw-medium small line-clamp-2">{{ product.name }}</p>
+                            </a>
+
                             <p class="text-danger fw-bold">{{ product.price|intcomma }}đ</p>
 
-                            <a href="#" class="btn btn-danger w-100 rounded-pill">Mua ngay</a>
+                            <!-- MUA NGAY -->
+                            <a href="{% url 'orders:buy_now' product.id %}"
+                               class="btn btn-danger w-100 rounded-pill">
+                                Mua ngay
+                            </a>
                         </div>
                     </div>
                 </div>

@@ -27,22 +27,30 @@
 
 <main class="khung-noi-dung">
     <section class="danh-sach-flycam">
-
         {% for product in products %}
         <article class="the-san-pham">
 
-            <img class="anh-san-pham"
-                 src="{{ product.image }}"
-                 alt="{{ product.name }}">
+            <a href="{% url 'product_detail' product.slug %}">
+                <img class="anh-san-pham"
+                     src="{{ product.image }}"
+                     alt="{{ product.name }}">
+            </a>
 
             <div class="noi-dung-san-pham">
-                <h2 class="ten-san-pham">{{ product.brand }}</h2>
-                <p class="mo-ta-san-pham">{{ product.name }}</p>
+                <a href="{% url 'product_detail' product.slug %}"
+                   class="text-decoration-none text-dark">
+                    <h2 class="ten-san-pham">{{ product.brand }}</h2>
+                </a>
+
+                <a href="{% url 'product_detail' product.slug %}"
+                   class="text-decoration-none text-dark">
+                    <p class="mo-ta-san-pham">{{ product.name }}</p>
+                </a>
 
                 <div class="gia-block">
                     {% with final_price=product.get_final_price %}
                     {% if final_price < product.price %}
-                    <span class="gia-moi">{{ product.get_final_price|intcomma }}₫</span>
+                    <span class="gia-moi">{{ final_price|intcomma }}₫</span>
                     <span class="gia-cu">{{ product.price|intcomma }}₫</span>
                     {% else %}
                     <span class="gia-moi">{{ product.price|intcomma }}₫</span>
@@ -61,15 +69,19 @@
                     <i class="bi bi-heart tim-yeu-thich"></i>
                 </div>
 
-                <a href="{% url 'product_detail' product.slug %}">
-                    <button class="nut-mua-ngay">Mua Ngay</button>
-                </a>
+                <div align="center">
+                    <a href="{% url 'orders:buy_now' product.id %}">
+                        <button class="nut-mua-ngay">Mua Ngay</button>
+                    </a>
+                </div>
+
+
             </div>
         </article>
-        {% empty %}
-        <p>Hiện chưa có sản phẩm khuyến mãi</p>
-        {% endfor %}
 
+        {% empty %}
+        <p class="text-center text-muted">Hiện chưa có sản phẩm khuyến mãi</p>
+        {% endfor %}
     </section>
 
 
