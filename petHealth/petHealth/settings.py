@@ -112,7 +112,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    BASE_DIR / "my_app" / "static",
+    BASE_DIR / 'my_app' / 'static',
 ]
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/homePage'  # 👈 giữ nguyên ở login
