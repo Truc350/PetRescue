@@ -111,17 +111,35 @@
 
     <!--    Nội dung chính-->
     <div class="content">
-
         <!--toolbar sắp xếp-->
         <div class="toolbar">
-            <div class="sort-by">
-                <span>Sắp xếp theo:</span>
-                <select>
-                    <option>Bán chạy</option>
-                    <option>Giá: Thấp đến cao</option>
-                    <option>Giá: Cao đến thấp</option>
-                </select>
-            </div>
+            <form method="get" action="{% url 'category-detail' category.slug %}">
+                {% for p in selected_prices %}
+                <input type="hidden" name="price" value="{{ p }}">
+                {% endfor %}
+
+                {% for b in selected_brands %}
+                <input type="hidden" name="brand" value="{{ b }}">
+                {% endfor %}
+
+                <div class="sort-by">
+                    <span>Sắp xếp theo:</span>
+                    <select name="sort"
+                            id="sortSelect"
+                            class="form-select form-select-sm w-auto d-inline-block "
+                            style="min-width: 160px;">
+                        <option value="">Bán chạy</option>
+                        <option value="price_asc"
+                                {% if sort == "price_asc" %}selected{% endif %}>
+                        Giá: Thấp đến cao
+                        </option>
+                        <option value="price_desc"
+                                {% if sort == "price_desc" %}selected{% endif %}>
+                        Giá: Cao đến thấp
+                        </option>
+                    </select>
+                </div>
+            </form>
         </div>
 
 
@@ -248,5 +266,15 @@
     });
 </script>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const sortSelect = document.getElementById("sortSelect");
+        if (sortSelect) {
+            sortSelect.addEventListener("change", function () {
+                this.form.submit();
+            });
+        }
+    });
+</script>
 
 </html>
