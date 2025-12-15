@@ -5,9 +5,6 @@ import json
 from django.http import JsonResponse
 
 
-# Create your views here.
-def get_home(request):
-    return render(request, 'home.html')  # tra ve trang my_app trong trang web
 
 
 def getChatWithAI(request):
@@ -70,8 +67,33 @@ def getPersonal(request):
     return render(request, 'frontend/personal-page.html')
 
 
+from django.shortcuts import render
+from my_app.models_Product import Product
+from django.db import models
+from django.db.models import Count
+
+
 def getHomePage(request):
-    return render(request, 'frontend/homePage.html')
+    favorite_products = (
+        Product.objects
+        .annotate(wishlist_count=Count("wishlisted_users"))
+        .order_by("-wishlist_count")[:10]
+    )
+
+    sale_products = Product.objects.filter(
+        discount_price__isnull=False
+    ).order_by('-discount_price')[:10]
+
+    new_products = Product.objects.all().order_by('-id')[:10]
+
+    context = {
+        'favorite_products': favorite_products,
+        'sale_products': sale_products,
+        'new_products': new_products,
+    }
+
+    return render(request, 'frontend/homePage.html', context)
+
 
 
 def getDashBoard(request):
@@ -97,9 +119,28 @@ def getHealthCat(request):
 def getCatToilet(request):
     return render(request, 'frontend/cat-toilet.html')
 
+from django.utils import timezone
+from .models_Product import Promotion
+
 
 def getPromotion(request):
-    return render(request, 'frontend/promotion.html')
+    now = timezone.now()
+
+    promotions = Promotion.objects.filter(
+        is_active=True,
+        start_date__lte=now,
+        end_date__gte=now
+    ).prefetch_related("products", "categories")
+
+    products = Product.objects.filter(
+        promotions__in=promotions
+    ).distinct()
+
+    return render(request, 'frontend/promotion.html', {
+        "promotions": promotions,
+        "products": products,
+    })
+
 
 
 def getDetailProduct(request):
@@ -147,7 +188,6 @@ def category_view(request, slug):
     })
 
 from django.shortcuts import render, get_object_or_404
-from .models_Product import Product, ProductReview
 from .models_Product import Wishlist
 
 def product_detail(request, slug):
@@ -349,5 +389,3 @@ def search_view(request):
         "products": products,
         "total": products.count(),
     })
-def home(request):
-    return render(request, "frontend/homePage.html")

@@ -5,7 +5,6 @@ from . import views
 # from my_app.views import get_home
 urlpatterns = [
     path("search/", views.search_view, name="search"),
-    path('home', views.get_home),
     path('ChatWithAI', views.getChatWithAI),
     path('footer', views.getFooter),
     path('header', views.getHeader),
@@ -21,7 +20,9 @@ urlpatterns = [
     path('overviewAdmin', views.getProfileAdmin),
     path('DogKibbleView', views.getDogKibbleView),
     path('personal-page', views.getPersonal, name='personal-page'),
-    path('homePage', views.getHomePage, name='homePage'),
+    path('', views.getHomePage, name='homePage'),  # root
+    path('homePage/', views.getHomePage, name='homePage'),
+
     path('dashboard', views.getDashBoard),
     path('health-dog', views.getHealthDog),
     path('policy-purchases', views.getPolicy, name='policy-purchases'),

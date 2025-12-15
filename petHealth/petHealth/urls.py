@@ -25,7 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('accounts.urls')),
     # 👇 ROOT URL
-    path('', my_views.home, name='home'),
+    path('', my_views.getHomePage, name='homePage'),
     # path('home', get_home)
     path('', include('my_app.urls')),
     path('', include('orders.urls')),
