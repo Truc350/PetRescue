@@ -100,7 +100,7 @@ body {
 }
 
 .page-container {
-    background-image: url("https://export-download.canva.com/OKk_8/DAG6IwOKk_8/3/0/0001-6652302788220292204.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAQYCGKMUH5AO7UJ26%2F20251130%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20251130T012222Z&X-Amz-Expires=14784&X-Amz-Signature=dd75386bf7114558ee1863244178c87b2d80dd18ff280a4aac17400804cb5794&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%2A%3DUTF-8%27%27Yellow%2520Blue%2520Cute%2520Illustration%2520Pet%2520Shop%2520Presentation.png&response-expires=Sun%2C%2030%20Nov%202025%2005%3A28%3A46%20GMT"); /* đổi thành ảnh bạn muốn */
+    background-image: url("https://png.pngtree.com/thumb_back/fw800/background/20220827/pngtree-pet-shop-cat-and-dog-vector-background-image_1462686.jpg"); /* đổi thành ảnh bạn muốn */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
