@@ -20,6 +20,7 @@
 
             <form method="post" novalidate>
                 {% csrf_token %}
+                {{ form.non_field_errors }}
 
                 <!-- Ô NHẬP TÀI KHOẢN -->
                 <div class="mb-3 text-start">
