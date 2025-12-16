@@ -11,7 +11,7 @@ from .forms import CustomAuthenticationForm, RegisterForm
 class CustomLoginView(LoginView):
     template_name = 'frontend/login.html'
     form_class = CustomAuthenticationForm
-    redirect_authenticated_user = True
+    redirect_authenticated_user = False
 
 
 def forgot_password(request):

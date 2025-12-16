@@ -121,9 +121,9 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / "my_app" / "static",
 ]
-LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = '/homePage'  # 👈 giữ nguyên ở login
-LOGOUT_REDIRECT_URL = '/login/'
+# LOGIN_URL = '/login/'
+# LOGIN_REDIRECT_URL = '/homePage'  # 👈 giữ nguyên ở login
+# LOGOUT_REDIRECT_URL = '/login/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -133,13 +133,20 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # cai dat google
 SITE_ID = 1
 # Cấu hình allauth
-# AUTHENTICATION_BACKENDS = [
-#     'django.contrib.auth.backends.ModelBackend',
-#     'allauth.account.auth_backends.AuthenticationBackend',
-# ]
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
 # Redirect sau login/logout
-LOGIN_REDIRECT_URL = '/'  # hoặc URL bạn muốn
-LOGOUT_REDIRECT_URL = '/'
+# URL login mặc định
+LOGIN_URL = '/accounts/login/'
+
+# Sau khi login thành công quay về trang chủ
+LOGIN_REDIRECT_URL = '/'
+
+# Sau khi logout quay về trang login
+LOGOUT_REDIRECT_URL = '/accounts/login/'
 
 # Allauth settings
 ACCOUNT_EMAIL_REQUIRED = True

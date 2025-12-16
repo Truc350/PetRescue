@@ -23,11 +23,9 @@ from my_app import views as my_views
 # from my_app.views import get_home
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('accounts.urls')),
-    # 👇 ROOT URL
-    # path('', my_views.getHomePage, name='homePage'),
-    # path('home', get_home)
-    path('', include('my_app.urls')),
     path('checkout/', include('orders.urls')),
-    path('accounts/', include('allauth.urls')),  # thêm allauth
+    path('accounts/', include('accounts.urls')),  # để cuối cùng
+    path('accounts/', include('allauth.urls')),
+    path('', include('my_app.urls')),
 ]
+
