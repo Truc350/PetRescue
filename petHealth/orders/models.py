@@ -2,18 +2,17 @@ from django.db import models
 
 # Create your models here.
 from django.contrib.auth.models import User
-from my_app.models_Product import Product   # ✅ ĐÚNG APP
+from my_app.models_Product import Product
 class Order(models.Model):
     STATUS_CHOICES = [
-        ("cart", "Giỏ hàng"),
-        ("shipping", "Đang nhập địa chỉ"),
-        ("pending", "Chờ thanh toán"),
-        ("paid", "Đã thanh toán"),
-        ("cancel", "Đã hủy"),
+        ("pending", "Chờ xác nhận"),  # admin xác nhận
+        ("shipping", "Đang giao"),  # admin giao hàng
+        ("delivered", "Đã giao"),  # hoàn tất
+        ("cancel", "Đã hủy"),  # admin hoặc user hủy
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="cart")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
     total_price = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
