@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
+from .models import UserProfile   # import model UserProfile để lưu thông tin bổ sung
 
 
 class CustomAuthenticationForm(AuthenticationForm):
@@ -55,7 +56,7 @@ class RegisterForm(UserCreationForm):
         })
     )
     email = forms.EmailField(
-        label="email",
+        label="Email",
         required=True,
         widget=forms.EmailInput(attrs={
             'placeholder': 'Nhập email',
@@ -63,19 +64,18 @@ class RegisterForm(UserCreationForm):
         })
     )
     agree_terms = forms.BooleanField(
-        label="Tôi đồng ý với điều khoản và chính sách này ",
+        label="Tôi đồng ý với điều khoản và chính sách này",
         required=True,
         widget=forms.CheckboxInput()
     )
 
     class Meta:
         model = User
-        # fields = ['username', 'email', 'password1', 'password2', 'fullname', 'birthday', 'phone', 'agree_terms']
         fields = ['username', 'email', 'password1', 'password2']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # đổi label và thêm attrs cho  chocacsfield mặc định
+        # tuỳ chỉnh label và placeholder cho field mặc định
         self.fields['username'].label = 'Tên đăng nhập'
         self.fields['username'].widget.attrs.update({
             'placeholder': 'Nhập vào tên đăng nhập',
@@ -91,4 +91,18 @@ class RegisterForm(UserCreationForm):
             'placeholder': 'Nhập lại mật khẩu',
             'class': 'form-control',
         })
-        self.fields['password1'].help_text = "Mật khẩu tối thiếu 6 ký tự , có ít nhất một số và một chữ cái"
+        self.fields['password1'].help_text = "Mật khẩu tối thiểu 6 ký tự, có ít nhất một số và một chữ cái"
+
+    def save(self, commit=True):
+        # tạo user trước
+        user = super().save(commit)
+        # tạo hoặc cập nhật profile đi kèm
+        UserProfile.objects.update_or_create(
+            user=user,
+            defaults={
+                'fullname': self.cleaned_data['fullname'],
+                'birthday': self.cleaned_data['birthday'],
+                'phone': self.cleaned_data['phone'],
+            }
+        )
+        return user
