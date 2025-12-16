@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'my_app', 'accounts', 'orders',
+    'my_app', 'accounts', 'orders.apps.OrdersConfig',
     'django.contrib.sites',  # cần thiết
     'allauth',
     'allauth.account',
