@@ -16,6 +16,18 @@ class Order(models.Model):
     total_price = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def save(self, *args, **kwargs):
+        valid = dict(self.STATUS_CHOICES).keys()
+        if self.status not in valid:
+            self.status = "pending"
+        super().save(*args, **kwargs)
+
+    def calculate_total(self):
+        return sum(
+            item.price * item.quantity
+            for item in self.items.all()
+        )
+
     def __str__(self):
         return f"Order #{self.id}"
 

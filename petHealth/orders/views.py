@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Order, ShippingAddress
 
+
 @login_required
 def checkout_shipping(request):
     order_id = request.session.get('checkout_order_id')
@@ -39,21 +40,21 @@ def checkout_shipping(request):
         "saved_addresses": [],
     })
 
+
 from django.shortcuts import get_object_or_404
 from my_app.models_Product import Product
 from .models import Order, OrderItem
+
 
 @login_required
 def buy_now(request, product_id):
     product = get_object_or_404(Product, id=product_id)
 
-    # Xóa cart cũ nếu có
-    Order.objects.filter(user=request.user, status="cart").delete()
+    order = Order.objects.create(
+        user=request.user,
+        status="pending"  # rõ ràng
+    )
 
-    # Tạo order mới
-    order = Order.objects.create(user=request.user, status="cart")
-
-    # Thêm sản phẩm vào order
     OrderItem.objects.create(
         order=order,
         product=product,
@@ -61,14 +62,14 @@ def buy_now(request, product_id):
         price=product.price
     )
 
-    # Lưu order.id vào session
     request.session['checkout_order_id'] = order.id
-
     return redirect("orders:checkout_shipping")
+
 
 import json
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
+
 
 @require_POST
 def save_checkout_items(request):
@@ -80,17 +81,9 @@ def save_checkout_items(request):
 
     return JsonResponse({"ok": True})
 
-from my_app.models_Product import Product
-
-def delivery_info(request):
-    ids = request.session.get("checkout_product_ids", [])
-    products = Product.objects.filter(id__in=ids)
-
-    return render(request, "frontend/delivery-infor.html", {
-        "products": products
-    })
 
 from my_app.models_Product import Product
+
 
 class CheckoutItem:
     def __init__(self, product, quantity):
@@ -120,9 +113,11 @@ def delivery_info(request):
         "total": total
     })
 
+
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Order
+
 
 @login_required
 def checkout_payment(request):
@@ -138,9 +133,11 @@ def checkout_payment(request):
         "total": total
     })
 
+
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Order
+
 
 @login_required
 def complete_payment(request):
@@ -148,9 +145,9 @@ def complete_payment(request):
         order_id = request.session.get('checkout_order_id')
         order = get_object_or_404(Order, id=order_id, user=request.user)
 
-        payment_method = request.POST.get("payment_method")
-        if payment_method in ["cod", "vnpay"]:
-            order.status = "paid"
+        # ✅ LƯU TOTAL VÀO ORDER
+        order.total_price = order.calculate_total()
+        order.status = "pending"
         order.save()
 
         if 'checkout_order_id' in request.session:
@@ -160,6 +157,7 @@ def complete_payment(request):
         return redirect('personal-page')
 
     return redirect('checkout_payment')
+
 
 # orders/views.py
 import json
@@ -182,11 +180,10 @@ def checkout_from_cart(request):
 
     cart = request.session.get("cart", {})
 
-    # ❌ Xóa order cart cũ
-    Order.objects.filter(user=request.user, status="cart").delete()
-
-    # ✅ Tạo order mới
-    order = Order.objects.create(user=request.user, status="cart")
+    order = Order.objects.create(
+        user=request.user,
+        status="pending"
+    )
 
     for pid in ids:
         pid = str(pid)
@@ -197,8 +194,15 @@ def checkout_from_cart(request):
                 order=order,
                 product=product,
                 quantity=cart[pid]["quantity"],  # ✅ LẤY SỐ LƯỢNG
-                price=product.discount_price           # ✅ LẤY GIÁ TỪ DB
+                price=product.discount_price  # ✅ LẤY GIÁ TỪ DB
             )
+
+            # ✅ XÓA SẢN PHẨM KHỎI CART
+            del cart[pid]
+
+        # ✅ LƯU LẠI CART
+    request.session["cart"] = cart
+    request.session.modified = True
 
     # ✅ Lưu order id vào session
     request.session["checkout_order_id"] = order.id
