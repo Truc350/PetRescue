@@ -188,7 +188,6 @@
 
                     <tbody>
                     {% for order in orders %}
-                    {% if order.status != "cancel" %}
                     <tr data-status="{{ order.status }}">
                         <td>#{{ order.id }}</td>
                         <td>{{ order.created_at|date:"d/m/Y H:i" }}</td>
@@ -228,7 +227,6 @@
 
                         </td>
                     </tr>
-                    {% endif %}
                     {% empty %}
                     <tr>
                         <td colspan="5" class="text-center">Chưa có đơn hàng</td>
@@ -363,150 +361,59 @@
     </div>
 </div>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const params = new URLSearchParams(window.location.search);
-        const tab = params.get("tab");
+document.addEventListener("DOMContentLoaded", function () {
 
-        if (tab === "orders") {
+    // ====== SIDEBAR ======
+    const menuItems = document.querySelectorAll('.sidebar .menu li');
+    const sections = document.querySelectorAll('.content .section');
 
-            // ❗ TẮT TẤT CẢ
-            document.querySelectorAll(".section")
-                .forEach(s => s.classList.remove("active"));
+    function activateSection(sectionId) {
+        menuItems.forEach(i => i.classList.remove("active"));
+        sections.forEach(s => s.classList.remove("active"));
 
-            document.querySelectorAll(".sidebar .menu li")
-                .forEach(li => li.classList.remove("active"));
+        const menu = document.querySelector(`[data-section="${sectionId}"]`);
+        const section = document.getElementById(sectionId + "-section");
 
-            // ✅ BẬT ĐƠN MUA
-            document.getElementById("orders-section").classList.add("active");
-            document.querySelector('li[data-section="orders"]').classList.add("active");
+        if (menu && section) {
+            menu.classList.add("active");
+            section.classList.add("active");
         }
-    });
+    }
 
-        /* ============ MENU SIDEBAR ============ */
-        const menuItems = document.querySelectorAll('.sidebar .menu li');
-        const sections = document.querySelectorAll('.content .section');
+    // ====== READ URL TAB ======
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get("tab");
 
-        menuItems.forEach(item => {
-            item.addEventListener('click', e => {
-                e.preventDefault();
+    if (tab === "orders") {
+        activateSection("orders");
+    }
 
-                menuItems.forEach(i => i.classList.remove('active'));
-                sections.forEach(s => s.classList.remove('active'));
-
-                item.classList.add('active');
-
-                const sectionId = item.dataset.section;
-                document.getElementById(sectionId + '-section').classList.add('active');
-            });
-        });
-
-        /* ============ XEM CHI TIẾT ĐƠN ============ */
-        let currentOrderId = null;
-
-        function showOrderDetail(orderId) {
-            currentOrderId = orderId;
-
-            document.getElementById("order-list").style.display = "none";
-            document.getElementById("order-detail").style.display = "block";
-
-            // Update text theo mã đơn
-            const dateText = document.querySelector(".order-date strong");
-            if (dateText) {
-                dateText.textContent = "03 tháng 11 năm 2025 - Đơn #" + orderId;
-            }
-        }
-
-        /* ===== QUAY LẠI DANH SÁCH ===== */
-        function showOrderList() {
-            document.getElementById("order-detail").style.display = "none";
-            document.getElementById("order-list").style.display = "block";
-        }
-
-        /* ============ MODAL HUỶ ĐƠN ============ */
-        function cancelOrder(orderId) {
-            currentOrderId = orderId;
-
-            document.getElementById("cancelReason").value = "";
-
-            const modal = document.getElementById("cancelModal");
-            modal.style.display = "block";
-            modal.classList.add("show");
-        }
-
-        /* ===== ĐÓNG MODAL ===== */
-        function closeCancelModal() {
-            const modal = document.getElementById("cancelModal");
-            modal.classList.remove("show");
-            modal.style.display = "none";
-        }
-
-        /* ===== XÁC NHẬN HUỶ ===== */
-        function confirmCancelOrder() {
-            const reason = document.getElementById("cancelReason").value.trim();
-
-            if (reason === "") {
-                alert("Vui lòng nhập lý do hủy!");
-                return;
-            }
-
-            alert("✅ Đã hủy đơn #" + currentOrderId + "\nLý do: " + reason);
-
-            closeCancelModal();
-
-            // TODO: Gửi API Django để hủy đơn
-            /*
-            fetch(`/cancel-order/${currentOrderId}/`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ reason })
-            });
-            */
-        }
-
-    document.addEventListener("DOMContentLoaded", function () {
-
-    const tabs = document.querySelectorAll(".order-tab");
-    const rows = document.querySelectorAll("#order-list tbody tr");
-
-    const mapStatus = {
-        "cho": "pending",
-        "dang-giao": "shipping",
-        "da-giao": "delivered",
-        "da-huy": "cancel"
-    };
+    // ====== ORDER FILTER ======
+    const rows = document.querySelectorAll("#order-list tbody tr[data-status]");
 
     function filterOrders(status) {
-    let found = false;
-    rows.forEach(row => {
-        if(row.dataset.status === status){
-            row.style.display = "table-row";
-            found = true;
-        } else {
-            row.style.display = "none";
-        }
-    });
-    if(!found){
-        // hiển thị thông báo trống hoặc tất cả
-        console.log("Không có đơn hàng cho status: " + status);
-    }
-}
+        let found = false;
 
-
-
-
-    tabs.forEach(tab => {
-        tab.addEventListener("click", () => {
-            tabs.forEach(t => t.classList.remove("active"));
-            tab.classList.add("active");
-
-            const needStatus = mapStatus[tab.dataset.status];
-            filterOrders(needStatus);
+        rows.forEach(row => {
+            if (row.dataset.status === status) {
+                row.style.display = "table-row";
+                found = true;
+            } else {
+                row.style.display = "none";
+            }
         });
-    });
 
+        if (!found) {
+            document.getElementById("no-order-row")?.classList.remove("hidden");
+        }
+    }
+
+    // 👉 MẶC ĐỊNH SAU KHI ĐẶT HÀNG
+    filterOrders("pending");
 });
-
 </script>
+
+
 </body>
 
 

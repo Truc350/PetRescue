@@ -9,7 +9,7 @@ def checkout_shipping(request):
 
     if not order_id:
         # Nếu không có order trong session → redirect về buy_now hoặc giỏ hàng
-        return redirect("orders:cart_view")  # thay cart_view bằng view giỏ hàng của bạn
+        return redirect("shopping_cart")  # thay cart_view bằng view giỏ hàng của bạn
 
     order = get_object_or_404(Order, id=order_id, user=request.user)
     items = order.items.select_related("product")
@@ -52,8 +52,12 @@ def buy_now(request, product_id):
 
     order = Order.objects.create(
         user=request.user,
-        status="pending"  # rõ ràng
+        status="draft"
     )
+    # order = Order.objects.create(
+    #     user=request.user,
+    #     status="pending"
+    # )
 
     OrderItem.objects.create(
         order=order,
@@ -136,7 +140,7 @@ def checkout_payment(request):
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse   # ✅ THÊM DÒNG NÀY
+from django.urls import reverse  # ✅ THÊM DÒNG NÀY
 from .models import Order
 
 
@@ -150,8 +154,15 @@ def complete_payment(request):
 
         order = get_object_or_404(Order, id=order_id, user=request.user)
 
+        if order.status != "pending":
+            return redirect(reverse("personal-page") + "?tab=orders")
+
+        payment_method = request.POST.get("payment_method")
+        if payment_method not in ["cod", "vnpay"]:
+            return redirect("orders:checkout_payment")
+
+        order.payment_method = payment_method
         order.calculate_total()
-        order.status = "pending"   # ✅ CHUYỂN CART → PENDING
         order.save()
 
         request.session.pop("checkout_order_id", None)
@@ -184,7 +195,7 @@ def checkout_from_cart(request):
 
     order = Order.objects.create(
         user=request.user,
-        status="pending"
+        status="draft"
     )
 
     for pid in ids:
@@ -210,15 +221,17 @@ def checkout_from_cart(request):
     request.session["checkout_order_id"] = order.id
 
     return JsonResponse({"ok": True})
+
+
 # views.py
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from .models import Order
 
+from django.contrib.auth.decorators import login_required
+
+
 @login_required
 def personal_page(request):
-    orders = Order.objects.filter(user=request.user).order_by("-created_at")
-
-    return render(request, "frontend/personal-page.html", {
-        "orders": orders
-    })
+    user_orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, "frontend/personal-page.html", {"orders": user_orders})
