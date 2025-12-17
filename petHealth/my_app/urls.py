@@ -1,6 +1,9 @@
 from django.contrib import admin
 from django.urls import path
 from . import views
+from django.urls import path
+from .views import profile_view
+from django.contrib.auth.views import LogoutView
 
 # from my_app.views import get_home
 urlpatterns = [
@@ -8,6 +11,8 @@ urlpatterns = [
     path('ChatWithAI', views.getChatWithAI),
     path('footer', views.getFooter),
     path('header', views.getHeader),
+    path('logout/', LogoutView.as_view(), name='logout'),
+
     # path('login/', views.getLogin, name='login'),
     path('register', views.getRegister, name='register'),
     path('forgot-password', views.getForgotPassword),
@@ -19,9 +24,10 @@ urlpatterns = [
     path('productManagement', views.getProductManagement),
     path('overviewAdmin', views.getProfileAdmin),
     path('DogKibbleView', views.getDogKibbleView),
-    path('personal-page', views.getPersonal, name='personal-page'),
+    path('personal-page', profile_view, name='personal-page'),
     path('', views.getHomePage, name='homePage'),  # root
     path('homePage/', views.getHomePage, name='homePage'),
+    path("profile/", views.profile_view, name="profile"),
 
     path('dashboard', views.getDashBoard),
     path('health-dog', views.getHealthDog),
