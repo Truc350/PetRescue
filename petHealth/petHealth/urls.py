@@ -28,5 +28,5 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('', include('review.urls')),
     path('', include('my_app.urls')),
+    path("api/", include("sentiment.urls")),
 ]
-

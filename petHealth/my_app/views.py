@@ -215,7 +215,7 @@ def category_view(request, slug):
 
 from django.shortcuts import render, get_object_or_404
 from .models_Product import Wishlist
-
+from sentiment.spam_filter import is_spam
 
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug)
@@ -224,7 +224,7 @@ def product_detail(request, slug):
     related = product.get_related_products(limit=10)
 
     # Lấy review đã duyệt
-    reviews = product.reviews.filter(approved=True)
+    reviews = product.reviews.filter(approved=True, is_spam=False)
 
     liked_ids = set()
     if request.user.is_authenticated:
