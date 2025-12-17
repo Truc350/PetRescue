@@ -31,3 +31,5 @@ class RegisterView(FormView):
     def form_invalid(self, form):
         messages.error(self.request, 'Vui lòng sửa các lỗi bên dưới.')
         return super().form_invalid(form)
+def login_view(request):
+    return render(request, 'frontend/login.html')

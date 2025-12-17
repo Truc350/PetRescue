@@ -1,3 +1,6 @@
+{% load static %}
+{% load socialaccount %}
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -70,11 +73,11 @@
 
                 <!-- GOOGLE (CHƯA GẮN BACKEND) -->
                 <div class="d-flex justify-content-center mb-3">
-                    <button type="button" class="btn btn-outline-secondary">
+                    <a href="{% provider_login_url 'google' %}" class="btn btn-outline-secondary">
                         <img src="https://www.svgrepo.com/show/355037/google.svg"
                              width="20" class="me-2" alt="Google">
                         Google
-                    </button>
+                    </a>
                 </div>
 
                 <!-- ĐĂNG KÝ -->
