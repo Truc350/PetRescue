@@ -26,6 +26,7 @@ urlpatterns = [
     path('checkout/', include('orders.urls')),
     path('accounts/', include('accounts.urls')),  # để cuối cùng
     path('accounts/', include('allauth.urls')),
+    path('', include('review.urls')),
     path('', include('my_app.urls')),
 ]
 
