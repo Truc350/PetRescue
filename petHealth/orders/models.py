@@ -12,7 +12,7 @@ class Order(models.Model):
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES)
     total_price = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -23,17 +23,20 @@ class Order(models.Model):
         super().save(*args, **kwargs)
 
     def calculate_total(self):
-        return sum(
-            item.price * item.quantity
+        total = sum(
+            int(item.price) * item.quantity
             for item in self.items.all()
         )
+        self.total_price = total
+        self.save()
+
 
     def __str__(self):
         return f"Order #{self.id}"
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name="items", on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)  # ✅ SỬA
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)  # SỬA
     quantity = models.PositiveIntegerField(default=1)
     price = models.DecimalField(max_digits=10, decimal_places=0)
 

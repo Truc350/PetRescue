@@ -134,29 +134,31 @@ def checkout_payment(request):
     })
 
 
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse   # ✅ THÊM DÒNG NÀY
 from .models import Order
 
 
 @login_required
 def complete_payment(request):
     if request.method == "POST":
-        order_id = request.session.get('checkout_order_id')
+        order_id = request.session.get("checkout_order_id")
+
+        if not order_id:
+            return redirect(reverse("personal-page") + "?tab=orders")
+
         order = get_object_or_404(Order, id=order_id, user=request.user)
 
-        # ✅ LƯU TOTAL VÀO ORDER
-        order.total_price = order.calculate_total()
-        order.status = "pending"
+        order.calculate_total()
+        order.status = "pending"   # ✅ CHUYỂN CART → PENDING
         order.save()
 
-        if 'checkout_order_id' in request.session:
-            del request.session['checkout_order_id']
+        request.session.pop("checkout_order_id", None)
 
-        # Redirect trực tiếp bằng name của URL, không cần namespace
-        return redirect('personal-page')
+        return redirect(reverse("personal-page") + "?tab=orders")
 
-    return redirect('checkout_payment')
+    return redirect("orders:checkout_payment")
 
 
 # orders/views.py
@@ -208,3 +210,15 @@ def checkout_from_cart(request):
     request.session["checkout_order_id"] = order.id
 
     return JsonResponse({"ok": True})
+# views.py
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from .models import Order
+
+@login_required
+def personal_page(request):
+    orders = Order.objects.filter(user=request.user).order_by("-created_at")
+
+    return render(request, "frontend/personal-page.html", {
+        "orders": orders
+    })

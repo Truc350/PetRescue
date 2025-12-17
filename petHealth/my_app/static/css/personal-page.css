@@ -34,7 +34,7 @@ body {
     display: flex;
     max-width: 1250px;
     margin: 0px auto;
-    margin-top:10px
+    margin-top:10px;
     background: #fff;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
@@ -52,9 +52,6 @@ body {
     background: #fff;
 }
 
-form {
-    width: 100%;
-}
 
 
 .user-info {
@@ -688,6 +685,30 @@ form {
 /* Icon màu trắng khi active */
 .order-tab.active i {
     color: #fff;
+}
+.form-row {
+    display: flex;
+    gap: 16px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+}
+
+.form-group select,
+.form-group input {
+    width: 100%;
+    padding: 8px;
+}
+@media (max-width: 600px) {
+    .form-row {
+        flex-direction: column;
+    }
 }
 
 .btn-primary {
