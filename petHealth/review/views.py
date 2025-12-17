@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 
 from my_app.models_Product import Product, ProductReview
-
+from sentiment.classifier import classify_comment
 
 @require_POST
 @login_required
@@ -32,11 +32,22 @@ def add_review(request, product_id):
             "message": "Bạn đã đánh giá sản phẩm này rồi."
         })
 
+    # Phân loại comment
+    result = classify_comment(comment)
+
+    if result["is_spam"]:
+        return JsonResponse({
+            "success": False,
+            "message": "Bình luận bị chặn do spam."
+        })
+
     review = ProductReview.objects.create(
         product=product,
         user=request.user,
         rating=rating,
         comment=comment,
+        sentiment=result["sentiment"],  # 👈 thêm
+        is_spam=False,  # 👈 thêm
         approved=True
     )
 
@@ -45,5 +56,7 @@ def add_review(request, product_id):
         "username": request.user.username,
         "rating": review.rating,
         "comment": review.comment,
+        "sentiment": review.sentiment,
         "created_at": review.created_at.strftime("%d/%m/%Y %H:%M")
     })
+
