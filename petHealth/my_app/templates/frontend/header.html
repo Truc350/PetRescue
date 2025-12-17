@@ -76,12 +76,30 @@
                     </div>
                 </a>
 
-                <a href="{% url 'personal-page' %}">
-                    <div class="icon-btn" title="Tài khoản">
+
+                <!-- ĐÃ ĐĂNG NHẬP -->
+                {% if user.is_authenticated %}
+
+                <a href="{% url 'personal-page' %}" class="text-decoration-none">
+                    <div class="icon-btn text-white" title="Tài khoản">
+                        <i class="bi bi-person-circle"></i>
+                        <span>{{ user.username }}</span>
+                    </div>
+                </a>
+
+                {% else %}
+
+                <!-- CHƯA ĐĂNG NHẬP -->
+                <a href="{% url 'login' %}" class="text-decoration-none">
+                    <div class="icon-btn text-white" title="Đăng nhập">
                         <i class="bi bi-person-circle"></i>
                         <span>Tài khoản</span>
                     </div>
                 </a>
+
+                {% endif %}
+
+
             </div>
         </header>
     </div>

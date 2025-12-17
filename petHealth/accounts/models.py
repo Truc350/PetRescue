@@ -7,9 +7,10 @@ from django.dispatch import receiver
 # Create your models here.
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
-    fullname = models.CharField("Họ và tên", max_length=100, blank=True)
-    birthday = models.DateField("Ngày sinh", null=True, blank=True)
-    phone = models.CharField("Số điện thoại", max_length=15, blank=True)
+    fullname = models.CharField(max_length=100, blank=True)
+    birthday = models.DateField(null=True, blank=True)
+    phone = models.CharField(max_length=15, blank=True)
+    gender = models.CharField(max_length=10, blank=True, null=True)
 
     def __str__(self):
         return self.user.username
@@ -23,6 +24,5 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
-    # chỉ save nếu profile đã tồn tại
-    if hasattr(instance, "profile"):
-        instance.profile.save()
+    UserProfile.objects.get_or_create(user=instance)
+

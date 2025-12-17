@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 import json
+from accounts.models import UserProfile
 from django.http import JsonResponse
 
 
@@ -61,8 +62,18 @@ def getDogKibbleView(request):
     return render(request, 'frontend/DogKibbleView.html')
 
 
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def getPersonal(request):
-    return render(request, 'frontend/personal-page.html')
+    user = request.user
+    profile, _ = UserProfile.objects.get_or_create(user=user)
+
+    return render(request, "frontend/personal-page.html", {
+        "user_obj": user,
+        "profile": profile
+    })
+
 
 
 from django.shortcuts import render
@@ -423,4 +434,82 @@ def search_view(request):
         "keyword": keyword_raw,
         "products": products,
         "total": products.count(),
+    })
+
+# views.py
+from django.contrib.auth import authenticate, login, logout
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+
+def login_view(request):
+    if request.method == "POST":
+        username = request.POST['username']
+        password = request.POST['password']
+
+        user = authenticate(request, username=username, password=password)
+        if user:
+            login(request, user)
+            return redirect('home')   # ✅ về HomePage
+        else:
+            return render(request, 'login.html', {
+                'error': 'Sai tài khoản hoặc mật khẩu'
+            })
+
+    return render(request, 'login.html')
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from accounts.models import UserProfile
+from django.contrib import messages
+
+@login_required
+@login_required
+def profile_view(request):
+    user = request.user
+    profile, created = UserProfile.objects.get_or_create(user=user)
+
+    # Khởi tạo danh sách giới tính và giá trị đang chọn
+    gender_options = ["Nam", "Nữ", "Khác"]
+    selected_gender = profile.gender if profile.gender else ""
+
+    if request.method == "POST":
+        # ===== CẬP NHẬT THÔNG TIN CƠ BẢN =====
+        user.first_name = request.POST.get("first_name", "")
+        user.last_name = request.POST.get("last_name", "")
+        user.save()
+
+        profile.phone = request.POST.get("phone", "")
+        profile.gender = request.POST.get("gender", "")
+        profile.birthday = request.POST.get("birthday") or None
+        profile.save()
+
+        # ===== XỬ LÝ ĐỔI MẬT KHẨU (NẾU CÓ) =====
+        current_password = request.POST.get("current_password")
+        new_password = request.POST.get("new_password")
+        confirm_password = request.POST.get("confirm_password")
+
+        if new_password or confirm_password:
+            if not current_password or not new_password or not confirm_password:
+                messages.error(request, "Vui lòng nhập đầy đủ thông tin đổi mật khẩu")
+                return redirect("profile")
+            if not user.check_password(current_password):
+                messages.error(request, "Mật khẩu hiện tại không đúng")
+                return redirect("profile")
+            if new_password != confirm_password:
+                messages.error(request, "Mật khẩu mới không khớp")
+                return redirect("profile")
+            user.set_password(new_password)
+            user.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, "Đổi mật khẩu thành công")
+
+        messages.success(request, "Cập nhật thông tin thành công")
+        return redirect("profile")
+
+    # Trả về template với context
+    return render(request, "frontend/personal-page.html", {
+        "user_obj": user,
+        "profile": profile,
+        "gender_options": gender_options,
+        "selected_gender": selected_gender
     })
