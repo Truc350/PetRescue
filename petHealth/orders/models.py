@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from my_app.models_Product import Product
 class Order(models.Model):
     STATUS_CHOICES = [
+        ("draft", "Nháp"), # chưa hoàn tất (thiếu thông tin mua hàng)
         ("pending", "Chờ xác nhận"),  # admin xác nhận
         ("shipping", "Đang giao"),  # admin giao hàng
         ("delivered", "Đã giao"),  # hoàn tất
@@ -12,15 +13,14 @@ class Order(models.Model):
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES)
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="draft"  # ✅ rất quan trọng
+    )
+
     total_price = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
-
-    def save(self, *args, **kwargs):
-        valid = dict(self.STATUS_CHOICES).keys()
-        if self.status not in valid:
-            self.status = "pending"
-        super().save(*args, **kwargs)
 
     def calculate_total(self):
         total = sum(
