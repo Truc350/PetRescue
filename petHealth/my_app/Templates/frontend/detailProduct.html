@@ -185,18 +185,6 @@
                     </div>
                     <div class="review-date">{{ r.created_at|date:"Y-m-d H:i" }}</div>
                     <p class="review-text">{{ r.comment }}</p>
-                    {% if r.sentiment %}
-                    <span class="badge
-                            {% if r.sentiment == 'positive' %}
-                                bg-success
-                            {% else %}
-                                bg-danger
-                            {% endif %}
-                        ">
-                            {{ r.sentiment }}
-                    </span>
-                    {% endif %}
-
                 </div>
             </div>
             {% empty %}
