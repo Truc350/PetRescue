@@ -1,4 +1,5 @@
 {% load static %}
+{% load humanize %}
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -90,40 +91,23 @@
                         <input type="tel" value="0901234567" maxlength="10">
                     </div>
 
-                    <div class="form-group">
-                        <label>Giới tính</label>
-                        <select name="gender">
-                            <option value="" disabled selected>Chọn giới tính</option>
-                            <option value="Nam">Nam</option>
-                            <option value="Nữ">Nữ</option>
-                            <option value="Khác">Khác</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group birthday">
-                        <label>Ngày sinh</label>
-                        <div class="date-select">
-                            <select name="day">
-                                <option value="" disabled selected>Ngày</option>
-                                <script>
-                                    for (let i = 1; i <= 31; i++) document.write(`<option value="${i}">${i}</option>`);
-                                </script>
-                            </select>
-                            <select name="month">
-                                <option value="" disabled selected>Tháng</option>
-                                <script>
-                                    for (let i = 1; i <= 12; i++) document.write(`<option value="${i}">${i}</option>`);
-                                </script>
-                            </select>
-                            <select name="year">
-                                <option value="" disabled selected>Năm</option>
-                                <script>
-                                    const year = new Date().getFullYear();
-                                    for (let i = year; i >= 1950; i--) document.write(`<option value="${i}">${i}</option>`);
-                                </script>
+                    <div style="display:flex; gap:16px;">
+                        <div class="form-group" style="flex:1;">
+                            <label>Giới tính</label>
+                            <select name="gender">
+                                <option value="" disabled selected>Chọn giới tính</option>
+                                <option value="Nam">Nam</option>
+                                <option value="Nữ">Nữ</option>
+                                <option value="Khác">Khác</option>
                             </select>
                         </div>
+
+                        <div class="form-group" style="flex:1;">
+                            <label>Ngày sinh</label>
+                            <input type="date" name="birthday">
+                        </div>
                     </div>
+
 
                     <button class="save-btn" type="button">Lưu</button>
                 </div>
@@ -203,54 +187,57 @@
                     </thead>
 
                     <tbody>
-                    <tr>
-                        <td>51</td>
-                        <td>2024-01-03 23:21:41</td>
-                        <td class="delivered">Đang giao</td>
-                        <td>100.990 ₫</td>
+                    {% for order in orders %}
+                    {% if order.status != "cancel" %}
+                    <tr data-status="{{ order.status }}">
+                        <td>#{{ order.id }}</td>
+                        <td>{{ order.created_at|date:"d/m/Y H:i" }}</td>
+
+                        <td>
+                            {% if order.status == "pending" %}
+                            <span class="text-warning">Chờ xác nhận</span>
+
+                            {% elif order.status == "shipping" %}
+                            <span class="text-primary">Đang giao</span>
+
+                            {% elif order.status == "delivered" %}
+                            <span class="delivered">Đã giao</span>
+
+                            {% elif order.status == "cancel" %}
+                            <span class="cancelled">Đã huỷ</span>
+                            {% endif %}
+                        </td>
+
+
+                        <td class="price">
+                            {{ order.total_price|intcomma }} ₫
+                        </td>
+
                         <td class="thao-tac-col">
-                            <button class="btn btn-view btn-sm" onclick="showOrderDetail(51)">
+                            <button class="btn btn-view btn-sm"
+                                    onclick="showOrderDetail({{ order.id }})">
                                 <i class="bi bi-eye"></i> Xem chi tiết
                             </button>
 
-                            <button class="btn btn-cancel btn-sm" onclick="cancelOrder(51)">
-                                <i class="bi bi-trash"></i> Huỷ đơn hàng
+                            {% if order.status == "pending" %}
+                            <button class="btn btn-cancel btn-sm"
+                                    onclick="cancelOrder({{ order.id }})">
+                                <i class="bi bi-trash"></i> Huỷ
                             </button>
+                            {% endif %}
+
                         </td>
                     </tr>
+                    {% endif %}
+                    {% empty %}
                     <tr>
-                        <td>51</td>
-                        <td>2024-01-03 23:21:41</td>
-                        <td class="delivered">Chờ xác nhận</td>
-                        <td>99.990 ₫</td>
-                        <td class="thao-tac-col">
-                            <button class="btn btn-view btn-sm" onclick="showOrderDetail(51)">
-                                <i class="bi bi-eye"></i> Xem chi tiết
-                            </button>
-
-                            <button class="btn btn-cancel btn-sm" onclick="cancelOrder(51)">
-                                <i class="bi bi-trash"></i> Huỷ đơn hàng
-                            </button>
-                        </td>
+                        <td colspan="5" class="text-center">Chưa có đơn hàng</td>
                     </tr>
-
-                    <tr>
-                        <td>50</td>
-                        <td>2024-01-02 22:24:02</td>
-                        <td class="delivered">Đang giao</td>
-                        <td>999.990 ₫</td>
-                        <td class="thao-tac-col">
-                            <button class="btn btn-view btn-sm" onclick="showOrderDetail(51)">
-                                <i class="bi bi-eye"></i> Xem chi tiết
-                            </button>
-
-                            <button class="btn btn-cancel btn-sm" onclick="cancelOrder(51)">
-                                <i class="bi bi-trash"></i> Huỷ đơn hàng
-                            </button>
-                        </td>
-                    </tr>
+                    {% endfor %}
                     </tbody>
+
                 </table>
+
             </div>
 
 
@@ -275,7 +262,8 @@
                 </div>
 
                 <div class="order-item">
-                    <img src="https://paddy.vn/cdn/shop/files/pate-meo-royal-canin-persian-85g_2.png?v=1724915140" alt="Flycam DJl Inspire 3">
+                    <img src="https://paddy.vn/cdn/shop/files/pate-meo-royal-canin-persian-85g_2.png?v=1724915140"
+                         alt="Flycam DJl Inspire 3">
                     <div class="item-info">
                         <h4>Pate Cho Mèo Ba Tư Trưởng Thành</h4>
                         <p>Số lượng: 1</p>
@@ -302,165 +290,224 @@
             </div>
         </section>
 
-    <!-- === Lịch sử mua hàng === -->
-<section id="history-section" class="section">
-    <h2>Lịch Sử Mua Hàng</h2>
-    <p class="desc">Danh sách tất cả các đơn hàng đã mua</p>
+        <!-- === Lịch sử mua hàng === -->
+        <section id="history-section" class="section">
+            <h2>Lịch Sử Mua Hàng</h2>
+            <p class="desc">Danh sách tất cả các đơn hàng đã mua</p>
 
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Mã hóa đơn</th>
-                <th>Ngày mua</th>
-                <th>Trạng thái</th>
-                <th>Tổng giá trị</th>
-                <th class="text-center">Thao Tác</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>49</td>
-                <td>2024-01-01</td>
-                <td>Đã giao</td>
-                <td>25.000.000 ₫</td>
-                <td class="thao-tac-col">
-                    <button class="btn btn-primary btn-sm" onclick="buyAgain(49)">
-                        <i class="bi bi-cart-plus"></i> Mua lại
-                    </button>
-                </td>
-            </tr>
-            <tr>
-                <td>48</td>
-                <td>2023-12-29</td>
-                <td>Đã giao</td>
-                <td>15.500.000 ₫</td>
-                <td class="thao-tac-col">
-                    <button class="btn btn-primary btn-sm" onclick="buyAgain(48)">
-                        <i class="bi bi-cart-plus"></i> Mua lại
-                    </button>
-                </td>
-            </tr>
-            <!-- Thêm các đơn hàng khác -->
-        </tbody>
-    </table>
-</section>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Mã hóa đơn</th>
+                    <th>Ngày mua</th>
+                    <th>Trạng thái</th>
+                    <th>Tổng giá trị</th>
+                    <th class="text-center">Thao Tác</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for order in orders %}
+                {% if order.status == "delivered" or order.status == "cancel" %}
 
+                <tr>
+                    <td>#{{ order.id }}</td>
+                    <td>{{ order.created_at|date:"d/m/Y" }}</td>
 
+                    <td>
+                        {% if order.status == "delivered" %}
+                        <span class="delivered">Đã giao</span>
+                        {% else %}
+                        <span class="cancelled">Đã huỷ</span>
+                        {% endif %}
+
+                    </td>
+
+                    <td>{{ order.total_price|intcomma }} ₫</td>
+
+                    <td class="thao-tac-col">
+                        <button class="btn btn-primary btn-sm"
+                                onclick="buyAgain({{ order.id }})">
+                            <i class="bi bi-cart-plus"></i> Mua lại
+                        </button>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+                </tbody>
+
+            </table>
+        </section>
 
 
     </main>
 </div>
 
 
-
-
-
-
 <!-- Popup nhập lý do hủy -->
 <div id="cancelModal" class="modal" tabindex="-1" style="display:none;">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Hủy Đơn Hàng</h5>
-        <button type="button" class="btn-close" onclick="closeCancelModal()"></button>
-      </div>
-      <div class="modal-body">
-        <label>Lý do hủy đơn hàng:</label>
-        <textarea id="cancelReason" class="form-control" rows="3"></textarea>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="closeCancelModal()">Hủy</button>
-        <button class="btn btn-danger" onclick="confirmCancelOrder()">Xác nhận hủy</button>
-      </div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Hủy Đơn Hàng</h5>
+                <button type="button" class="btn-close" onclick="closeCancelModal()"></button>
+            </div>
+            <div class="modal-body">
+                <label>Lý do hủy đơn hàng:</label>
+                <textarea id="cancelReason" class="form-control" rows="3"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeCancelModal()">Hủy</button>
+                <button class="btn btn-danger" onclick="confirmCancelOrder()">Xác nhận hủy</button>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
-
-</body>
 <script>
-/* ============ MENU SIDEBAR ============ */
-const menuItems = document.querySelectorAll('.sidebar .menu li');
-const sections = document.querySelectorAll('.content .section');
+    document.addEventListener("DOMContentLoaded", function () {
+        const params = new URLSearchParams(window.location.search);
+        const tab = params.get("tab");
 
-menuItems.forEach(item => {
-    item.addEventListener('click', e => {
-        e.preventDefault();
+        if (tab === "orders") {
 
-        menuItems.forEach(i => i.classList.remove('active'));
-        sections.forEach(s => s.classList.remove('active'));
+            // ❗ TẮT TẤT CẢ
+            document.querySelectorAll(".section")
+                .forEach(s => s.classList.remove("active"));
 
-        item.classList.add('active');
+            document.querySelectorAll(".sidebar .menu li")
+                .forEach(li => li.classList.remove("active"));
 
-        const sectionId = item.dataset.section;
-        document.getElementById(sectionId + '-section').classList.add('active');
+            // ✅ BẬT ĐƠN MUA
+            document.getElementById("orders-section").classList.add("active");
+            document.querySelector('li[data-section="orders"]').classList.add("active");
+        }
     });
+
+        /* ============ MENU SIDEBAR ============ */
+        const menuItems = document.querySelectorAll('.sidebar .menu li');
+        const sections = document.querySelectorAll('.content .section');
+
+        menuItems.forEach(item => {
+            item.addEventListener('click', e => {
+                e.preventDefault();
+
+                menuItems.forEach(i => i.classList.remove('active'));
+                sections.forEach(s => s.classList.remove('active'));
+
+                item.classList.add('active');
+
+                const sectionId = item.dataset.section;
+                document.getElementById(sectionId + '-section').classList.add('active');
+            });
+        });
+
+        /* ============ XEM CHI TIẾT ĐƠN ============ */
+        let currentOrderId = null;
+
+        function showOrderDetail(orderId) {
+            currentOrderId = orderId;
+
+            document.getElementById("order-list").style.display = "none";
+            document.getElementById("order-detail").style.display = "block";
+
+            // Update text theo mã đơn
+            const dateText = document.querySelector(".order-date strong");
+            if (dateText) {
+                dateText.textContent = "03 tháng 11 năm 2025 - Đơn #" + orderId;
+            }
+        }
+
+        /* ===== QUAY LẠI DANH SÁCH ===== */
+        function showOrderList() {
+            document.getElementById("order-detail").style.display = "none";
+            document.getElementById("order-list").style.display = "block";
+        }
+
+        /* ============ MODAL HUỶ ĐƠN ============ */
+        function cancelOrder(orderId) {
+            currentOrderId = orderId;
+
+            document.getElementById("cancelReason").value = "";
+
+            const modal = document.getElementById("cancelModal");
+            modal.style.display = "block";
+            modal.classList.add("show");
+        }
+
+        /* ===== ĐÓNG MODAL ===== */
+        function closeCancelModal() {
+            const modal = document.getElementById("cancelModal");
+            modal.classList.remove("show");
+            modal.style.display = "none";
+        }
+
+        /* ===== XÁC NHẬN HUỶ ===== */
+        function confirmCancelOrder() {
+            const reason = document.getElementById("cancelReason").value.trim();
+
+            if (reason === "") {
+                alert("Vui lòng nhập lý do hủy!");
+                return;
+            }
+
+            alert("✅ Đã hủy đơn #" + currentOrderId + "\nLý do: " + reason);
+
+            closeCancelModal();
+
+            // TODO: Gửi API Django để hủy đơn
+            /*
+            fetch(`/cancel-order/${currentOrderId}/`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ reason })
+            });
+            */
+        }
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+    const tabs = document.querySelectorAll(".order-tab");
+    const rows = document.querySelectorAll("#order-list tbody tr");
+
+    const mapStatus = {
+        "cho": "pending",
+        "dang-giao": "shipping",
+        "da-giao": "delivered",
+        "da-huy": "cancel"
+    };
+
+    function filterOrders(status) {
+    let found = false;
+    rows.forEach(row => {
+        if(row.dataset.status === status){
+            row.style.display = "table-row";
+            found = true;
+        } else {
+            row.style.display = "none";
+        }
+    });
+    if(!found){
+        // hiển thị thông báo trống hoặc tất cả
+        console.log("Không có đơn hàng cho status: " + status);
+    }
+}
+
+
+
+
+    tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+            tabs.forEach(t => t.classList.remove("active"));
+            tab.classList.add("active");
+
+            const needStatus = mapStatus[tab.dataset.status];
+            filterOrders(needStatus);
+        });
+    });
+
 });
 
-/* ============ XEM CHI TIẾT ĐƠN ============ */
-let currentOrderId = null;
-
-function showOrderDetail(orderId) {
-    currentOrderId = orderId;
-
-    document.getElementById("order-list").style.display = "none";
-    document.getElementById("order-detail").style.display = "block";
-
-    // Update text theo mã đơn
-    const dateText = document.querySelector(".order-date strong");
-    if (dateText) {
-        dateText.textContent = "03 tháng 11 năm 2025 - Đơn #" + orderId;
-    }
-}
-
-/* ===== QUAY LẠI DANH SÁCH ===== */
-function showOrderList() {
-    document.getElementById("order-detail").style.display = "none";
-    document.getElementById("order-list").style.display = "block";
-}
-
-/* ============ MODAL HUỶ ĐƠN ============ */
-function cancelOrder(orderId) {
-    currentOrderId = orderId;
-
-    document.getElementById("cancelReason").value = "";
-
-    const modal = document.getElementById("cancelModal");
-    modal.style.display = "block";
-    modal.classList.add("show");
-}
-
-/* ===== ĐÓNG MODAL ===== */
-function closeCancelModal() {
-    const modal = document.getElementById("cancelModal");
-    modal.classList.remove("show");
-    modal.style.display = "none";
-}
-
-/* ===== XÁC NHẬN HUỶ ===== */
-function confirmCancelOrder() {
-    const reason = document.getElementById("cancelReason").value.trim();
-
-    if (reason === "") {
-        alert("Vui lòng nhập lý do hủy!");
-        return;
-    }
-
-    alert("✅ Đã hủy đơn #" + currentOrderId + "\nLý do: " + reason);
-
-    closeCancelModal();
-
-    // TODO: Gửi API Django để hủy đơn
-    /*
-    fetch(`/cancel-order/${currentOrderId}/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reason })
-    });
-    */
-}
 </script>
-
-
+</body>
 
 
 </html>
