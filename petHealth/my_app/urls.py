@@ -11,6 +11,7 @@ urlpatterns = [
     path('ChatWithAI', views.getChatWithAI),
     path('footer', views.getFooter),
     path('header', views.getHeader),
+    path("search/suggest/", views.search_suggest, name="search-suggest"),
     path('logout/', LogoutView.as_view(), name='logout'),
 
     # path('login/', views.getLogin, name='login'),
@@ -20,6 +21,7 @@ urlpatterns = [
     path('payment-infor', views.getPaymentInfor, name='payment'),
     path('category', views.getCategory, name='category'),
     path('categoryManage', views.getCategoryManage),
+    path("support/", views.getSupport, name="support"),
     path('customerManage', views.getCustomerManage),
     path('productManagement', views.getProductManagement),
     path('overviewAdmin', views.getProfileAdmin),
