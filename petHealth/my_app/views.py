@@ -27,7 +27,7 @@ def getRegister(request):
 
 
 def getForgotPassword(request):
-    return render(request, 'frontend/forgot-password.html')
+    return render(request, 'frontend/forgot_password.html')
 
 
 def getPayment(request):
@@ -227,6 +227,7 @@ def category_view(request, slug):
 from django.shortcuts import render, get_object_or_404
 from .models_Product import Wishlist
 # from sentiment.spam_filter import is_spam
+from django.db.models import Avg, Count
 
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug)
@@ -237,6 +238,18 @@ def product_detail(request, slug):
     # # Lấy review đã duyệt
     # reviews = product.reviews.filter(approved=True, is_spam=False)
     reviews = product.reviews.filter(approved=True)
+
+    total_reviews = reviews.count()
+
+    avg_rating = reviews.aggregate(avg=Avg("rating"))["avg"] or 0
+    avg_rating = round(avg_rating, 1)
+
+    rating_counts = {
+        star: reviews.filter(rating=star).count()
+        for star in range(1, 6)
+    }
+
+    commented_count = reviews.exclude(comment__isnull=True).exclude(comment="").count()
 
     liked_ids = set()
     if request.user.is_authenticated:
@@ -250,6 +263,10 @@ def product_detail(request, slug):
         "related": related,
         "reviews": reviews,
         "liked_ids": liked_ids,
+        "avg_rating": avg_rating,
+        "total_reviews": total_reviews,
+        "rating_counts": rating_counts,
+        "commented_count": commented_count,
     })
 
 
