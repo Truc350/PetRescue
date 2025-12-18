@@ -394,6 +394,9 @@ def search_view(request):
     keyword_raw = request.GET.get("q", "").strip()
     keyword = keyword_raw.lower()
 
+    selected_prices = request.GET.getlist("price")
+    selected_brands = request.GET.getlist("brand")
+
     products = Product.objects.none()
 
     # ====== TẦNG 1: HIỂU Ý (NHẸ – KHÔNG ÉP) ======
@@ -450,10 +453,27 @@ def search_view(request):
 
     products = Product.objects.filter(query).distinct()
 
+    # ====== LỌC GIÁ (TRÊN KẾT QUẢ SEARCH) ======
+    if selected_prices:
+        price_q = Q()
+        for p in selected_prices:
+            min_price, max_price = p.split("-")
+            price_q |= Q(
+                price__gte=int(min_price),
+                price__lte=int(max_price)
+            )
+        products = products.filter(price_q)
+
+    # ====== LỌC BRAND (TRÊN KẾT QUẢ SEARCH) ======
+    if selected_brands:
+        products = products.filter(brand__in=selected_brands)
+
     return render(request, "frontend/search.html", {
         "keyword": keyword_raw,
         "products": products,
         "total": products.count(),
+        "selected_prices": selected_prices,
+        "selected_brands": selected_brands,
     })
 
 # views.py
@@ -477,62 +497,71 @@ def login_view(request):
 
     return render(request, 'login.html')
 
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from accounts.models import UserProfile
+from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
+from orders.models import Order
+from accounts.models import UserProfile
+from django.contrib.auth.decorators import login_required
 
-@login_required
 @login_required
 def profile_view(request):
     user = request.user
-    profile, created = UserProfile.objects.get_or_create(user=user)
+    profile, _ = UserProfile.objects.get_or_create(user=user)
+    orders = Order.objects.filter(user=user)
 
-    # Khởi tạo danh sách giới tính và giá trị đang chọn
     gender_options = ["Nam", "Nữ", "Khác"]
-    selected_gender = profile.gender if profile.gender else ""
+    selected_gender = profile.gender or ""
 
     if request.method == "POST":
-        # ===== CẬP NHẬT THÔNG TIN CƠ BẢN =====
-        user.first_name = request.POST.get("first_name", "")
-        user.last_name = request.POST.get("last_name", "")
-        user.save()
+        form_type = request.POST.get("form_type")
 
-        profile.phone = request.POST.get("phone", "")
-        profile.gender = request.POST.get("gender", "")
-        profile.birthday = request.POST.get("birthday") or None
-        profile.save()
+        # ===== CẬP NHẬT HỒ SƠ =====
+        if form_type == "profile":
+            user.first_name = request.POST.get("first_name", "")
+            user.last_name = request.POST.get("last_name", "")
+            user.save()
 
-        # ===== XỬ LÝ ĐỔI MẬT KHẨU (NẾU CÓ) =====
-        current_password = request.POST.get("current_password")
-        new_password = request.POST.get("new_password")
-        confirm_password = request.POST.get("confirm_password")
+            profile.phone = request.POST.get("phone", "")
+            profile.gender = request.POST.get("gender", "")
+            profile.birthday = request.POST.get("birthday") or None
+            profile.save()
 
-        if new_password or confirm_password:
-            if not current_password or not new_password or not confirm_password:
-                messages.error(request, "Vui lòng nhập đầy đủ thông tin đổi mật khẩu")
-                return redirect("profile")
+            messages.success(request, "Cập nhật hồ sơ thành công")
+            return redirect("personal-page")
+
+        # ===== ĐỔI MẬT KHẨU =====
+        if form_type == "password":
+            current_password = request.POST.get("current_password")
+            new_password = request.POST.get("new_password")
+            confirm_password = request.POST.get("confirm_password")
+
+            if not all([current_password, new_password, confirm_password]):
+                messages.error(request, "Vui lòng nhập đầy đủ thông tin")
+                return redirect("personal-page")
+
             if not user.check_password(current_password):
                 messages.error(request, "Mật khẩu hiện tại không đúng")
-                return redirect("profile")
+                return redirect("personal-page")
+
             if new_password != confirm_password:
                 messages.error(request, "Mật khẩu mới không khớp")
-                return redirect("profile")
+                return redirect("personal-page")
+
             user.set_password(new_password)
             user.save()
             update_session_auth_hash(request, user)
+
             messages.success(request, "Đổi mật khẩu thành công")
+            return redirect("personal-page")
 
-        messages.success(request, "Cập nhật thông tin thành công")
-        return redirect("profile")
-
-    # Trả về template với context
     return render(request, "frontend/personal-page.html", {
         "user_obj": user,
         "profile": profile,
+        "orders": orders,
         "gender_options": gender_options,
         "selected_gender": selected_gender
     })
+
 
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET

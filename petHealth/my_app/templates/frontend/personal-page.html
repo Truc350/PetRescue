@@ -71,6 +71,7 @@
 
             <form class="profile-form" method="POST">
                 {% csrf_token %}
+                <input type="hidden" name="form_type" value="profile">
 
                 <div class="form-left">
 
@@ -105,7 +106,8 @@
                             <label>Giới tính</label>
                             <select name="gender">
                                 {% for g in gender_options %}
-                               <option value="{{ g }}"{% if g == selected_gender %} selected{% endif %}>{{ g }}</option>
+                                <option value="{{ g }}" {% if g == selected_gender %} selected{% endif %}>{{ g }}
+                                </option>
 
                                 {% endfor %}
                             </select>
@@ -117,233 +119,235 @@
                                    value="{{ profile.birthday|date:'Y-m-d' }}">
                         </div>
 
+                    </div>
+
+                    <button class="save-btn" type="submit">Lưu</button>
+                </div>
+            </form>
+
+        </section>
+        <!-- === Đổi mật khẩu có OTP === -->
+        <section id="repass-section" class="section">
+            <h2>Đổi Mật Khẩu</h2>
+            <p class="desc">Vui lòng xác minh qua mã OTP để đảm bảo an toàn cho tài khoản của bạn</p>
+
+            <form method="post" class="password-form">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="password">
+
+
+                <div class="form-group">
+                    <label>Mật khẩu hiện tại</label>
+                    <input type="password" name="current_password" required>
                 </div>
 
-                <button class="save-btn" type="submit">Lưu</button>
-</div>
-</form>
+                <div class="form-group">
+                    <label>Mật khẩu mới</label>
+                    <input type="password" name="new_password" required>
+                </div>
 
-</section>
-<!-- === Đổi mật khẩu có OTP === -->
-<section id="repass-section" class="section">
-    <h2>Đổi Mật Khẩu</h2>
-    <p class="desc">Vui lòng xác minh qua mã OTP để đảm bảo an toàn cho tài khoản của bạn</p>
+                <div class="form-group">
+                    <label>Nhập lại mật khẩu mới</label>
+                    <input type="password" name="confirm_password" required>
+                </div>
 
-    <form method="post" class="password-form">
-        {% csrf_token %}
-
-        <div class="form-group">
-            <label>Mật khẩu hiện tại</label>
-            <input type="password" name="current_password" required>
-        </div>
-
-        <div class="form-group">
-            <label>Mật khẩu mới</label>
-            <input type="password" name="new_password" required>
-        </div>
-
-        <div class="form-group">
-            <label>Nhập lại mật khẩu mới</label>
-            <input type="password" name="confirm_password" required>
-        </div>
-
-        <button type="submit" class="save-btn">
-            Lưu thay đổi
-        </button>
-    </form>
-
-</section>
-
-
-<!-- === Đơn Mua === -->
-<section id="orders-section" class="section">
-    <h2>Đơn Mua</h2>
-    <!-- BẢNG DANH SÁCH HÓA ĐƠN -->
-    <div id="order-list" class="order-table">
-        <!-- TABS LỌC TRẠNG THÁI -->
-        <div class="order-tabs">
-            <button class="order-tab tab-cho active" data-status="cho">
-                <i class="bi bi-clock-history"></i> Chờ xác nhận
-            </button>
-
-            <button class="order-tab tab-dang-giao" data-status="dang-giao">
-                <i class="bi bi-truck"></i> Đang giao
-            </button>
-
-            <button class="order-tab tab-da-giao" data-status="da-giao">
-                <i class="bi bi-check2-circle"></i> Đã giao
-            </button>
-
-            <button class="order-tab tab-da-huy" data-status="da-huy">
-                <i class="bi bi-x-circle"></i> Đã huỷ
-            </button>
-        </div>
-        <h3>Hóa đơn gần đây</h3>
-        <table>
-            <thead>
-            <tr>
-                <th>Mã hóa đơn</th>
-                <th>Thời gian cập nhật</th>
-                <th>Trạng thái</th>
-                <th>Tổng giá trị</th>
-                <th class="text-center">Thao Tác</th>
-            </tr>
-            </thead>
-
-            <tbody>
-            {% for order in orders %}
-            {% if order.status != "cancel" %}
-            <tr data-status="{{ order.status }}">
-                <td>#{{ order.id }}</td>
-                <td>{{ order.created_at|date:"d/m/Y H:i" }}</td>
-
-                <td>
-                    {% if order.status == "pending" %}
-                    <span class="text-warning">Chờ xác nhận</span>
-
-                    {% elif order.status == "shipping" %}
-                    <span class="text-primary">Đang giao</span>
-
-                    {% elif order.status == "delivered" %}
-                    <span class="delivered">Đã giao</span>
-
-                    {% elif order.status == "cancel" %}
-                    <span class="cancelled">Đã huỷ</span>
-                    {% endif %}
-                </td>
-
-
-                <td class="price">
-                    {{ order.total_price|intcomma }} ₫
-                </td>
-
-                <td class="thao-tac-col">
-                    <button class="btn btn-view btn-sm"
-                            onclick="showOrderDetail({{ order.id }})">
-                        <i class="bi bi-eye"></i> Xem chi tiết
-                    </button>
-
-                    {% if order.status == "pending" %}
-                    <button class="btn btn-cancel btn-sm"
-                            onclick="cancelOrder({{ order.id }})">
-                        <i class="bi bi-trash"></i> Huỷ
-                    </button>
-                    {% endif %}
-
-                </td>
-            </tr>
-            {% endif %}
-            {% empty %}
-            <tr>
-                <td colspan="5" class="text-center">Chưa có đơn hàng</td>
-            </tr>
-            {% endfor %}
-            </tbody>
-
-        </table>
-
-    </div>
-
-
-    <!-- 🔹 CHI TIẾT ĐƠN HÀNG (ẩn mặc định) -->
-    <div id="order-detail" class="order-card" style="display: none;">
-        <button class="back-btn" onclick="showOrderList()">Quay lại danh sách</button>
-        <p class="order-date">Vận chuyển ngày <strong>03 tháng 11 năm 2025</strong></p>
-
-        <div class="order-progress">
-            <div class="step active">ĐANG XỬ LÝ</div>
-            <div class="step">ĐANG VẬN CHUYỂN</div>
-            <div class="step">ĐÃ GIAO</div>
-        </div>
-
-        <div class="order-item">
-            <img src="https://paddy.vn/cdn/shop/files/forcans_1.jpg?v=1748246401" alt="Flycam DJI Air 3">
-            <div class="item-info">
-                <h4>Xịt Thơm Miệng Chó</h4>
-                <p>Số lượng: 1</p>
-                <p>Giá: <strong>165.000 ₫</strong></p>
-            </div>
-        </div>
-
-        <div class="order-item">
-            <img src="https://paddy.vn/cdn/shop/files/pate-meo-royal-canin-persian-85g_2.png?v=1724915140"
-                 alt="Flycam DJl Inspire 3">
-            <div class="item-info">
-                <h4>Pate Cho Mèo Ba Tư Trưởng Thành</h4>
-                <p>Số lượng: 1</p>
-                <p>Giá: <strong>29.000 ₫</strong></p>
-            </div>
-        </div>
-
-        <div class="order-summary-box">
-            <div class="summary-left">
-                <h4>Địa chỉ giao hàng</h4>
-                <p><strong>Chí Nguyên</strong></p>
-                <p>Tòa B, Ký túc xá Khu B</p>
-                <p>033332234</p>
-            </div>
-
-            <div class="summary-right">
-                <p>Tổng phụ thu: <strong>194.990 ₫</strong></p>
-                <p>Phí vận chuyển: <strong>0 ₫</strong></p>
-                <hr>
-                <p><strong>Tổng: 194.990 ₫</strong></p>
-                <p class="payment-note">Thanh toán bằng tiền mặt khi giao hàng</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- === Lịch sử mua hàng === -->
-<section id="history-section" class="section">
-    <h2>Lịch Sử Mua Hàng</h2>
-    <p class="desc">Danh sách tất cả các đơn hàng đã mua</p>
-
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th>Mã hóa đơn</th>
-            <th>Ngày mua</th>
-            <th>Trạng thái</th>
-            <th>Tổng giá trị</th>
-            <th class="text-center">Thao Tác</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for order in orders %}
-        {% if order.status == "delivered" or order.status == "cancel" %}
-
-        <tr>
-            <td>#{{ order.id }}</td>
-            <td>{{ order.created_at|date:"d/m/Y" }}</td>
-
-            <td>
-                {% if order.status == "delivered" %}
-                <span class="delivered">Đã giao</span>
-                {% else %}
-                <span class="cancelled">Đã huỷ</span>
-                {% endif %}
-
-            </td>
-
-            <td>{{ order.total_price|intcomma }} ₫</td>
-
-            <td class="thao-tac-col">
-                <button class="btn btn-primary btn-sm"
-                        onclick="buyAgain({{ order.id }})">
-                    <i class="bi bi-cart-plus"></i> Mua lại
+                <button type="submit" class="save-btn">
+                    Lưu thay đổi
                 </button>
-            </td>
-        </tr>
-        {% endif %}
-        {% endfor %}
-        </tbody>
+            </form>
 
-    </table>
-</section>
+        </section>
 
 
-</main>
+        <!-- === Đơn Mua === -->
+        <section id="orders-section" class="section">
+            <h2>Đơn Mua</h2>
+            <!-- BẢNG DANH SÁCH HÓA ĐƠN -->
+            <div id="order-list" class="order-table">
+                <!-- TABS LỌC TRẠNG THÁI -->
+                <div class="order-tabs">
+                    <button class="order-tab tab-cho active" data-status="pending">
+                        <i class="bi bi-clock-history"></i> Chờ xác nhận
+                    </button>
+
+                    <button class="order-tab tab-dang-giao" data-status="shipping">
+                        <i class="bi bi-truck"></i> Đang giao
+                    </button>
+
+                    <button class="order-tab tab-da-giao" data-status="delivered">
+                        <i class="bi bi-check2-circle"></i> Đã giao
+                    </button>
+
+                    <button class="order-tab tab-da-huy" data-status="cancel">
+                        <i class="bi bi-x-circle"></i> Đã huỷ
+                    </button>
+                </div>
+                <h3>Hóa đơn gần đây</h3>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Mã hóa đơn</th>
+                        <th>Thời gian cập nhật</th>
+                        <th>Trạng thái</th>
+                        <th>Tổng giá trị</th>
+                        <th class="text-center">Thao Tác</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for order in orders %}
+                    <!--                    {% if order.status == "pending" or order.status == "shipping" or order.status == "delivered" or-->
+                    <!--                    order.status == "cancel" %}-->
+                    <tr data-status="{{ order.status }}">
+                        <td>#{{ order.id }}</td>
+                        <td>{{ order.created_at|date:"d/m/Y H:i" }}</td>
+
+                        <td>
+                            {% if order.status == "pending" %}
+                            <span class="text-warning">Chờ xác nhận</span>
+
+                            {% elif order.status == "shipping" %}
+                            <span class="text-primary">Đang giao</span>
+
+                            {% elif order.status == "delivered" %}
+                            <span class="delivered">Đã giao</span>
+
+                            {% elif order.status == "cancel" %}
+                            <span class="cancelled">Đã huỷ</span>
+                            {% endif %}
+                        </td>
+
+
+                        <td class="price">
+                            {{ order.total_price|intcomma }} ₫
+                        </td>
+
+                        <td class="thao-tac-col">
+                            <button class="btn btn-view btn-sm"
+                                    onclick="showOrderDetail({{ order.id }})">
+                                <i class="bi bi-eye"></i> Xem chi tiết
+                            </button>
+
+                            {% if order.status == "pending" %}
+                            <button class="btn btn-cancel btn-sm"
+                                    onclick="cancelOrder({{ order.id }})">
+                                <i class="bi bi-trash"></i> Huỷ
+                            </button>
+                            {% endif %}
+
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">Chưa có đơn hàng</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- 🔹 CHI TIẾT ĐƠN HÀNG (ẩn mặc định) -->
+            <div id="order-detail" class="order-card" style="display: none;">
+                <button class="back-btn" onclick="showOrderList()">Quay lại danh sách</button>
+                <p class="order-date">Vận chuyển ngày <strong>03 tháng 11 năm 2025</strong></p>
+
+                <div class="order-progress">
+                    <div class="step active">ĐANG XỬ LÝ</div>
+                    <div class="step">ĐANG VẬN CHUYỂN</div>
+                    <div class="step">ĐÃ GIAO</div>
+                </div>
+
+                <div class="order-item">
+                    <img src="https://paddy.vn/cdn/shop/files/forcans_1.jpg?v=1748246401" alt="Flycam DJI Air 3">
+                    <div class="item-info">
+                        <h4>Xịt Thơm Miệng Chó</h4>
+                        <p>Số lượng: 1</p>
+                        <p>Giá: <strong>165.000 ₫</strong></p>
+                    </div>
+                </div>
+
+                <div class="order-item">
+                    <img src="https://paddy.vn/cdn/shop/files/pate-meo-royal-canin-persian-85g_2.png?v=1724915140"
+                         alt="Flycam DJl Inspire 3">
+                    <div class="item-info">
+                        <h4>Pate Cho Mèo Ba Tư Trưởng Thành</h4>
+                        <p>Số lượng: 1</p>
+                        <p>Giá: <strong>29.000 ₫</strong></p>
+                    </div>
+                </div>
+
+                <div class="order-summary-box">
+                    <div class="summary-left">
+                        <h4>Địa chỉ giao hàng</h4>
+                        <p><strong>Chí Nguyên</strong></p>
+                        <p>Tòa B, Ký túc xá Khu B</p>
+                        <p>033332234</p>
+                    </div>
+
+                    <div class="summary-right">
+                        <p>Tổng phụ thu: <strong>194.990 ₫</strong></p>
+                        <p>Phí vận chuyển: <strong>0 ₫</strong></p>
+                        <hr>
+                        <p><strong>Tổng: 194.990 ₫</strong></p>
+                        <p class="payment-note">Thanh toán bằng tiền mặt khi giao hàng</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === Lịch sử mua hàng === -->
+        <section id="history-section" class="section">
+            <h2>Lịch Sử Mua Hàng</h2>
+            <p class="desc">Danh sách tất cả các đơn hàng đã mua</p>
+
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Mã hóa đơn</th>
+                    <th>Ngày mua</th>
+                    <th>Trạng thái</th>
+                    <th>Tổng giá trị</th>
+                    <th class="text-center">Thao Tác</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for order in orders %}
+                {% if order.status == "delivered" or order.status == "cancel" %}
+
+                <tr>
+                    <td>#{{ order.id }}</td>
+                    <td>{{ order.created_at|date:"d/m/Y" }}</td>
+
+                    <td>
+                        {% if order.status == "delivered" %}
+                        <span class="delivered">Đã giao</span>
+                        {% else %}
+                        <span class="cancelled">Đã huỷ</span>
+                        {% endif %}
+
+                    </td>
+
+                    <td>{{ order.total_price|intcomma }} ₫</td>
+
+                    <td class="thao-tac-col">
+                        <button class="btn btn-primary btn-sm"
+                                onclick="buyAgain({{ order.id }})">
+                            <i class="bi bi-cart-plus"></i> Mua lại
+                        </button>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+                </tbody>
+
+            </table>
+        </section>
+
+
+    </main>
 </div>
 
 
@@ -386,129 +390,124 @@
         }
     });
 
-        /* ============ MENU SIDEBAR ============ */
-        const menuItems = document.querySelectorAll('.sidebar .menu li');
-        const sections = document.querySelectorAll('.content .section');
+    /* ============ MENU SIDEBAR ============ */
+    const menuItems = document.querySelectorAll('.sidebar .menu li');
+    const sections = document.querySelectorAll('.content .section');
 
-        menuItems.forEach(item => {
-            item.addEventListener('click', e => {
-                e.preventDefault();
+    menuItems.forEach(item => {
+        item.addEventListener('click', e => {
+            e.preventDefault();
 
-                menuItems.forEach(i => i.classList.remove('active'));
-                sections.forEach(s => s.classList.remove('active'));
+            menuItems.forEach(i => i.classList.remove('active'));
+            sections.forEach(s => s.classList.remove('active'));
 
-                item.classList.add('active');
+            item.classList.add('active');
 
-                const sectionId = item.dataset.section;
-                document.getElementById(sectionId + '-section').classList.add('active');
-            });
+            const sectionId = item.dataset.section;
+            document.getElementById(sectionId + '-section').classList.add('active');
         });
+    });
 
-        /* ============ XEM CHI TIẾT ĐƠN ============ */
-        let currentOrderId = null;
+    /* ============ XEM CHI TIẾT ĐƠN ============ */
+    let currentOrderId = null;
 
-        function showOrderDetail(orderId) {
-            currentOrderId = orderId;
+    function showOrderDetail(orderId) {
+        currentOrderId = orderId;
 
-            document.getElementById("order-list").style.display = "none";
-            document.getElementById("order-detail").style.display = "block";
+        document.getElementById("order-list").style.display = "none";
+        document.getElementById("order-detail").style.display = "block";
 
-            // Update text theo mã đơn
-            const dateText = document.querySelector(".order-date strong");
-            if (dateText) {
-                dateText.textContent = "03 tháng 11 năm 2025 - Đơn #" + orderId;
-            }
+        // Update text theo mã đơn
+        const dateText = document.querySelector(".order-date strong");
+        if (dateText) {
+            dateText.textContent = "03 tháng 11 năm 2025 - Đơn #" + orderId;
+        }
+    }
+
+    /* ===== QUAY LẠI DANH SÁCH ===== */
+    function showOrderList() {
+        document.getElementById("order-detail").style.display = "none";
+        document.getElementById("order-list").style.display = "block";
+    }
+
+    /* ============ MODAL HUỶ ĐƠN ============ */
+    function cancelOrder(orderId) {
+        currentOrderId = orderId;
+
+        document.getElementById("cancelReason").value = "";
+
+        const modal = document.getElementById("cancelModal");
+        modal.style.display = "block";
+        modal.classList.add("show");
+    }
+
+    /* ===== ĐÓNG MODAL ===== */
+    function closeCancelModal() {
+        const modal = document.getElementById("cancelModal");
+        modal.classList.remove("show");
+        modal.style.display = "none";
+    }
+
+    /* ===== XÁC NHẬN HUỶ ===== */
+    function confirmCancelOrder() {
+        const reason = document.getElementById("cancelReason").value.trim();
+
+        if (reason === "") {
+            alert("Vui lòng nhập lý do hủy!");
+            return;
         }
 
-        /* ===== QUAY LẠI DANH SÁCH ===== */
-        function showOrderList() {
-            document.getElementById("order-detail").style.display = "none";
-            document.getElementById("order-list").style.display = "block";
-        }
+        alert("✅ Đã hủy đơn #" + currentOrderId + "\nLý do: " + reason);
 
-        /* ============ MODAL HUỶ ĐƠN ============ */
-        function cancelOrder(orderId) {
-            currentOrderId = orderId;
+        closeCancelModal();
 
-            document.getElementById("cancelReason").value = "";
-
-            const modal = document.getElementById("cancelModal");
-            modal.style.display = "block";
-            modal.classList.add("show");
-        }
-
-        /* ===== ĐÓNG MODAL ===== */
-        function closeCancelModal() {
-            const modal = document.getElementById("cancelModal");
-            modal.classList.remove("show");
-            modal.style.display = "none";
-        }
-
-        /* ===== XÁC NHẬN HUỶ ===== */
-        function confirmCancelOrder() {
-            const reason = document.getElementById("cancelReason").value.trim();
-
-            if (reason === "") {
-                alert("Vui lòng nhập lý do hủy!");
-                return;
-            }
-
-            alert("✅ Đã hủy đơn #" + currentOrderId + "\nLý do: " + reason);
-
-            closeCancelModal();
-
-            // TODO: Gửi API Django để hủy đơn
-            /*
-            fetch(`/cancel-order/${currentOrderId}/`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ reason })
-            });
-            */
-        }
+        // TODO: Gửi API Django để hủy đơn
+        /*
+        fetch(`/cancel-order/${currentOrderId}/`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ reason })
+        });
+        */
+    }
 
     document.addEventListener("DOMContentLoaded", function () {
 
-    const tabs = document.querySelectorAll(".order-tab");
-    const rows = document.querySelectorAll("#order-list tbody tr");
+        const tabs = document.querySelectorAll(".order-tab");
+        const rows = document.querySelectorAll("#order-list tbody tr[data-status]");
 
-    const mapStatus = {
-        "cho": "pending",
-        "dang-giao": "shipping",
-        "da-giao": "delivered",
-        "da-huy": "cancel"
-    };
 
-    function filterOrders(status) {
-    let found = false;
-    rows.forEach(row => {
-        if(row.dataset.status === status){
-            row.style.display = "table-row";
-            found = true;
-        } else {
-            row.style.display = "none";
+        function filterOrders(status) {
+            let found = false;
+            rows.forEach(row => {
+                if (row.dataset.status === status) {
+                    row.style.display = "table-row";
+                    found = true;
+                } else {
+                    row.style.display = "none";
+                }
+            });
+
+            if (!found) {
+                console.log("Không có đơn hàng cho status: " + status);
+            }
         }
-    });
-    if(!found){
-        // hiển thị thông báo trống hoặc tất cả
-        console.log("Không có đơn hàng cho status: " + status);
-    }
-}
 
+        tabs.forEach(tab => {
+            tab.addEventListener("click", () => {
+                tabs.forEach(t => t.classList.remove("active"));
+                tab.classList.add("active");
 
-
-
-    tabs.forEach(tab => {
-        tab.addEventListener("click", () => {
-            tabs.forEach(t => t.classList.remove("active"));
-            tab.classList.add("active");
-
-            const needStatus = mapStatus[tab.dataset.status];
-            filterOrders(needStatus);
+                // 🔥 LẤY TRỰC TIẾP
+                filterOrders(tab.dataset.status);
+            });
         });
+
+        // ✅ HIỂN THỊ TAB MẶC ĐỊNH
+        filterOrders("pending");
+
     });
 
-});
 
 </script>
 </body>
