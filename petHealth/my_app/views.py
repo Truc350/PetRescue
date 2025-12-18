@@ -481,6 +481,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from accounts.models import UserProfile
 from django.contrib import messages
+from orders.models import Order
 
 @login_required
 @login_required
@@ -488,6 +489,7 @@ def profile_view(request):
     user = request.user
     profile, created = UserProfile.objects.get_or_create(user=user)
 
+    orders = Order.objects.filter(user=request.user)
     # Khởi tạo danh sách giới tính và giá trị đang chọn
     gender_options = ["Nam", "Nữ", "Khác"]
     selected_gender = profile.gender if profile.gender else ""
@@ -531,7 +533,8 @@ def profile_view(request):
         "user_obj": user,
         "profile": profile,
         "gender_options": gender_options,
-        "selected_gender": selected_gender
+        "selected_gender": selected_gender,
+        "orders": orders
     })
 
 from django.http import JsonResponse
