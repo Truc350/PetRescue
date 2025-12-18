@@ -394,6 +394,9 @@ def search_view(request):
     keyword_raw = request.GET.get("q", "").strip()
     keyword = keyword_raw.lower()
 
+    selected_prices = request.GET.getlist("price")
+    selected_brands = request.GET.getlist("brand")
+
     products = Product.objects.none()
 
     # ====== TẦNG 1: HIỂU Ý (NHẸ – KHÔNG ÉP) ======
@@ -450,10 +453,27 @@ def search_view(request):
 
     products = Product.objects.filter(query).distinct()
 
+    # ====== LỌC GIÁ (TRÊN KẾT QUẢ SEARCH) ======
+    if selected_prices:
+        price_q = Q()
+        for p in selected_prices:
+            min_price, max_price = p.split("-")
+            price_q |= Q(
+                price__gte=int(min_price),
+                price__lte=int(max_price)
+            )
+        products = products.filter(price_q)
+
+    # ====== LỌC BRAND (TRÊN KẾT QUẢ SEARCH) ======
+    if selected_brands:
+        products = products.filter(brand__in=selected_brands)
+
     return render(request, "frontend/search.html", {
         "keyword": keyword_raw,
         "products": products,
         "total": products.count(),
+        "selected_prices": selected_prices,
+        "selected_brands": selected_brands,
     })
 
 # views.py

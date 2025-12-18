@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 
+
 class Category(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
@@ -15,12 +16,11 @@ class Product(models.Model):
     brand = models.CharField(max_length=255, null=True, blank=True)
     image = models.URLField(max_length=500)
 
-    price = models.IntegerField()                      # giá gốc
-    discount_price = models.IntegerField(              # giá sau giảm
+    price = models.IntegerField()  # giá gốc
+    discount_price = models.IntegerField(  # giá sau giảm
         null=True,
         blank=True
     )
-
 
     description = models.TextField(blank=True, null=True)
 
@@ -45,25 +45,31 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    @property
     def final_price(self):
         now = timezone.now()
-        promo = self.category.promotions.filter(
+        promo = (self.category.promotions.filter(
             is_active=True,
             start_date__lte=now,
             end_date__gte=now
         ).first()
+        or self.category.promotions.filter(
+            is_active=True,
+            start_date__lte=now,
+            end_date__gte=now
+        ).first()
+        )
 
         if promo:
             return int(self.price * (100 - promo.discount_percent) / 100)
 
-        return self.price
+        return self.discount_price or self.price
 
     def discount_percent(self):
         """Tính % giảm tự động"""
         if self.discount_price:
             return int((1 - self.discount_price / self.price) * 100)
         return 0
-
 
     def get_related_products(self, limit=10):
         # 1. Ưu tiên sản phẩm admin gán thủ công
@@ -84,8 +90,6 @@ class Product(models.Model):
         ).exclude(id=self.id)
         return same_category[:limit]
 
-
-
     def get_active_promotion(self):
         return self.promotions.filter(
             is_active=True,
@@ -98,6 +102,7 @@ class Product(models.Model):
         if promo:
             return int(self.price * (100 - promo.discount_percent) / 100)
         return self.discount_price or self.price
+
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
@@ -115,8 +120,10 @@ class ProductSize(models.Model):
     def __str__(self):
         return f"{self.product.name} - {self.size_name}"
 
+
 from django.db import models
 from django.contrib.auth.models import User  # hoặc model User custom nếu bạn có
+
 
 class ProductReview(models.Model):
     STAR_CHOICES = [(i, f"{i} sao") for i in range(1, 6)]
@@ -125,7 +132,6 @@ class ProductReview(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     email = models.EmailField(blank=True, null=True)  # nếu user không login
     rating = models.IntegerField(choices=STAR_CHOICES)
-
 
     #  THÊM
     # sentiment = models.CharField(
@@ -148,8 +154,10 @@ class ProductReview(models.Model):
         user_info = self.user.username if self.user else self.email
         return f"{user_info} - {self.product.name} ({self.rating} sao)"
 
+
 from django.db import models
 from django.contrib.auth.models import User
+
 
 class Wishlist(models.Model):
     user = models.ForeignKey(
@@ -174,6 +182,7 @@ class Wishlist(models.Model):
 # models.py
 from django.db import models
 from django.core.exceptions import ValidationError
+
 
 class Promotion(models.Model):
     name = models.CharField(max_length=255)
