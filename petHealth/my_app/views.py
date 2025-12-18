@@ -26,7 +26,7 @@ def getRegister(request):
 
 
 def getForgotPassword(request):
-    return render(request, 'frontend/forgot-password.html')
+    return render(request, 'frontend/forgot_password.html')
 
 
 def getPayment(request):
