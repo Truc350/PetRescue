@@ -41,6 +41,9 @@ def getPaymentInfor(request):
 def getCategory(request):
     return render(request, 'frontend/category.html')
 
+def getSupport(request):
+    return render(request, 'frontend/support.html')
+
 
 def getCategoryManage(request):
     return render(request, 'frontend/admin/category-manage.html')
@@ -530,3 +533,23 @@ def profile_view(request):
         "gender_options": gender_options,
         "selected_gender": selected_gender
     })
+
+from django.http import JsonResponse
+from django.views.decorators.http import require_GET
+from .models_Product import Product
+
+@require_GET
+def search_suggest(request):
+    keyword = request.GET.get("q", "").strip()
+
+    if not keyword:
+        return JsonResponse([], safe=False)
+
+    products = (
+        Product.objects
+        .filter(name__icontains=keyword)
+        .values("name", "slug")[:8]
+    )
+
+    return JsonResponse(list(products), safe=False)
+
