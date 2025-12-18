@@ -127,10 +127,10 @@ class ProductReview(models.Model):
     rating = models.IntegerField(choices=STAR_CHOICES)
 
 
-    # # 👇 THÊM
+    #  THÊM
     # sentiment = models.CharField(
     #     max_length=10,
-    #     choices=[("positive", "Positive"), ("negative", "Negative")],
+    #     choices=[("tích cực", "Tích cực"), ("tiêu cực", "Tiêu cực")],
     #     null=True,
     #     blank=True
     # )
