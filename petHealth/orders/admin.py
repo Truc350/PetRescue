@@ -46,6 +46,7 @@ class OrderAdmin(admin.ModelAdmin):
         "user",
         "status_label",
         "total_price",
+        "short_cancel_reason",
         "created_at",
     )
 
@@ -53,7 +54,7 @@ class OrderAdmin(admin.ModelAdmin):
     search_fields = ("id", "user__username")
     ordering = ("-created_at",)
 
-    readonly_fields = ("user", "total_price", "created_at")
+    readonly_fields = ("user", "total_price", "created_at",  "cancel_reason", "cancelled_at",)
 
     inlines = [OrderItemInline, ShippingAddressInline]
 
@@ -75,3 +76,10 @@ class OrderAdmin(admin.ModelAdmin):
 
     def has_view_permission(self, request, obj=None):
         return True
+
+    def short_cancel_reason(self, obj):
+        if obj.status == "cancel" and obj.cancel_reason:
+            return obj.cancel_reason[:40]  # cắt cho gọn
+        return "-"
+
+    short_cancel_reason.short_description = "Lý do huỷ"
