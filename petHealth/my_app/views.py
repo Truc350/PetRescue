@@ -286,7 +286,7 @@ def add_to_cart(request, product_id):
     else:
         cart[pid] = {
             "name": product.name,
-            "price": product.final_price(),  # đúng model
+            "price": product.final_price,  # đúng model
             "image": product.image,
             "slug": product.slug,
             "quantity": quantity
@@ -581,4 +581,63 @@ def search_suggest(request):
     )
 
     return JsonResponse(list(products), safe=False)
+
+
+from sklearn.metrics.pairwise import cosine_similarity
+from .services.image_index import library_features, library_urls
+from .services.feature import extract_feature_from_file
+from .services.yolo import yolo_model
+
+def image_search(request):
+    best_url = None
+    best_score = None
+
+    if request.method == "POST":
+        query_feat = extract_feature_from_file(
+            request.FILES["query_image"], yolo_model
+        )
+
+        sims = cosine_similarity([query_feat], library_features)[0]
+        idx = sims.argmax()
+
+        best_url = library_urls[idx]
+        best_score = sims[idx]
+
+    return render(request, "search.html", {
+        "best_url": best_url,
+        "best_score": best_score
+    })
+from django.http import JsonResponse
+from sklearn.metrics.pairwise import cosine_similarity
+from my_app.models_Product import ProductImage
+from .services.image_index import library_features, library_urls
+from .services.feature import extract_feature_from_file
+
+
+def image_search_api(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid method"}, status=400)
+
+    file = request.FILES.get("query_image")
+    if not file:
+        return JsonResponse({"error": "No image"}, status=400)
+
+    # extract feature
+    query_feat = extract_feature_from_file(file, None)
+    query_feat = query_feat.reshape(1, -1)
+
+    # cosine similarity
+    sims = cosine_similarity(query_feat, library_features)[0]
+    idx = int(sims.argmax())
+    best_url = library_urls[idx]
+
+    # tìm Product
+    img = ProductImage.objects.filter(url=best_url).select_related("product").first()
+    if not img:
+        return JsonResponse({"error": "Not found"}, status=404)
+
+    return JsonResponse({
+        "url": f"/product/{img.product.slug}/",
+        "score": float(sims[idx])
+    })
 

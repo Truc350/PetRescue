@@ -55,6 +55,20 @@
                         <ul id="suggestList" class="list-group position-absolute w-100 shadow-sm"
                             style="top: 100%; left: 0; z-index: 1000; display: none;">
                         </ul>
+                        <!-- INPUT FILE ẨN -->
+                        <input
+                                type="file"
+                                id="imageSearchInput"
+                                accept="image/*"
+                                hidden
+                        >
+
+                        <!-- NÚT CAMERA -->
+                        <button type="button"
+                                class="btn position-absolute top-50 end-0 translate-middle-y me-2 border-0 bg-transparent"
+                                onclick="document.getElementById('imageSearchInput').click()">
+                            <i class="bi bi-camera"></i>
+                        </button>
                     </div>
                 </form>
             </div>
@@ -298,39 +312,39 @@
             fetch(`/search/suggest/?q=${encodeURIComponent(keyword)}`, {
                 signal: controller.signal
             })
-            .then(res => res.json())
-            .then(data => {
-                list.innerHTML = "";
+                .then(res => res.json())
+                .then(data => {
+                    list.innerHTML = "";
 
-                if (!data.length) {
-                    list.style.display = "none";
-                    return;
-                }
+                    if (!data.length) {
+                        list.style.display = "none";
+                        return;
+                    }
 
-                const safeKeyword = escapeRegex(keyword);
-                const regex = new RegExp(`(${safeKeyword})`, "gi");
+                    const safeKeyword = escapeRegex(keyword);
+                    const regex = new RegExp(`(${safeKeyword})`, "gi");
 
-                data.forEach(item => {
-                    const li = document.createElement("li");
-                    li.className = "list-group-item list-group-item-action";
+                    data.forEach(item => {
+                        const li = document.createElement("li");
+                        li.className = "list-group-item list-group-item-action";
 
-                    // Highlight từ khóa
-                    li.innerHTML = item.name.replace(regex, "<strong>$1</strong>");
+                        // Highlight từ khóa
+                        li.innerHTML = item.name.replace(regex, "<strong>$1</strong>");
 
-                    li.addEventListener("click", () => {
-                        window.location.href = `/product/${item.slug}/`;
+                        li.addEventListener("click", () => {
+                            window.location.href = `/product/${item.slug}/`;
+                        });
+
+                        list.appendChild(li);
                     });
 
-                    list.appendChild(li);
+                    list.style.display = "block";
+                })
+                .catch(err => {
+                    if (err.name !== "AbortError") {
+                        console.error(err);
+                    }
                 });
-
-                list.style.display = "block";
-            })
-            .catch(err => {
-                if (err.name !== "AbortError") {
-                    console.error(err);
-                }
-            });
         });
 
         // Click ra ngoài → ẩn gợi ý
@@ -340,6 +354,31 @@
             }
         });
     });
+</script>
+<script>
+document.getElementById("imageSearchInput").addEventListener("change", function () {
+    if (!this.files.length) return;
+
+    const formData = new FormData();
+    formData.append("query_image", this.files[0]);
+
+    fetch("/search/image/", {
+        method: "POST",
+        body: formData,
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}"
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.url) {
+            window.location.href = data.url;
+        } else {
+            alert("Không tìm thấy sản phẩm phù hợp");
+        }
+    })
+    .catch(err => console.error(err));
+});
 </script>
 
 
