@@ -212,6 +212,9 @@ def checkout_from_cart(request):
                 price=cart[pid]["price"]
             )
 
+            del cart[pid]
+        request.session["cart"] = cart
+
     # KHÔNG xóa cart ở đây (tùy bạn)
         request.session["checkout_order_id"] = order.id
         request.session.modified = True
