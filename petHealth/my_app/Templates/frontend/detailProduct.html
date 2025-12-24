@@ -10,6 +10,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="../../static/css/detailProduct.css">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
 
 </head>
@@ -176,7 +178,18 @@
     <!-- ========== ĐÁNH GIÁ SẢN PHẨM ========== -->
     <section class="review-section">
         <h4 class="review-title">ĐÁNH GIÁ SẢN PHẨM</h4>
-
+        <!-- NÚT BẬT THỐNG KÊ -->
+        <button id="toggle-stats-btn" class="btn btn-outline-primary mb-3">
+            <i class="bi bi-bar-chart"></i>
+            <span class="btn-text">Thống kê đánh giá</span>
+        </button>
+        <!-- KHỐI THỐNG KÊ (ẨN MẶC ĐỊNH) -->
+        <div id="stats-box" style="display:none">
+            <h4>Thống kê đánh giá</h4>
+            <img src="{% url 'sentiment_chart' product.id %}"
+                 alt="Biểu đồ đánh giá"
+                 style="max-width:100%">
+        </div>
 
         <div class="rating-overview">
             <div class="rating-score">
@@ -244,13 +257,8 @@
         </div>
 
 
-        <div class="pagination">
-            <button class="active">1</button>
-            <button>2</button>
-            <button>3</button>
-            <span>...</span>
-            <button>5</button>
-        </div>
+        <!-- PAGINATION -->
+        <div class="pagination" id="pagination"></div>
 
 
         <button class="write-review-btn">Viết đánh giá</button>
@@ -281,13 +289,13 @@
                 {% for p in related %}
                 <div class="col-6 col-md-4 col-lg-3 flex-shrink-0">
                     <div class="product-card bg-white rounded shadow-sm overflow-hidden">
-
-                        <!-- Ảnh -->
-                        <img src="{{ p.image }}"
-                             class="w-100"
-                             style="height:200px; object-fit:contain;"
-                             alt="{{ p.name }}">
-
+                        <a href="{% url 'product_detail' p.slug %}">
+                            <!-- Ảnh -->
+                            <img src="{{ p.image }}"
+                                 class="w-100"
+                                 style="height:200px; object-fit:contain;"
+                                 alt="{{ p.name }}">
+                        </a>
                         <div class="p-3">
 
                             <div class="product-header d-flex justify-content-between align-items-center mb-2">
@@ -314,10 +322,10 @@
                             </p>
 
                             <!-- Link -->
-                            <a href="{% url 'product_detail' p.slug %}"
+                           <a href="{% url 'orders:buy_now' p.id %}"
                                class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
                                 <i class="bi bi-cart-plus me-1"></i>
-                                Xem sản phẩm
+                                Mua ngay
                             </a>
                         </div>
 
@@ -609,6 +617,97 @@
             document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
             this.parentElement.classList.add('active');
         });
+    });
+</script>
+<script>
+    const btn = document.getElementById("toggle-stats-btn");
+    const box = document.getElementById("stats-box");
+    const icon = btn.querySelector("i");
+    const text = btn.querySelector(".btn-text");
+
+    btn.addEventListener("click", function () {
+        const isHidden = box.style.display === "none" || box.style.display === "";
+
+        if (isHidden) {
+            box.style.display = "block";
+            icon.className = "bi bi-x-circle";
+            text.textContent = "Ẩn thống kê đánh giá";
+        } else {
+            box.style.display = "none";
+            icon.className = "bi bi-bar-chart";
+            text.textContent = "Thống kê đánh giá";
+        }
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const reviews = document.querySelectorAll("#review-list .review");
+        const pagination = document.getElementById("pagination");
+
+        const reviewsPerPage = 5;
+        let currentPage = 1;
+
+        function renderPage(page) {
+            currentPage = page;
+
+            const start = (page - 1) * reviewsPerPage;
+            const end = start + reviewsPerPage;
+
+            reviews.forEach((review, index) => {
+                review.style.display =
+                    index >= start && index < end ? "flex" : "none";
+            });
+
+            renderPagination();
+        }
+
+        function renderPagination() {
+            pagination.innerHTML = "";
+
+            const totalPages = Math.ceil(reviews.length / reviewsPerPage);
+
+            if (totalPages <= 1) return;
+
+            // ←
+            if (currentPage > 1) {
+                pagination.innerHTML += `
+                <button class="page-btn" data-page="${currentPage - 1}">
+                    &laquo;
+                </button>`;
+            }
+
+            for (let i = 1; i <= totalPages; i++) {
+                if (i >= currentPage - 2 && i <= currentPage + 2) {
+                    pagination.innerHTML += `
+                    <button class="page-btn ${i === currentPage ? 'active' : ''}"
+                            data-page="${i}">
+                        ${i}
+                    </button>`;
+                }
+            }
+
+            // →
+            if (currentPage < totalPages) {
+                pagination.innerHTML += `
+                <button class="page-btn" data-page="${currentPage + 1}">
+                    &raquo;
+                </button>`;
+            }
+
+            // click event
+            document.querySelectorAll(".page-btn").forEach(btn => {
+                btn.addEventListener("click", function () {
+                    renderPage(parseInt(this.dataset.page));
+                    window.scrollTo({
+                        top: document.querySelector(".review-section").offsetTop - 80,
+                        behavior: "smooth"
+                    });
+                });
+            });
+        }
+
+        // INIT
+        renderPage(1);
     });
 </script>
 
