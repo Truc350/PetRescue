@@ -276,3 +276,70 @@ def order_detail_api(request, order_id):
         "items": items,
         "shipping": shipping,
     })
+
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from .models import Order
+
+@login_required
+def buy_again(request, order_id):
+    order = get_object_or_404(
+        Order,
+        id=order_id,
+        user=request.user,
+        status="delivered"   # ❗ chỉ cho mua lại đơn đã giao
+    )
+
+    cart = request.session.get("cart", {})
+
+    for item in order.items.select_related("product"):
+        product = item.product
+        pid = str(product.id)
+
+        if pid in cart:
+            cart[pid]["quantity"] += item.quantity
+        else:
+            cart[pid] = {
+                "name": product.name,
+                "price": product.final_price,
+                "image": str(product.image),
+                "slug": product.slug,
+                "quantity": item.quantity
+            }
+
+    request.session["cart"] = cart
+    request.session.modified = True
+
+    return JsonResponse({
+        "success": True,
+        "redirect": "/shoppingcart"
+    })
+
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.utils import timezone
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
+import json
+
+@login_required
+@require_POST
+def cancel_order_api(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+
+    if order.status != "pending":
+        return JsonResponse({"success": False, "message": "Không thể huỷ đơn này"})
+
+    data = json.loads(request.body)
+    reason = data.get("reason", "").strip()
+
+    if not reason:
+        return JsonResponse({"success": False, "message": "Thiếu lý do huỷ"})
+
+    order.status = "cancel"
+    order.cancel_reason = reason
+    order.cancelled_at = timezone.now()
+    order.save()
+
+    return JsonResponse({"success": True})
