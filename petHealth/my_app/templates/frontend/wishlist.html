@@ -67,13 +67,18 @@
                     <div class="d-flex align-items-center gap-2">
 
                         <!-- Thêm vào giỏ hàng (sau này gắn cart) -->
-                        <a href="#">
-                            <button class="btn btn-primary btn-sm nut_them_vao_gio">
+                       <form method="post" action="{% url 'add_to_cart' item.product.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="quantity" id="qtyInput" value="1">
+
+                            <button type="submit"
+                                    class="btn btn-primary btn-sm nut_them_vao_gio">
                                 <i class="bi bi-cart-plus"></i> Thêm vào giỏ hàng
                             </button>
-                        </a>
+                        </form>
 
-                        //Xoá
+
+
                         <form method="post" action="{% url 'remove-wishlist' item.product.id %}">
                             {% csrf_token %}
                             <button class="btn btn-outline-danger btn-sm">
