@@ -1,8 +1,8 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from . import views
 from django.urls import path
-from .views import profile_view
+from .views import profile_view, chat_api
 from django.contrib.auth.views import LogoutView
 
 # from my_app.views import get_home
@@ -66,8 +66,9 @@ urlpatterns = [
         views.remove_from_wishlist,
         name="remove-wishlist"
     ),
-path("search-image/", views.image_search),
-# urls.py
-path("search/image/", views.image_search_api, name="image-search"),
-
+    path("search-image/", views.image_search),
+    # urls.py
+    path("search/image/", views.image_search_api, name="image-search"),
+    # path("", include("my_app.urls")),
+    path("api/chat/", chat_api),
 ]

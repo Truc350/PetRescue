@@ -1,9 +1,13 @@
+import os
+
 import pandas as pd
 from langchain_core.documents import Document
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 
-df = pd.read_csv("data/data.csv")
+csv_path = os.path.join("..", "data", "data.csv")
+df = pd.read_csv(csv_path)
+
 
 docs = []
 for _, row in df.iterrows():
@@ -16,6 +20,6 @@ embeddings = HuggingFaceEmbeddings(
 
 vectorstore = FAISS.from_documents(docs, embeddings)
 
-vectorstore.save_local("data/faiss_db")
+vectorstore.save_local(r"E:\Work_Space\Ki1_nam3\PetRescue\petHealth\rag\data\faiss_db")
 
 print("✅ FAISS database đã tạo xong!", len(docs))

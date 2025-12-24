@@ -14,8 +14,10 @@ def load_rag_chain():
         model_name="sentence-transformers/all-MiniLM-L6-v2"
     )
 
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    faiss_dir = os.path.join(BASE_DIR, "data/faiss_db")
     vectorstore = FAISS.load_local(
-        "data/faiss_db",
+        faiss_dir,
         embeddings,
         allow_dangerous_deserialization=True
     )
