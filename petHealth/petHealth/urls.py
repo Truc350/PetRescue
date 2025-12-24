@@ -23,9 +23,10 @@ from my_app import views as my_views
 # from my_app.views import get_home
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('checkout/', include('orders.urls')),
+    # path('checkout/', include('orders.urls')),
     path('accounts/', include('accounts.urls')),  # để cuối cùng
     path('accounts/', include('allauth.urls')),
     path('', include('review.urls')),
     path('', include('my_app.urls')),
+    path("orders/", include("orders.urls")),
 ]

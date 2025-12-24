@@ -72,7 +72,7 @@ def buy_now(request, product_id):
 
 import json
 from django.views.decorators.http import require_POST
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 
 
 @require_POST
@@ -235,3 +235,45 @@ from django.contrib.auth.decorators import login_required
 def personal_page(request):
     user_orders = Order.objects.filter(user=request.user).order_by('-created_at')
     return render(request, "frontend/personal-page.html", {"orders": user_orders})
+
+
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Order
+
+@login_required
+def order_detail_api(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+
+    if order.user != request.user:
+        return HttpResponseForbidden("Bạn không có quyền xem đơn này")
+
+    items = []
+    for item in order.items.all():
+        items.append({
+            "name": item.product.name,
+            "image": item.product.image if item.product.image else "",
+            "quantity": item.quantity,
+            "price": int(item.price),
+        })
+
+    shipping = None
+    if hasattr(order, "shippingaddress"):
+        shipping = {
+            "full_name": order.shippingaddress.full_name,
+            "phone": order.shippingaddress.phone,
+            "address": order.shippingaddress.address,
+            "province": order.shippingaddress.province,
+            "ward": order.shippingaddress.ward,
+            "note": order.shippingaddress.note,
+        }
+
+    return JsonResponse({
+        "id": order.id,
+        "status": order.status,
+        "created_at": order.created_at.strftime("%d/%m/%Y %H:%M"),
+        "total_price": order.total_price,
+        "items": items,
+        "shipping": shipping,
+    })

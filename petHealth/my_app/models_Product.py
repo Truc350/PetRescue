@@ -48,22 +48,32 @@ class Product(models.Model):
     @property
     def final_price(self):
         now = timezone.now()
-        promo = (self.category.promotions.filter(
-            is_active=True,
-            start_date__lte=now,
-            end_date__gte=now
-        ).first()
-        or self.category.promotions.filter(
-            is_active=True,
-            start_date__lte=now,
-            end_date__gte=now
-        ).first()
-        )
 
+        # 1️⃣ Ưu tiên promotion gắn trực tiếp cho sản phẩm
+        promo = self.promotions.filter(
+            is_active=True,
+            start_date__lte=now,
+            end_date__gte=now
+        ).first()
+
+        # 2️⃣ Fallback: promotion theo category
+        if not promo:
+            promo = self.category.promotions.filter(
+                is_active=True,
+                start_date__lte=now,
+                end_date__gte=now
+            ).first()
+
+        # 3️⃣ Nếu có promotion → tính theo %
         if promo:
             return int(self.price * (100 - promo.discount_percent) / 100)
 
-        return self.discount_price or self.price
+        # 4️⃣ Không promotion → dùng discount_price nếu có
+        if self.discount_price is not None:
+            return self.discount_price
+
+        # 5️⃣ Cuối cùng → giá gốc
+        return self.price
 
     def discount_percent(self):
         """Tính % giảm tự động"""
