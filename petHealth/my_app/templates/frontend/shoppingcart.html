@@ -63,14 +63,28 @@
                     </div>
 
                     <div class="d-flex align-items-center">
-                        <button type="button" class="btn btn-outline-secondary btn-sm nut_giam">−</button>
 
-                        <input type="text"
-                               value="{{ item.quantity }}"
-                               class="form-control text-center o_so_luong mx-1"
-                               style="width:50px;" readonly>
 
-                        <button type="button" class="btn btn-outline-secondary btn-sm nut_tang">+</button>
+                        <form method="post" action="{% url 'shoppingcart' %}" class="d-flex align-items-center">
+                            {% csrf_token %}
+                            <input type="hidden" name="product_id" value="{{ id }}">
+
+                            <button type="submit" name="action" value="decrease"
+                                    class="btn btn-outline-secondary btn-sm">−
+                            </button>
+
+                            <input type="text"
+                                   name="quantity"
+                                   value="{{ item.quantity }}"
+                                   class="form-control text-center mx-1 o_so_luong"
+                                   style="width:50px;"
+                                   readonly>
+
+                            <button type="submit" name="action" value="increase"
+                                    class="btn btn-outline-secondary btn-sm">+
+                            </button>
+                        </form>
+
 
                         <a href="{% url 'remove_cart' id %}"
                            class="btn btn-outline-danger btn-sm nut_xoa ms-2">
@@ -99,9 +113,12 @@
                     </h5>
 
 
-                    <button class="btn btn-primary nut_thanh_toan">
+                    <button
+                            class="btn nut_thanh_toan"
+                            style="background-color:#234bbb; color:#fff; border:none;">
                         Mua ngay
                     </button>
+
 
                 </div>
             </div>
@@ -110,30 +127,37 @@
 </div>
 <script>
     document.querySelector(".nut_thanh_toan").addEventListener("click", () => {
-        const ids = [...document.querySelectorAll(".chon_san_pham:checked")]
-            .map(cb => cb.dataset.id);
+    const items = [...document.querySelectorAll(".chon_san_pham:checked")]
+        .map(cb => {
+            const sp = cb.closest(".khung_san_pham");
+            return {
+                id: cb.dataset.id,
+                quantity: parseInt(sp.querySelector(".o_so_luong").value)
+            };
+        });
 
-        if (ids.length === 0) {
-            alert("Vui lòng chọn ít nhất 1 sản phẩm");
-            return;
+    if (items.length === 0) {
+        alert("Vui lòng chọn ít nhất 1 sản phẩm");
+        return;
+    }
+
+    fetch("{% url 'orders:checkout_from_cart' %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ items })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.ok) {
+            window.location.href = "{% url 'orders:checkout_shipping' %}";
         }
-
-        fetch("{% url 'orders:checkout_from_cart' %}", {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ids})
-        })
-            .then(res => res.json())
-            .then(() => {
-                // 👉 CHUYỂN THẲNG TỚI SHIPPING
-                window.location.href = "{% url 'orders:checkout_shipping' %}";
-            });
     });
-
+});
 </script>
+
 <script>
     const chonTatCa = document.getElementById("chon_tat_ca");
     const nutXoaDaChon = document.querySelector(".nut_xoa_da_chon");
@@ -170,14 +194,8 @@
         if (!sp) return;
 
         // Tăng / giảm số lượng
-        if (e.target.classList.contains("nut_tang") || e.target.classList.contains("nut_giam")) {
-            const input = sp.querySelector(".o_so_luong");
-            let soLuong = parseInt(input.value);
-            if (e.target.classList.contains("nut_tang")) soLuong++;
-            else if (soLuong > 1) soLuong--;
-            input.value = soLuong;
-            capNhatTongTien();
-        }
+
+
 
 
         // Tick chọn sản phẩm
