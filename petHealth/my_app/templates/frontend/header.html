@@ -223,9 +223,20 @@
             </div>
 
             <div class="modal-footer chatbox-footer">
-                <input type="text" class="form-control" placeholder="Nhập tin nhắn...">
-                <button class="btn btn-primary">Gửi</button>
+                <input
+                        id="chatInput"
+                        type="text"
+                        class="form-control"
+                        placeholder="Nhập tin nhắn..."
+                >
+                <button
+                        id="sendChatBtn"
+                        class="btn btn-primary"
+                >
+                    Gửi
+                </button>
             </div>
+
 
         </div>
     </div>
@@ -356,30 +367,80 @@
     });
 </script>
 <script>
-document.getElementById("imageSearchInput").addEventListener("change", function () {
-    if (!this.files.length) return;
+    document.getElementById("imageSearchInput").addEventListener("change", function () {
+        if (!this.files.length) return;
 
-    const formData = new FormData();
-    formData.append("query_image", this.files[0]);
+        const formData = new FormData();
+        formData.append("query_image", this.files[0]);
 
-    fetch("/search/image/", {
-        method: "POST",
-        body: formData,
-        headers: {
-            "X-CSRFToken": "{{ csrf_token }}"
-        }
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.url) {
-            window.location.href = data.url;
-        } else {
-            alert("Không tìm thấy sản phẩm phù hợp");
-        }
-    })
-    .catch(err => console.error(err));
+        fetch("/search/image/", {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}"
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.url) {
+                window.location.href = data.url;
+            } else {
+                alert("Không tìm thấy sản phẩm phù hợp");
+            }
+        })
+        .catch(err => console.error(err));
+    });
+</script>
+
+<!--Xử lý chatbox-->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const chatBody = document.querySelector(".chatbox-body");
+    const chatInput = document.getElementById("chatInput");
+    const sendBtn = document.getElementById("sendChatBtn");
+
+    function addMessage(text, type) {
+        const div = document.createElement("div");
+        div.className = `message ${type}-msg`;
+        div.innerText = text;
+        chatBody.appendChild(div);
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function sendMessage() {
+        const message = chatInput.value.trim();
+        if (!message) return;
+
+        // Hiện tin nhắn người dùng
+        addMessage(message, "user");
+        chatInput.value = "";
+
+        fetch("/api/chat/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({ message })
+        })
+        .then(res => res.json())
+        .then(data => {
+            addMessage(data.answer, "bot");
+        })
+        .catch(() => {
+            addMessage("⚠️ Không thể kết nối hệ thống", "bot");
+        });
+    }
+
+    sendBtn.addEventListener("click", sendMessage);
+
+    chatInput.addEventListener("keydown", e => {
+        if (e.key === "Enter") sendMessage();
+    });
 });
 </script>
+
+
 
 
 </body>

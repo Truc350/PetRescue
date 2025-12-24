@@ -1,0 +1,12 @@
+langchain
+langchain-core
+langchain-community
+langchain-huggingface
+langchain-google-genai
+sentence-transformers
+faiss-cpu
+python-dotenv
+google-generativeai
+requests==2.32.4
+langchain-classic
+Django>=4.2

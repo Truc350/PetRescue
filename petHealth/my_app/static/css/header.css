@@ -373,5 +373,25 @@ background: var(--primary);
 .search-bar input {
     width: 100%;
 }
+.message {
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    max-width: 80%;
+    font-size: 14px;
+}
+
+.bot-msg {
+    background: #f1f1f1;
+    align-self: flex-start;
+}
+
+.user-msg {
+    background: #0d6efd;
+    color: white;
+    align-self: flex-end;
+    margin-left: auto;
+}
+
 
 
