@@ -318,8 +318,23 @@ body {
     color: #222;
 }
 
-.product-desc .desc-body::after {
-    content: "Xem thêm sản phẩm khác tại PesRecue.vn";
+/*.product-desc .desc-body::after {*/
+/*    content: "Xem thêm sản phẩm khác tại PesRecue.vn";*/
+/*    display: block;*/
+/*    text-align: center;*/
+/*    margin: 40px auto 10px;*/
+/*    padding: 16px 20px;*/
+/*    background: #f8f9fa;*/
+/*    border: 1.5px dashed #234bbb;*/
+/*    border-radius: 12px;*/
+/*    font-weight: 600;*/
+/*    color: #234bbb;*/
+/*    font-size: 16px;*/
+/*    max-width: 90%;*/
+/*    width: fit-content;*/
+/*}*/
+
+.desc-home-link {
     display: block;
     text-align: center;
     margin: 40px auto 10px;
@@ -332,6 +347,14 @@ body {
     font-size: 16px;
     max-width: 90%;
     width: fit-content;
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+
+.desc-home-link:hover {
+    background: #234bbb;
+    color: #fff;
+    transform: translateY(-2px);
 }
 
 /* smaller, dim brand link style used in image */

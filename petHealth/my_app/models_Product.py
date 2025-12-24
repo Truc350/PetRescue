@@ -144,13 +144,13 @@ class ProductReview(models.Model):
     rating = models.IntegerField(choices=STAR_CHOICES)
 
     #  THÊM
-    # sentiment = models.CharField(
-    #     max_length=10,
-    #     choices=[("tích cực", "Tích cực"), ("tiêu cực", "Tiêu cực")],
-    #     null=True,
-    #     blank=True
-    # )
-    # is_spam = models.BooleanField(default=False)
+    sentiment = models.CharField(
+        max_length=10,
+        choices=[("tích cực", "Tích cực"), ("tiêu cực", "Tiêu cực")],
+        null=True,
+        blank=True
+    )
+    is_spam = models.BooleanField(default=False)
 
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
