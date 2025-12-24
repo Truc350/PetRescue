@@ -224,7 +224,8 @@
 
                         <td class="thao-tac-col">
                             <button class="btn btn-view btn-sm"
-                                    onclick="showOrderDetail({{ order.id }})">
+                                    data-url="{% url 'orders:order_detail_api' order.id %}"
+                                    onclick="showOrderDetail(this)">
                                 <i class="bi bi-eye"></i> Xem chi tiết
                             </button>
 
@@ -252,7 +253,10 @@
             <!-- 🔹 CHI TIẾT ĐƠN HÀNG (ẩn mặc định) -->
             <div id="order-detail" class="order-card" style="display: none;">
                 <button class="back-btn" onclick="showOrderList()">Quay lại danh sách</button>
-                <p class="order-date">Vận chuyển ngày <strong>03 tháng 11 năm 2025</strong></p>
+
+                <p class="order-date">
+                    Vận chuyển ngày <strong></strong>
+                </p>
 
                 <div class="order-progress">
                     <div class="step active">ĐANG XỬ LÝ</div>
@@ -260,40 +264,12 @@
                     <div class="step">ĐÃ GIAO</div>
                 </div>
 
-                <div class="order-item">
-                    <img src="https://paddy.vn/cdn/shop/files/forcans_1.jpg?v=1748246401" alt="Flycam DJI Air 3">
-                    <div class="item-info">
-                        <h4>Xịt Thơm Miệng Chó</h4>
-                        <p>Số lượng: 1</p>
-                        <p>Giá: <strong>165.000 ₫</strong></p>
-                    </div>
-                </div>
-
-                <div class="order-item">
-                    <img src="https://paddy.vn/cdn/shop/files/pate-meo-royal-canin-persian-85g_2.png?v=1724915140"
-                         alt="Flycam DJl Inspire 3">
-                    <div class="item-info">
-                        <h4>Pate Cho Mèo Ba Tư Trưởng Thành</h4>
-                        <p>Số lượng: 1</p>
-                        <p>Giá: <strong>29.000 ₫</strong></p>
-                    </div>
-                </div>
+                <!-- 🔹 CHI TIẾT ĐƠN HÀNG (DỮ LIỆU ĐỘNG) -->
+                <div id="order-items"></div>
 
                 <div class="order-summary-box">
-                    <div class="summary-left">
-                        <h4>Địa chỉ giao hàng</h4>
-                        <p><strong>Chí Nguyên</strong></p>
-                        <p>Tòa B, Ký túc xá Khu B</p>
-                        <p>033332234</p>
-                    </div>
-
-                    <div class="summary-right">
-                        <p>Tổng phụ thu: <strong>194.990 ₫</strong></p>
-                        <p>Phí vận chuyển: <strong>0 ₫</strong></p>
-                        <hr>
-                        <p><strong>Tổng: 194.990 ₫</strong></p>
-                        <p class="payment-note">Thanh toán bằng tiền mặt khi giao hàng</p>
-                    </div>
+                    <div class="summary-left"></div>
+                    <div class="summary-right"></div>
                 </div>
             </div>
         </section>
@@ -411,17 +387,25 @@
     /* ============ XEM CHI TIẾT ĐƠN ============ */
     let currentOrderId = null;
 
-    function showOrderDetail(orderId) {
-        currentOrderId = orderId;
+    function showOrderDetail(btn) {
+        const url = btn.dataset.url;
 
-        document.getElementById("order-list").style.display = "none";
-        document.getElementById("order-detail").style.display = "block";
+    fetch(url)
+        .then(res => {
+            if (!res.ok) throw new Error(res.status);
+            return res.json();
+        })
+        .then(data => {
+            renderOrderDetail(data);
 
-        // Update text theo mã đơn
-        const dateText = document.querySelector(".order-date strong");
-        if (dateText) {
-            dateText.textContent = "03 tháng 11 năm 2025 - Đơn #" + orderId;
-        }
+            // ✅ chuyển giao diện
+            document.getElementById("order-list").style.display = "none";
+            document.getElementById("order-detail").style.display = "block";
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Không tải được chi tiết đơn hàng");
+        });
     }
 
     /* ===== QUAY LẠI DANH SÁCH ===== */
@@ -507,6 +491,47 @@
         filterOrders("pending");
 
     });
+
+
+    function renderOrderDetail(order) {
+
+        // Ngày + mã đơn
+        document.querySelector(".order-date strong").textContent =
+            `Đơn #${order.id} - ${order.created_at}`;
+
+        // ===== SẢN PHẨM =====
+        const itemsBox = document.getElementById("order-items");
+        itemsBox.innerHTML = "";
+
+        order.items.forEach(item => {
+            itemsBox.innerHTML += `
+            <div class="order-item">
+                <img src="${item.image}" alt="${item.name}">
+                <div class="item-info">
+                    <h4>${item.name}</h4>
+                    <p>Số lượng: ${item.quantity}</p>
+                    <p>Giá: <strong>${item.price.toLocaleString()} ₫</strong></p>
+                </div>
+            </div>
+        `;
+        });
+
+        // ===== ĐỊA CHỈ =====
+        if (order.shipping) {
+            document.querySelector(".summary-left").innerHTML = `
+            <h4>Địa chỉ giao hàng</h4>
+            <p><strong>${order.shipping.full_name}</strong></p>
+            <p>${order.shipping.address}, ${order.shipping.ward}, ${order.shipping.province}</p>
+            <p>${order.shipping.phone}</p>
+        `;
+        }
+
+        // ===== TỔNG TIỀN =====
+        document.querySelector(".summary-right").innerHTML = `
+        <p><strong>Tổng: ${order.total_price.toLocaleString()} ₫</strong></p>
+        <p class="payment-note">Thanh toán khi nhận hàng</p>
+    `;
+    }
 
 
 </script>
