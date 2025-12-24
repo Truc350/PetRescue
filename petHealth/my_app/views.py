@@ -281,12 +281,14 @@ def add_to_cart(request, product_id):
 
     pid = str(product.id)
 
+    price = product.final_price or product.price
+
     if pid in cart:
         cart[pid]["quantity"] += quantity
     else:
         cart[pid] = {
             "name": product.name,
-            "price": product.final_price,  # đúng model
+            "price": price,  # đúng model
             "image": product.image,
             "slug": product.slug,
             "quantity": quantity

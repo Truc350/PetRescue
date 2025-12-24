@@ -41,21 +41,39 @@
             <div class="brand">Thương hiệu: {{ product.brand }}</div>
 
             <!-- GIÁ -->
-            {% if product.discount_price|intcomma %}
-            <div class="price text-danger fw-bold" style="font-size: 24px">
-                {{ product.discount_price|intcomma }}đ
+<!--                        {% if product.discount_price|intcomma %}-->
+<!--                        <div class="price text-danger fw-bold" style="font-size: 24px">-->
+<!--                            {{ product.discount_price|intcomma }}đ-->
+<!--                            <span class="text-muted old-price" style="text-decoration: line-through;">-->
+<!--                                    {{ product.price|intcomma }}đ-->
+<!--                                </span>-->
+<!--                            <span class="badge bg-danger ms-2">-->
+<!--                                    -{{ product.discount_percent|intcomma }}%-->
+<!--                                </span>-->
+<!--                        </div>-->
+<!--                        {% else %}-->
+<!--                        <div class="price fw-bold" style="font-size:24px">-->
+<!--                            {{ product.price|intcomma }}đ-->
+<!--                        </div>-->
+<!--                        {% endif %}-->
+            {% with final=product.final_price original=product.price %}
+            {% if final < original %}
+            <div class="price text-danger fw-bold" style="font-size:24px">
+                {{ final|intcomma }}đ
                 <span class="text-muted old-price" style="text-decoration: line-through;">
-                        {{ product.price|intcomma }}đ
-                    </span>
+                {{ original|intcomma }}đ
+            </span>
                 <span class="badge bg-danger ms-2">
-                        -{{ product.discount_percent|intcomma }}%
-                    </span>
+                -{{ product.discount_percent }}%
+            </span>
             </div>
             {% else %}
             <div class="price fw-bold" style="font-size:24px">
-                {{ product.price|intcomma }}đ
+                {{ original|intcomma }}đ
             </div>
             {% endif %}
+            {% endwith %}
+
 
             <!-- SIZE -->
             {% if product.sizes.all %}
