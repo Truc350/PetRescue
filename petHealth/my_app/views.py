@@ -4,6 +4,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 import json
 from accounts.models import UserProfile
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 
 def getChatWithAI(request):
@@ -41,6 +42,7 @@ def getPaymentInfor(request):
 def getCategory(request):
     return render(request, 'frontend/category.html')
 
+
 def getSupport(request):
     return render(request, 'frontend/support.html')
 
@@ -67,6 +69,7 @@ def getDogKibbleView(request):
 
 from django.contrib.auth.decorators import login_required
 
+
 @login_required
 def getPersonal(request):
     user = request.user
@@ -76,7 +79,6 @@ def getPersonal(request):
         "user_obj": user,
         "profile": profile
     })
-
 
 
 from django.shortcuts import render
@@ -232,6 +234,7 @@ from .models_Product import Wishlist
 # from sentiment.spam_filter import is_spam
 from django.db.models import Avg, Count
 
+
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug)
 
@@ -325,7 +328,6 @@ def shoppingcart(request):
         "cart": cart,
         "total": total
     })
-
 
 
 def remove_cart(request, product_id):
@@ -493,10 +495,12 @@ def search_view(request):
         "selected_brands": selected_brands,
     })
 
+
 # views.py
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+
 
 def login_view(request):
     if request.method == "POST":
@@ -506,7 +510,7 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user:
             login(request, user)
-            return redirect('home')   # ✅ về HomePage
+            return redirect('home')  # ✅ về HomePage
         else:
             return render(request, 'login.html', {
                 'error': 'Sai tài khoản hoặc mật khẩu'
@@ -514,11 +518,13 @@ def login_view(request):
 
     return render(request, 'login.html')
 
+
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
 from orders.models import Order
 from accounts.models import UserProfile
 from django.contrib.auth.decorators import login_required
+
 
 @login_required
 def profile_view(request):
@@ -584,6 +590,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 from .models_Product import Product
 
+
 @require_GET
 def search_suggest(request):
     keyword = request.GET.get("q", "").strip()
@@ -605,6 +612,7 @@ from .services.image_index import library_features, library_urls
 from .services.feature import extract_feature_from_file
 from .services.yolo import yolo_model
 
+
 def image_search(request):
     best_url = None
     best_score = None
@@ -624,6 +632,8 @@ def image_search(request):
         "best_url": best_url,
         "best_score": best_score
     })
+
+
 from django.http import JsonResponse
 from sklearn.metrics.pairwise import cosine_similarity
 from my_app.models_Product import ProductImage
@@ -657,10 +667,14 @@ def image_search_api(request):
         "url": f"/product/{img.product.slug}/",
         "score": float(sims[idx])
     })
+
+
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 import json
+
+
 @login_required
 @require_POST
 def checkout_from_cart(request):
@@ -686,3 +700,32 @@ def checkout_from_cart(request):
 
     return JsonResponse({"ok": True})
 
+from rag.rag1.rag_chain import load_rag_chain
+# load RAG LAZY (chỉ load khi cần)
+rag_chain = None
+
+
+def get_rag_chain():
+    global rag_chain
+    if rag_chain is None:
+        from rag.rag1.rag_chain import load_rag_chain
+        rag_chain = load_rag_chain()
+    return rag_chain
+
+
+@csrf_exempt
+def chat_api(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Method not allowed"}, status=405)
+    try:
+        body = json.loads(request.body.decode("utf-8"))
+        message = body.get("message", "").strip()
+        if not message:
+            return JsonResponse({"answer": "Bạn vui lòng nhập câu hỏi 🐾"})
+        qa = get_rag_chain()
+        result = qa.invoke({"query": message})
+        return JsonResponse({"answer": result.get("result", "Mình chưa tìm được câu trả lời 😿")})
+    except Exception as e:
+        return JsonResponse({
+            "answer": f"⚠️ Lỗi hệ thống: {str(e)}"
+        }, status=500)
