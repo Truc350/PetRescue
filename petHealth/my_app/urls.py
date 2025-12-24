@@ -66,5 +66,8 @@ urlpatterns = [
         views.remove_from_wishlist,
         name="remove-wishlist"
     ),
+path("search-image/", views.image_search),
+# urls.py
+path("search/image/", views.image_search_api, name="image-search"),
 
 ]
