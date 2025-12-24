@@ -239,8 +239,8 @@ def product_detail(request, slug):
     related = product.get_related_products(limit=10)
 
     # # Lấy review đã duyệt
-    # reviews = product.reviews.filter(approved=True, is_spam=False)
-    reviews = product.reviews.filter(approved=True)
+    reviews = product.reviews.filter(approved=True, is_spam=False)
+    # reviews = product.reviews.filter(approved=True)
 
     total_reviews = reviews.count()
 

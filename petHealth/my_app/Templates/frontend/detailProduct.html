@@ -21,16 +21,26 @@
         <!-- CỘT 1: THUMBNAILS -->
         <div class="col-lg-1 gallery-col">
             <div class="thumbs">
+
+                <!-- Ảnh chính -->
+                <div class="thumb active">
+                    <img src="{{ product.image }}" data-src="{{ product.image }}" alt="">
+                </div>
+
+                <!-- Ảnh phụ -->
                 {% for img in product.images.all %}
-                <div class="thumb"><img src="{{ img.url }}" alt=""></div>
+                <div class="thumb">
+                    <img src="{{ img.url }}" data-src="{{ img.url }}" alt="">
+                </div>
                 {% endfor %}
+
             </div>
         </div>
 
         <!-- CỘT 2: ẢNH CHÍNH -->
         <div class="col-lg-5 position-relative main-image">
             <div class="img-wrap">
-                <img src="{{ product.image }}" alt="{{ product.name }}">
+                <img id="mainProductImage" src="{{ product.image }}" alt="{{ product.name }}">
             </div>
         </div>
 
@@ -41,21 +51,21 @@
             <div class="brand">Thương hiệu: {{ product.brand }}</div>
 
             <!-- GIÁ -->
-<!--                        {% if product.discount_price|intcomma %}-->
-<!--                        <div class="price text-danger fw-bold" style="font-size: 24px">-->
-<!--                            {{ product.discount_price|intcomma }}đ-->
-<!--                            <span class="text-muted old-price" style="text-decoration: line-through;">-->
-<!--                                    {{ product.price|intcomma }}đ-->
-<!--                                </span>-->
-<!--                            <span class="badge bg-danger ms-2">-->
-<!--                                    -{{ product.discount_percent|intcomma }}%-->
-<!--                                </span>-->
-<!--                        </div>-->
-<!--                        {% else %}-->
-<!--                        <div class="price fw-bold" style="font-size:24px">-->
-<!--                            {{ product.price|intcomma }}đ-->
-<!--                        </div>-->
-<!--                        {% endif %}-->
+            <!--                        {% if product.discount_price|intcomma %}-->
+            <!--                        <div class="price text-danger fw-bold" style="font-size: 24px">-->
+            <!--                            {{ product.discount_price|intcomma }}đ-->
+            <!--                            <span class="text-muted old-price" style="text-decoration: line-through;">-->
+            <!--                                    {{ product.price|intcomma }}đ-->
+            <!--                                </span>-->
+            <!--                            <span class="badge bg-danger ms-2">-->
+            <!--                                    -{{ product.discount_percent|intcomma }}%-->
+            <!--                                </span>-->
+            <!--                        </div>-->
+            <!--                        {% else %}-->
+            <!--                        <div class="price fw-bold" style="font-size:24px">-->
+            <!--                            {{ product.price|intcomma }}đ-->
+            <!--                        </div>-->
+            <!--                        {% endif %}-->
             {% with final=product.final_price original=product.price %}
             {% if final < original %}
             <div class="price text-danger fw-bold" style="font-size:24px">
@@ -157,6 +167,10 @@
                 {{ product.description|safe }}
             </div>
             {% endif %}
+            <a href="{% url 'homePage' %}" class="desc-home-link">
+                Xem thêm sản phẩm khác tại PesRecue.vn
+            </a>
+
         </div>
     </section>
     <!-- ========== ĐÁNH GIÁ SẢN PHẨM ========== -->
@@ -585,6 +599,19 @@
         });
     })();
 </script>
+<script>
+    document.querySelectorAll('.thumb img').forEach(thumb => {
+        thumb.addEventListener('click', function () {
+            const mainImg = document.getElementById('mainProductImage');
+            mainImg.src = this.dataset.src;
+
+            // active thumbnail
+            document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+            this.parentElement.classList.add('active');
+        });
+    });
+</script>
+
 
 {% include "frontend/footer.html" %}
 </body>
