@@ -186,9 +186,9 @@ from .models import Order, OrderItem
 @login_required
 def checkout_from_cart(request):
     data = json.loads(request.body)
-    ids = data.get("ids", [])
+    items = data.get("items", [])
 
-    if not ids:
+    if not items:
         return JsonResponse({"error": "no items"}, status=400)
 
     cart = request.session.get("cart", {})
@@ -198,28 +198,23 @@ def checkout_from_cart(request):
         status="draft"
     )
 
-    for pid in ids:
-        pid = str(pid)
+    for item in items:
+        pid = str(item["id"])
+        quantity = int(item["quantity"])
+
         if pid in cart:
             product = Product.objects.get(id=pid)
 
             OrderItem.objects.create(
                 order=order,
                 product=product,
-                quantity=cart[pid]["quantity"],  # ✅ LẤY SỐ LƯỢNG
-                price=product.discount_price  # ✅ LẤY GIÁ TỪ DB
+                quantity=quantity,
+                price=cart[pid]["price"]
             )
 
-            # ✅ XÓA SẢN PHẨM KHỎI CART
-            del cart[pid]
-
-        # ✅ LƯU LẠI CART
-    request.session["cart"] = cart
-    request.session.modified = True
-
-    # ✅ Lưu order id vào session
-    request.session["checkout_order_id"] = order.id
-
+    # KHÔNG xóa cart ở đây (tùy bạn)
+        request.session["checkout_order_id"] = order.id
+        request.session.modified = True
     return JsonResponse({"ok": True})
 
 
@@ -241,6 +236,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Order
+
 
 @login_required
 def order_detail_api(request, order_id):

@@ -281,14 +281,12 @@ def add_to_cart(request, product_id):
 
     pid = str(product.id)
 
-    price = product.final_price or product.price
-
     if pid in cart:
         cart[pid]["quantity"] += quantity
     else:
         cart[pid] = {
             "name": product.name,
-            "price": price,  # đúng model
+            "price": product.final_price,  # đúng model
             "image": product.image,
             "slug": product.slug,
             "quantity": quantity
@@ -302,6 +300,22 @@ def add_to_cart(request, product_id):
 
 def shoppingcart(request):
     cart = request.session.get("cart", {})
+
+    if request.method == "POST":
+        pid = request.POST.get("product_id")
+        action = request.POST.get("action")
+
+        if pid in cart:
+            if action == "increase":
+                cart[pid]["quantity"] += 1
+            elif action == "decrease":
+                cart[pid]["quantity"] = max(1, cart[pid]["quantity"] - 1)
+
+            request.session["cart"] = cart
+            request.session.modified = True
+
+        return redirect("shoppingcart")  # ⭐ RẤT QUAN TRỌNG
+
     total = sum(
         item["price"] * item["quantity"]
         for item in cart.values()
@@ -311,6 +325,7 @@ def shoppingcart(request):
         "cart": cart,
         "total": total
     })
+
 
 
 def remove_cart(request, product_id):
@@ -642,4 +657,32 @@ def image_search_api(request):
         "url": f"/product/{img.product.slug}/",
         "score": float(sims[idx])
     })
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+import json
+@login_required
+@require_POST
+def checkout_from_cart(request):
+    data = json.loads(request.body)
+
+    # ✅ JS gửi { items: [{id, quantity}, ...] }
+    items = data.get("items", [])
+
+    cart = request.session.get("cart", {})
+    checkout_items = {}
+
+    for item in items:
+        pid = str(item.get("id"))
+        qty = int(item.get("quantity", 1))
+
+        if pid in cart:
+            checkout_items[pid] = cart[pid].copy()
+            checkout_items[pid]["quantity"] = qty  # ✅ lấy số lượng từ JS
+
+    # 👉 lưu vào session để trang shipping / payment dùng
+    request.session["checkout_items"] = checkout_items
+    request.session.modified = True
+
+    return JsonResponse({"ok": True})
 
