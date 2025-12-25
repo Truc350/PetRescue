@@ -1,7 +1,7 @@
 {% load humanize %}
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <title>Thông tin giao hàng</title>
@@ -40,7 +40,7 @@
             </div>
         </div>
 
-        <!-- FORM DUY NHẤT -->
+        <!-- FORM -->
         <form method="POST" action="{% url 'orders:checkout_shipping' %}">
             {% csrf_token %}
 
@@ -49,7 +49,14 @@
                 <select name="saved_address" id="savedAddress" class="form-select">
                     <option value="">Thêm địa chỉ mới...</option>
                     {% for addr in saved_addresses %}
-                    <option value="{{ addr.id }}">
+                    <option value="{{ addr.id }}"
+                            data-phone="{{ addr.phone }}"
+                            data-fullname="{{ addr.full_name }}"
+                            data-address="{{ addr.address }}"
+                            data-provincecode="{{ addr.province_code }}"
+                            data-provincename="{{ addr.province }}"
+                            data-wardcode="{{ addr.ward_code }}"
+                            data-wardname="{{ addr.ward }}">
                         {{ addr.phone }} - {{ addr.address }}
                     </option>
                     {% endfor %}
@@ -78,14 +85,15 @@
                        required>
             </div>
 
-            <!-- Nhóm chọn địa chỉ hành chính -->
+            <!-- CHỈ CÓ 2 CẤP: TỈNH/THÀNH PHỐ VÀ PHƯỜNG/XÃ -->
             <div class="address-select-group mb-3">
+                <!-- Hidden inputs để lưu CODE -->
+                <input type="hidden" name="province_code" id="provinceCodeInput">
+                <input type="hidden" name="ward_code" id="wardCodeInput">
+
+                <!-- Select để hiển thị, value là NAME -->
                 <select name="province" id="province" class="form-select" required>
                     <option value="">-- Chọn Tỉnh/Thành phố --</option>
-                </select>
-
-                <select name="district" id="district" class="form-select mt-2" required>
-                    <option value="">-- Chọn Quận/Huyện --</option>
                 </select>
 
                 <select name="ward" id="ward" class="form-select mt-2" required>
@@ -100,7 +108,6 @@
                           placeholder="Nhập ghi chú của bạn..."></textarea>
             </div>
 
-            <!-- Nút chuyển sang bước thanh toán (có thể thay action nếu cần) -->
             <button type="submit" class="btn btn-primary w-100 mt-3">
                 Tiếp tục đến phương thức thanh toán
             </button>
@@ -139,95 +146,166 @@
 </div>
 
 <script>
-    const provinceSelect = document.getElementById("province");
-    const districtSelect = document.getElementById("district");
-    const wardSelect = document.getElementById("ward");
+// ================ API V2 (2025) - CHỈ CÓ 2 CẤP ================
+const API_BASE = "https://provinces.open-api.vn/api/v2";
 
-    // Load danh sách tỉnh/thành phố
-    fetch("https://provinces.open-api.vn/api/?depth=1")
-        .then(res => res.json())
-        .then(provinces => {
-            provinces.forEach(p => {
-                const opt = document.createElement("option");
-                opt.value = p.code;
-                opt.textContent = p.name;
-                provinceSelect.appendChild(opt);
-            });
-        })
-        .catch(err => console.error("Lỗi load tỉnh:", err));
+const provinceSelect = document.getElementById("province");
+const wardSelect = document.getElementById("ward");
 
-    // Khi chọn tỉnh → load quận/huyện
-    provinceSelect.addEventListener("change", () => {
-        const code = provinceSelect.value;
-        districtSelect.innerHTML = '<option value="">-- Chọn Quận/Huyện --</option>';
-        wardSelect.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
-        districtSelect.disabled = true;
-        wardSelect.disabled = true;
-
-        if (!code) return;
-
-        fetch(`https://provinces.open-api.vn/api/p/${code}?depth=2`)
-            .then(res => res.json())
-            .then(data => {
-                data.districts.forEach(d => {
-                    const opt = document.createElement("option");
-                    opt.value = d.code;
-                    opt.textContent = d.name;
-                    districtSelect.appendChild(opt);
-                });
-                districtSelect.disabled = false;
-            });
+// 1️⃣ Load danh sách Tỉnh/Thành phố
+fetch(`${API_BASE}/p/`)
+    .then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+    })
+    .then(provinces => {
+        provinces.forEach(p => {
+            const opt = document.createElement("option");
+            opt.value = p.name;  // ✅ VALUE LÀ TÊN
+            opt.textContent = p.name;
+            opt.dataset.code = p.code;  // Lưu code vào dataset
+            provinceSelect.appendChild(opt);
+        });
+    })
+    .catch(err => {
+        console.error("Lỗi load tỉnh:", err);
+        alert("Không thể tải danh sách tỉnh/thành phố");
     });
 
-    // Khi chọn quận/huyện → load phường/xã
-    districtSelect.addEventListener("change", () => {
-        const code = districtSelect.value;
-        wardSelect.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
-        wardSelect.disabled = true;
+// 2️⃣ Khi chọn Tỉnh → load Phường/Xã
+provinceSelect.addEventListener("change", () => {
+    const provinceName = provinceSelect.value;
+    const selectedOption = provinceSelect.options[provinceSelect.selectedIndex];
+    const code = selectedOption.dataset.code;
 
-        if (!code) return;
+    // Cập nhật hidden input cho province_code
+    document.getElementById("provinceCodeInput").value = code || '';
 
-        fetch(`https://provinces.open-api.vn/api/d/${code}?depth=2`)
-            .then(res => res.json())
-            .then(data => {
+    // Reset ward select
+    wardSelect.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+    wardSelect.disabled = true;
+    document.getElementById("wardCodeInput").value = '';
+
+    if (!code) return;
+
+    // Load tỉnh với depth=2 để lấy tất cả wards
+    fetch(`${API_BASE}/p/${code}?depth=2`)
+        .then(res => {
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            return res.json();
+        })
+        .then(data => {
+            if (data.wards && data.wards.length > 0) {
                 data.wards.forEach(w => {
                     const opt = document.createElement("option");
-                    opt.value = w.name;
+                    opt.value = w.name;  // ✅ VALUE LÀ TÊN
                     opt.textContent = w.name;
+                    opt.dataset.code = w.code;  // Lưu code vào dataset
                     wardSelect.appendChild(opt);
                 });
                 wardSelect.disabled = false;
-            });
-    });
+            } else {
+                alert("Không có phường/xã cho tỉnh này");
+            }
+        })
+        .catch(err => {
+            console.error("Lỗi load phường/xã:", err);
+            alert("Không thể tải danh sách phường/xã");
+        });
+});
 
-    // ================ XỬ LÝ ĐỊA CHỈ ĐÃ LƯU ================
-    const savedAddressSelect = document.getElementById("savedAddress");
-    const nameInput = document.querySelector('input[name="full_name"]');
-    const phoneInput = document.querySelector('input[name="phone"]');
-    const addressInput = document.querySelector('input[name="address"]');
+// Cập nhật ward_code khi chọn ward
+wardSelect.addEventListener("change", () => {
+    const selectedOption = wardSelect.options[wardSelect.selectedIndex];
+    const code = selectedOption.dataset.code;
+    document.getElementById("wardCodeInput").value = code || '';
+});
 
-    // Bạn cần điều chỉnh dữ liệu savedAddresses để lưu thêm code tỉnh/quận nếu muốn autofill chính xác hơn.
-    // Hiện tại giữ nguyên logic cũ, chỉ autofill những field có sẵn.
-    savedAddressSelect.addEventListener("change", () => {
-        const selectedId = savedAddressSelect.value;
-        if (!selectedId) {
-            // Reset form nếu chọn "Thêm địa chỉ mới"
-            nameInput.value = "{{ request.user.get_full_name }}";
-            phoneInput.value = "";
-            addressInput.value = "";
-            provinceSelect.value = "";
-            districtSelect.innerHTML = '<option value="">-- Chọn Quận/Huyện --</option>';
-            wardSelect.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
-            districtSelect.disabled = true;
-            wardSelect.disabled = true;
-            return;
+// ================ XỬ LÝ ĐỊA CHỈ ĐÃ LƯU ================
+const savedAddressSelect = document.getElementById("savedAddress");
+const nameInput = document.querySelector('input[name="full_name"]');
+const phoneInput = document.querySelector('input[name="phone"]');
+const addressInput = document.querySelector('input[name="address"]');
+
+// Lưu data từ backend
+const savedAddressesData = {};
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('#savedAddress option[value]').forEach(opt => {
+        if (opt.value) {
+            savedAddressesData[opt.value] = {
+                phone: opt.dataset.phone || '',
+                fullName: opt.dataset.fullname || '',
+                address: opt.dataset.address || '',
+                provinceCode: opt.dataset.provincecode || '',
+                provinceName: opt.dataset.provincename || '',
+                wardCode: opt.dataset.wardcode || '',
+                wardName: opt.dataset.wardname || ''
+            };
         }
-
-        // Nếu backend trả thêm thông tin chi tiết địa chỉ (province name/code, district, ward...),
-        // bạn có thể truyền qua data attribute hoặc xử lý ở đây.
-        // Hiện tại chỉ reset và để người dùng chọn lại tỉnh/huyện/xã cho an toàn.
-        // (Bạn có thể mở rộng sau nếu cần)
     });
+});
+
+savedAddressSelect.addEventListener("change", () => {
+    const selectedId = savedAddressSelect.value;
+
+    if (!selectedId) {
+        // Reset form
+        nameInput.value = nameInput.defaultValue;
+        phoneInput.value = "";
+        addressInput.value = "";
+        provinceSelect.value = "";
+        wardSelect.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+        wardSelect.disabled = true;
+        document.getElementById("provinceCodeInput").value = '';
+        document.getElementById("wardCodeInput").value = '';
+        return;
+    }
+
+    const savedAddr = savedAddressesData[selectedId];
+    if (savedAddr) {
+        // Fill thông tin
+        nameInput.value = savedAddr.fullName;
+        phoneInput.value = savedAddr.phone;
+        addressInput.value = savedAddr.address;
+
+        // Fill tỉnh bằng TÊN
+        if (savedAddr.provinceName) {
+            provinceSelect.value = savedAddr.provinceName;
+            document.getElementById("provinceCodeInput").value = savedAddr.provinceCode;
+
+            // Trigger load wards
+            const selectedOption = provinceSelect.options[provinceSelect.selectedIndex];
+            if (selectedOption.dataset.code) {
+                fetch(`${API_BASE}/p/${selectedOption.dataset.code}?depth=2`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.wards) {
+                            wardSelect.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+                            data.wards.forEach(w => {
+                                const opt = document.createElement("option");
+                                opt.value = w.name;
+                                opt.textContent = w.name;
+                                opt.dataset.code = w.code;
+                                wardSelect.appendChild(opt);
+                            });
+                            wardSelect.disabled = false;
+
+                            // Chọn ward đã lưu
+                            if (savedAddr.wardName) {
+                                wardSelect.value = savedAddr.wardName;
+                                document.getElementById("wardCodeInput").value = savedAddr.wardCode;
+                            }
+                        }
+                    });
+            }
+        }
+    }
+});
+
+// ================ XỬ LÝ SUBMIT FORM ================
+// Không cần code này nữa vì đã submit đúng name từ select
+// và code từ hidden inputs
 </script>
 
 </body>
