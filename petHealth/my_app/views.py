@@ -284,22 +284,19 @@ def add_to_cart(request, product_id):
     size_id = request.POST.get("size_id")
     quantity = int(request.POST.get("quantity", 1))
 
-    # ❗ bắt buộc chọn size
-    if not size_id:
-        return redirect("product_detail", slug=product.slug)
-
-    size = get_object_or_404(ProductSize, id=size_id, product=product)
-
-    final_price = size.get_final_price()
-
     cart = request.session.get("cart", {})
-    #  key phân biệt theo product + size
-    cart_key = f"{product.id}_{size.id}"
 
-    if cart_key in cart:
-        cart[cart_key]["quantity"] += quantity
-    else:
-        cart[cart_key] = {
+    # ====== TRƯỜNG HỢP CÓ SIZE ======
+    if product.sizes.exists():
+        if not size_id:
+            return redirect("product_detail", slug=product.slug)
+
+        size = get_object_or_404(ProductSize, id=size_id, product=product)
+
+        final_price = size.get_final_price()
+        cart_key = f"{product.id}_{size.id}"
+
+        item_data = {
             "product_id": product.id,
             "size_id": size.id,
             "name": product.name,
@@ -310,10 +307,33 @@ def add_to_cart(request, product_id):
             "quantity": quantity
         }
 
+    # ====== TRƯỜNG HỢP KHÔNG CÓ SIZE ======
+    else:
+        final_price = product.final_price
+        cart_key = str(product.id)
+
+        item_data = {
+            "product_id": product.id,
+            "size_id": None,
+            "name": product.name,
+            "size": None,
+            "price": final_price,
+            "image": product.image,
+            "slug": product.slug,
+            "quantity": quantity
+        }
+
+    # ====== ADD / UPDATE CART ======
+    if cart_key in cart:
+        cart[cart_key]["quantity"] += quantity
+    else:
+        cart[cart_key] = item_data
+
     request.session["cart"] = cart
     request.session.modified = True
 
     return redirect("shoppingcart")
+
 
 
 def shoppingcart(request):

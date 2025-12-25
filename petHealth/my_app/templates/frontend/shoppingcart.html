@@ -1,4 +1,5 @@
 {% load static %}
+{% load humanize %}
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -55,9 +56,15 @@
                         </a>
 
                         <div>
-                            <h5 class="ten_san_pham mb-2">{{ item.name }}</h5>
+                            <h5 class="ten_san_pham mb-1">{{ item.name }}</h5>
+
+                            {% if item.size %}
+                            <div class="text-muted small">
+                                Biến thể: {{ item.size }}
+                            </div>
+                            {% endif %}
                             <span class="gia_hien_tai text-danger fw-bold">
-                {{ item.price|floatformat:0 }}₫
+                {{ item.price|intcomma }}₫
             </span>
                         </div>
                     </div>
@@ -127,35 +134,35 @@
 </div>
 <script>
     document.querySelector(".nut_thanh_toan").addEventListener("click", () => {
-    const items = [...document.querySelectorAll(".chon_san_pham:checked")]
-        .map(cb => {
-            const sp = cb.closest(".khung_san_pham");
-            return {
-                id: cb.dataset.id,
-                quantity: parseInt(sp.querySelector(".o_so_luong").value)
-            };
-        });
+        const items = [...document.querySelectorAll(".chon_san_pham:checked")]
+            .map(cb => {
+                const sp = cb.closest(".khung_san_pham");
+                return {
+                    id: cb.dataset.id,
+                    quantity: parseInt(sp.querySelector(".o_so_luong").value)
+                };
+            });
 
-    if (items.length === 0) {
-        alert("Vui lòng chọn ít nhất 1 sản phẩm");
-        return;
-    }
-
-    fetch("{% url 'orders:checkout_from_cart' %}", {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": "{{ csrf_token }}",
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ items })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.ok) {
-            window.location.href = "{% url 'orders:checkout_shipping' %}";
+        if (items.length === 0) {
+            alert("Vui lòng chọn ít nhất 1 sản phẩm");
+            return;
         }
+
+        fetch("{% url 'orders:checkout_from_cart' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({items})
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.ok) {
+                    window.location.href = "{% url 'orders:checkout_shipping' %}";
+                }
+            });
     });
-});
 </script>
 
 <script>
@@ -194,8 +201,6 @@
         if (!sp) return;
 
         // Tăng / giảm số lượng
-
-
 
 
         // Tick chọn sản phẩm

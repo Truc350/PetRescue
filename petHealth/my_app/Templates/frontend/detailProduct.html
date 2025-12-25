@@ -771,10 +771,15 @@ function changeQty(n) {
 
 <script>
 document.getElementById("addToCartForm").addEventListener("submit", function (e) {
-    const size = document.getElementById("sizeInput").value;
-    if (!size) {
-        e.preventDefault();
-        alert("Vui lòng chọn size trước khi thêm vào giỏ hàng!");
+    const sizeButtons = document.querySelectorAll(".size-btn");
+
+    // chỉ bắt chọn size nếu có size
+    if (sizeButtons.length > 0) {
+        const size = document.getElementById("sizeInput").value;
+        if (!size) {
+            e.preventDefault();
+            alert("Vui lòng chọn size trước khi thêm vào giỏ hàng!");
+        }
     }
 });
 </script>
