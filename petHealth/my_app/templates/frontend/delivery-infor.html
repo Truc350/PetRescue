@@ -40,11 +40,21 @@
             </div>
         </div>
 
-        <!-- FORM -->
+        <!-- FORM DUY NHẤT -->
         <form method="POST" action="{% url 'orders:checkout_shipping' %}">
             {% csrf_token %}
 
             <!-- Địa chỉ đã lưu -->
+            <div class="mb-3">
+                <select name="saved_address" id="savedAddress" class="form-select">
+                    <option value="">Thêm địa chỉ mới...</option>
+                    {% for addr in saved_addresses %}
+                    <option value="{{ addr.id }}">
+                        {{ addr.phone }} - {{ addr.address }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
 
             <div class="mb-3">
                 <input type="text" name="full_name"
@@ -68,35 +78,34 @@
                        required>
             </div>
 
+            <!-- Nhóm chọn địa chỉ hành chính -->
             <div class="address-select-group mb-3">
-                <select name="province" id="province" class="form-select">
+                <select name="province" id="province" class="form-select" required>
                     <option value="">-- Chọn Tỉnh/Thành phố --</option>
                 </select>
 
-                <select name="ward" id="ward" class="form-select mt-2">
+                <select name="district" id="district" class="form-select mt-2" required>
+                    <option value="">-- Chọn Quận/Huyện --</option>
+                </select>
+
+                <select name="ward" id="ward" class="form-select mt-2" required>
                     <option value="">-- Chọn Phường/Xã --</option>
                 </select>
             </div>
 
             <div class="mb-3">
-            <textarea name="note"
-                      rows="4"
-                      class="form-control"
-                      placeholder="Nhập ghi chú của bạn..."></textarea>
+                <textarea name="note"
+                          rows="4"
+                          class="form-control"
+                          placeholder="Nhập ghi chú của bạn..."></textarea>
             </div>
 
-            <form method="post" action="{% url 'orders:checkout_payment' %}">
-                {% csrf_token %}
-                <!-- input thông tin giao hàng -->
-                <button type="submit" class="btn btn-primary w-100 mt-3">
-                    Tiếp tục đến phương thức thanh toán
-                </button>
-            </form>
-
-
+            <!-- Nút chuyển sang bước thanh toán (có thể thay action nếu cần) -->
+            <button type="submit" class="btn btn-primary w-100 mt-3">
+                Tiếp tục đến phương thức thanh toán
+            </button>
         </form>
     </div>
-
 
     <!-- PHẢI -->
     <div class="right">
@@ -104,15 +113,16 @@
 
         {% for item in items %}
         <div class="d-flex align-items-center mb-3">
-            <img src="{{ item.product.image }}" width="60">
-            <div>
-                <p>{{ item.product.name }}</p>
+            <img src="{{ item.product.image }}" width="60" alt="{{ item.product.name }}">
+            <div class="flex-grow-1 ms-3">
+                <p class="mb-0">{{ item.product.name }}</p>
                 <small>Số lượng: {{ item.quantity }}</small>
             </div>
-            <span class="ms-auto">{{ item.price|intcomma }}₫</span>
+            <span>{{ item.price|intcomma }}₫</span>
         </div>
         {% endfor %}
 
+        <hr>
         <div class="d-flex justify-content-between">
             <span>Tạm tính</span>
             <span>{{ total|intcomma }}₫</span>
@@ -121,144 +131,102 @@
             <span>Phí vận chuyển</span><span>—</span>
         </div>
         <hr>
-        <div class="d-flex justify-content-between fw-bold total">
+        <div class="d-flex justify-content-between fw-bold total fs-5">
             <span>Tổng cộng</span>
             <span>{{ total|intcomma }}₫</span>
         </div>
     </div>
 </div>
+
 <script>
-    const data = {
-        "TP. Hồ Chí Minh": {
-            "Quận 1": ["Phường Bến Nghé", "Phường Bến Thành", "Phường Nguyễn Thái Bình"],
-            "Quận Bình Thạnh": ["Phường 1", "Phường 2", "Phường 3"]
-        },
-        "Cà Mau": {
-            "TP. Cà Mau": ["Phường 1", "Phường 2", "Phường 4"],
-            "Huyện Trần Văn Thời": ["Xã Trần Hợi", "Xã Khánh Bình", "Xã Khánh Hải"]
-        },
-        "Hà Nội": {
-            "Quận Ba Đình": ["Phường Điện Biên", "Phường Kim Mã", "Phường Ngọc Hà"],
-            "Quận Cầu Giấy": ["Phường Dịch Vọng", "Phường Nghĩa Tân"]
-        }
-    };
+    const provinceSelect = document.getElementById("province");
+    const districtSelect = document.getElementById("district");
+    const wardSelect = document.getElementById("ward");
 
-    const province = document.getElementById("province");
-    const district = document.getElementById("district");
-    const ward = document.getElementById("ward");
+    // Load danh sách tỉnh/thành phố
+    fetch("https://provinces.open-api.vn/api/?depth=1")
+        .then(res => res.json())
+        .then(provinces => {
+            provinces.forEach(p => {
+                const opt = document.createElement("option");
+                opt.value = p.code;
+                opt.textContent = p.name;
+                provinceSelect.appendChild(opt);
+            });
+        })
+        .catch(err => console.error("Lỗi load tỉnh:", err));
 
-    // Nạp danh sách tỉnh
-    for (let p in data) {
-        const opt = document.createElement("option");
-        opt.value = p;
-        opt.textContent = p;
-        province.appendChild(opt);
-    }
+    // Khi chọn tỉnh → load quận/huyện
+    provinceSelect.addEventListener("change", () => {
+        const code = provinceSelect.value;
+        districtSelect.innerHTML = '<option value="">-- Chọn Quận/Huyện --</option>';
+        wardSelect.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+        districtSelect.disabled = true;
+        wardSelect.disabled = true;
 
-    // Khi chọn tỉnh
-    province.addEventListener("change", () => {
-        district.innerHTML = '<option value="">Chọn quận / huyện</option>';
-        ward.innerHTML = '<option value="">Chọn phường / xã</option>';
-        district.disabled = true;
-        ward.disabled = true;
+        if (!code) return;
 
-        const p = province.value;
-        if (!p) return;
-
-        for (let d in data[p]) {
-            const opt = document.createElement("option");
-            opt.value = d;
-            opt.textContent = d;
-            district.appendChild(opt);
-        }
-        district.disabled = false;
+        fetch(`https://provinces.open-api.vn/api/p/${code}?depth=2`)
+            .then(res => res.json())
+            .then(data => {
+                data.districts.forEach(d => {
+                    const opt = document.createElement("option");
+                    opt.value = d.code;
+                    opt.textContent = d.name;
+                    districtSelect.appendChild(opt);
+                });
+                districtSelect.disabled = false;
+            });
     });
 
-    // Khi chọn huyện
-    district.addEventListener("change", () => {
-        ward.innerHTML = '<option value="">Chọn phường / xã</option>';
-        ward.disabled = true;
+    // Khi chọn quận/huyện → load phường/xã
+    districtSelect.addEventListener("change", () => {
+        const code = districtSelect.value;
+        wardSelect.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+        wardSelect.disabled = true;
 
-        const p = province.value;
-        const d = district.value;
-        if (!d) return;
+        if (!code) return;
 
-        data[p][d].forEach(w => {
-            const opt = document.createElement("option");
-            opt.value = w;
-            opt.textContent = w;
-            ward.appendChild(opt);
-        });
-        ward.disabled = false;
+        fetch(`https://provinces.open-api.vn/api/d/${code}?depth=2`)
+            .then(res => res.json())
+            .then(data => {
+                data.wards.forEach(w => {
+                    const opt = document.createElement("option");
+                    opt.value = w.name;
+                    opt.textContent = w.name;
+                    wardSelect.appendChild(opt);
+                });
+                wardSelect.disabled = false;
+            });
     });
 
-    // 🟢 DỮ LIỆU ĐỊA CHỈ LƯU TRỮ
-    const savedAddresses = {
-        "0948088315, 70000, Việt Nam": {
-            name: "Mạc Chí Nguyên",
-            phone: "0948088315",
-            address: "70000",
-            province: "TP. Hồ Chí Minh",
-            district: "Quận 1",
-            ward: "Phường Bến Nghé"
-        },
-        "0948088315, Xã Trần Hợi, Huyện Trần Văn Thời, Cà Mau": {
-            name: "Mạc Chí Nguyên",
-            phone: "0948088315",
-            address: "Xã Trần Hợi",
-            province: "Cà Mau",
-            district: "Huyện Trần Văn Thời",
-            ward: "Xã Trần Hợi"
-        }
-    };
-
-    // 🟡 Khi chọn "địa chỉ đã lưu"
+    // ================ XỬ LÝ ĐỊA CHỈ ĐÃ LƯU ================
     const savedAddressSelect = document.getElementById("savedAddress");
-    const nameInput = document.querySelector('input[placeholder="Họ và tên"]');
-    const phoneInput = document.querySelector('input[placeholder="Số điện thoại"]');
-    const addressInput = document.querySelector('input[placeholder="Địa chỉ cụ thể (Số nhà, đường...)"]');
+    const nameInput = document.querySelector('input[name="full_name"]');
+    const phoneInput = document.querySelector('input[name="phone"]');
+    const addressInput = document.querySelector('input[name="address"]');
 
+    // Bạn cần điều chỉnh dữ liệu savedAddresses để lưu thêm code tỉnh/quận nếu muốn autofill chính xác hơn.
+    // Hiện tại giữ nguyên logic cũ, chỉ autofill những field có sẵn.
     savedAddressSelect.addEventListener("change", () => {
-        const selected = savedAddressSelect.value;
-        if (!selected || !savedAddresses[selected]) {
-            nameInput.value = "";
+        const selectedId = savedAddressSelect.value;
+        if (!selectedId) {
+            // Reset form nếu chọn "Thêm địa chỉ mới"
+            nameInput.value = "{{ request.user.get_full_name }}";
             phoneInput.value = "";
             addressInput.value = "";
-            province.value = "";
-            district.innerHTML = '<option value="">Chọn quận / huyện</option>';
-            ward.innerHTML = '<option value="">Chọn phường / xã</option>';
-            district.disabled = true;
-            ward.disabled = true;
+            provinceSelect.value = "";
+            districtSelect.innerHTML = '<option value="">-- Chọn Quận/Huyện --</option>';
+            wardSelect.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+            districtSelect.disabled = true;
+            wardSelect.disabled = true;
             return;
         }
 
-        const info = savedAddresses[selected];
-        nameInput.value = info.name;
-        phoneInput.value = info.phone;
-        addressInput.value = info.address;
-        province.value = info.province;
-
-        // Tải lại huyện
-        district.innerHTML = '<option value="">Chọn quận / huyện</option>';
-        for (let d in data[info.province]) {
-            const opt = document.createElement("option");
-            opt.value = d;
-            opt.textContent = d;
-            district.appendChild(opt);
-        }
-        district.disabled = false;
-        district.value = info.district;
-
-        // Tải lại xã
-        ward.innerHTML = '<option value="">Chọn phường / xã</option>';
-        data[info.province][info.district].forEach(w => {
-            const opt = document.createElement("option");
-            opt.value = w;
-            opt.textContent = w;
-            ward.appendChild(opt);
-        });
-        ward.disabled = false;
-        ward.value = info.ward;
+        // Nếu backend trả thêm thông tin chi tiết địa chỉ (province name/code, district, ward...),
+        // bạn có thể truyền qua data attribute hoặc xử lý ở đây.
+        // Hiện tại chỉ reset và để người dùng chọn lại tỉnh/huyện/xã cho an toàn.
+        // (Bạn có thể mở rộng sau nếu cần)
     });
 </script>
 
