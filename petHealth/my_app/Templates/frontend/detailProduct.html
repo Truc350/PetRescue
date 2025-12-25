@@ -51,23 +51,6 @@
             <h1>{{ product.name }}</h1>
 
             <div class="brand">Thương hiệu: {{ product.brand }}</div>
-
-            <!-- GIÁ -->
-            <!--                        {% if product.discount_price|intcomma %}-->
-            <!--                        <div class="price text-danger fw-bold" style="font-size: 24px">-->
-            <!--                            {{ product.discount_price|intcomma }}đ-->
-            <!--                            <span class="text-muted old-price" style="text-decoration: line-through;">-->
-            <!--                                    {{ product.price|intcomma }}đ-->
-            <!--                                </span>-->
-            <!--                            <span class="badge bg-danger ms-2">-->
-            <!--                                    -{{ product.discount_percent|intcomma }}%-->
-            <!--                                </span>-->
-            <!--                        </div>-->
-            <!--                        {% else %}-->
-            <!--                        <div class="price fw-bold" style="font-size:24px">-->
-            <!--                            {{ product.price|intcomma }}đ-->
-            <!--                        </div>-->
-            <!--                        {% endif %}-->
             {% with final=product.final_price original=product.price %}
             {% if final < original %}
             <div class="price text-danger fw-bold" style="font-size:24px">
@@ -95,7 +78,14 @@
                 </div>
                 <div class="btn-group size-buttons" role="group">
                     {% for s in product.sizes.all %}
-                    <button class="btn">{{ s.size_name }}</button>
+                    <button type="button"
+                            class="btn btn-outline-secondary size-btn"
+                            data-price="{{ s.price }}"
+                            data-final-price="{{ s.get_final_price }}"
+                            data-discount="{{ product.discount_percent|default:0 }}"
+                            data-size-id="{{ s.id }}">
+                        {{ s.size_name }}
+                    </button>
                     {% endfor %}
                 </div>
             </div>
@@ -128,8 +118,11 @@
             <div class="d-flex align-items-center gap-3 mt-3">
                 <form method="post" action="{% url 'add_to_cart' product.id %}">
                     {% csrf_token %}
+                    <!-- size -->
+                    <input type="hidden" name="size_id" id="sizeInput">
+                    <!-- quantity -->
                     <input type="hidden" name="quantity" id="qtyInput" value="1">
-                    <button class="add-cart">Thêm Vào Giỏ Hàng</button>
+                    <button type="submit" class="add-cart">Thêm Vào Giỏ Hàng</button>
                 </form>
 
 
@@ -322,7 +315,7 @@
                             </p>
 
                             <!-- Link -->
-                           <a href="{% url 'orders:buy_now' p.id %}"
+                            <a href="{% url 'orders:buy_now' p.id %}"
                                class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
                                 <i class="bi bi-cart-plus me-1"></i>
                                 Mua ngay
@@ -710,6 +703,82 @@
         renderPage(1);
     });
 </script>
+
+<script>
+let currentPrice = Number("{{ product.final_price }}");
+
+const priceBox = document.querySelector(".price");
+const totalBox = document.getElementById("total");
+const qtyBox = document.getElementById("qty");
+const sizeInput = document.getElementById("sizeInput");
+
+document.querySelectorAll(".size-btn").forEach(btn => {
+    btn.addEventListener("click", function () {
+
+        // active UI
+        document.querySelectorAll(".size-btn")
+            .forEach(b => b.classList.remove("active"));
+        this.classList.add("active");
+
+        const price = Number(this.dataset.price);
+        const finalPrice = Number(this.dataset.finalPrice);
+        const discount = Number(this.dataset.discount);
+
+        sizeInput.value = this.dataset.sizeId;
+
+        // ===== HIỂN THỊ GIÁ =====
+        if (finalPrice < price) {
+            priceBox.innerHTML = `
+                <span class="text-danger fw-bold" style="font-size:24px">
+                    ${finalPrice.toLocaleString("vi-VN")}đ
+                </span>
+                <span class="text-muted ms-2"
+                      style="text-decoration:line-through">
+                    ${price.toLocaleString("vi-VN")}đ
+                </span>
+                <span class="badge bg-danger ms-2">
+                    -${discount}%
+                </span>
+            `;
+            currentPrice = finalPrice;
+        } else {
+            priceBox.innerHTML = `
+                <span class="fw-bold" style="font-size:24px">
+                    ${price.toLocaleString("vi-VN")}đ
+                </span>
+            `;
+            currentPrice = price;
+        }
+
+        // ===== UPDATE TOTAL =====
+        const qty = Number(qtyBox.innerText);
+        totalBox.innerText =
+            (currentPrice * qty).toLocaleString("vi-VN") + "đ";
+    });
+});
+
+function changeQty(n) {
+    let q = parseInt(qtyBox.innerText);
+    q = Math.max(1, q + n);
+
+    qtyBox.innerText = q;
+    document.getElementById("qtyInput").value = q;
+
+    totalBox.innerText =
+        (q * currentPrice).toLocaleString("vi-VN") + "đ";
+}
+</script>
+
+<script>
+document.getElementById("addToCartForm").addEventListener("submit", function (e) {
+    const size = document.getElementById("sizeInput").value;
+    if (!size) {
+        e.preventDefault();
+        alert("Vui lòng chọn size trước khi thêm vào giỏ hàng!");
+    }
+});
+</script>
+
 
 
 {% include "frontend/footer.html" %}

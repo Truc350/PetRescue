@@ -127,6 +127,12 @@ class ProductSize(models.Model):
     size_name = models.CharField(max_length=255)
     price = models.IntegerField()
 
+    def get_final_price(self):
+        promo = self.product.get_active_promotion()
+        if promo:
+            return int(self.price * (100 - promo.discount_percent) / 100)
+        return self.price
+
     def __str__(self):
         return f"{self.product.name} - {self.size_name}"
 
