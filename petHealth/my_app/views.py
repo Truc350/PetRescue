@@ -345,13 +345,12 @@ def shoppingcart(request):
     })
 
 
-def remove_cart(request, product_id):
+def remove_cart(request, cart_key):
     cart = request.session.get("cart", {})
-    pid = str(product_id)
 
-    if pid in cart:
-        del cart[pid]
-        request.session["cart"] = cart
+    if cart_key in cart:
+        del cart[cart_key]
+        request.session.modified = True
 
     return redirect("shoppingcart")
 
