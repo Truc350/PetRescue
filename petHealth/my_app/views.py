@@ -275,21 +275,36 @@ def product_detail(request, slug):
         "commented_count": commented_count,
     })
 
+from django.shortcuts import get_object_or_404, redirect
+from .models_Product import Product, ProductSize
 
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
+
+    size_id = request.POST.get("size_id")
     quantity = int(request.POST.get("quantity", 1))
 
+    # ❗ bắt buộc chọn size
+    if not size_id:
+        return redirect("product_detail", slug=product.slug)
+
+    size = get_object_or_404(ProductSize, id=size_id, product=product)
+
+    final_price = size.get_final_price()
+
     cart = request.session.get("cart", {})
+    #  key phân biệt theo product + size
+    cart_key = f"{product.id}_{size.id}"
 
-    pid = str(product.id)
-
-    if pid in cart:
-        cart[pid]["quantity"] += quantity
+    if cart_key in cart:
+        cart[cart_key]["quantity"] += quantity
     else:
-        cart[pid] = {
+        cart[cart_key] = {
+            "product_id": product.id,
+            "size_id": size.id,
             "name": product.name,
-            "price": product.final_price,  # đúng model
+            "size": size.size_name,
+            "price": final_price,
             "image": product.image,
             "slug": product.slug,
             "quantity": quantity
@@ -330,13 +345,12 @@ def shoppingcart(request):
     })
 
 
-def remove_cart(request, product_id):
+def remove_cart(request, cart_key):
     cart = request.session.get("cart", {})
-    pid = str(product_id)
 
-    if pid in cart:
-        del cart[pid]
-        request.session["cart"] = cart
+    if cart_key in cart:
+        del cart[cart_key]
+        request.session.modified = True
 
     return redirect("shoppingcart")
 

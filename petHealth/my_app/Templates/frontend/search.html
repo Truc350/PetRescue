@@ -149,10 +149,17 @@
 
                     <div class="p-3">
                         <div class="product-header d-flex justify-content-between align-items-center">
-                            <p class="small text-muted mb-0">
-                                {{ product.brand }}
-                            </p>
+                            <p class="small text-muted mb-0 brand-name">{{ product.brand }}</p>
+
+                            <button class="btn-wishlist" data-id="{{ product.id }}">
+                                {% if product.id in liked_ids %}
+                                <i class="bi bi-heart-fill text-danger"></i>
+                                {% else %}
+                                <i class="bi bi-heart"></i>
+                                {% endif %}
+                            </button>
                         </div>
+
 
                         <p class="fw-medium small line-clamp-2">
                             {{ product.name }}
@@ -164,7 +171,7 @@
 
                         <a href="{% url 'orders:buy_now' product.id %}"
                            class="btn btn-danger w-100 rounded-pill py-2">
-                            <i class="bi bi-cart-plus"></i> Mua ngay
+                            Mua ngay
                         </a>
                     </div>
 
@@ -189,11 +196,27 @@
 </body>
 
 <script>
-    document.querySelectorAll('.btn-wishlist').forEach(btn => {
-        btn.addEventListener('click', function () {
-            this.classList.toggle('liked');
+
+    document.querySelectorAll(".btn-wishlist").forEach(btn => {
+        btn.addEventListener("click", function () {
+            const productId = this.dataset.id;
+
+            fetch(`/wishlist/toggle/${productId}/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrftoken,
+                },
+            })
+                .then(res => res.json())
+                .then(data => {
+                    const icon = this.querySelector("i");
+                    if (data.liked) {
+                        icon.className = "bi bi-heart-fill text-danger";
+                    } else {
+                        icon.className = "bi bi-heart";
+                    }
+                });
         });
-    });
 </script>
 
 <script>
@@ -213,5 +236,29 @@
         });
     });
 </script>
+<script>
+document.querySelectorAll(".btn-wishlist").forEach(btn => {
+    btn.addEventListener("click", function () {
+        const productId = this.dataset.id;
+
+        fetch(`/wishlist/toggle/${productId}/`, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+            },
+        })
+        .then(res => res.json())
+        .then(data => {
+            const icon = this.querySelector("i");
+            if (data.liked) {
+                icon.className = "bi bi-heart-fill text-danger";
+            } else {
+                icon.className = "bi bi-heart";
+            }
+        });
+    });
+});
+</script>
+
 
 </html>
