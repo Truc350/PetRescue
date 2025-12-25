@@ -259,10 +259,21 @@
                 </p>
 
                 <div class="order-progress">
-                    <div class="step active">ĐANG XỬ LÝ</div>
-                    <div class="step">ĐANG VẬN CHUYỂN</div>
-                    <div class="step">ĐÃ GIAO</div>
+                    <div class="progress-step">
+                        <div class="step" data-step="pending">ĐANG XỬ LÝ</div>
+                        <div class="line"></div>
+                    </div>
+
+                    <div class="progress-step">
+                        <div class="step" data-step="shipping">ĐANG VẬN CHUYỂN</div>
+                        <div class="line"></div>
+                    </div>
+
+                    <div class="progress-step">
+                        <div class="step" data-step="delivered">ĐÃ GIAO</div>
+                    </div>
                 </div>
+
 
                 <!-- 🔹 CHI TIẾT ĐƠN HÀNG (DỮ LIỆU ĐỘNG) -->
                 <div id="order-items"></div>
@@ -432,73 +443,72 @@
 
     /* ===== XÁC NHẬN HUỶ ===== */
     function confirmCancelOrder() {
-    const reason = document.getElementById("cancelReason").value.trim();
+        const reason = document.getElementById("cancelReason").value.trim();
 
-    if (!reason) {
-        alert("Vui lòng nhập lý do hủy!");
-        return;
-    }
-
-    fetch(`/orders/cancel/${currentOrderId}/`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": getCookie("csrftoken")
-        },
-        body: JSON.stringify({ reason })
-    })
-    .then(res => {
-        if (!res.ok) throw new Error("HTTP error");
-        return res.json();
-    })
-    .then(data => {
-        if (!data.success) {
-            alert("Không thể huỷ đơn");
+        if (!reason) {
+            alert("Vui lòng nhập lý do hủy!");
             return;
         }
 
-        closeCancelModal();
+        fetch(`/orders/cancel/${currentOrderId}/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCookie("csrftoken")
+            },
+            body: JSON.stringify({reason})
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("HTTP error");
+                return res.json();
+            })
+            .then(data => {
+                if (!data.success) {
+                    alert("Không thể huỷ đơn");
+                    return;
+                }
 
-        const row = document.querySelector(
-            `tr[data-order-id="${currentOrderId}"]`
-        );
+                closeCancelModal();
 
-        if (row) {
-            row.dataset.status = "cancel";
-            row.querySelector("td:nth-child(3)").innerHTML =
-                `<span class="cancelled">Đã huỷ</span>`;
+                const row = document.querySelector(
+                    `tr[data-order-id="${currentOrderId}"]`
+                );
 
-            const btn = row.querySelector(".btn-cancel");
-            if (btn) btn.remove();
-        }
+                if (row) {
+                    row.dataset.status = "cancel";
+                    row.querySelector("td:nth-child(3)").innerHTML =
+                        `<span class="cancelled">Đã huỷ</span>`;
 
-        // chuyển tab
-        document.querySelectorAll(".order-tab").forEach(t => t.classList.remove("active"));
-        document.querySelector('.order-tab[data-status="cancel"]').classList.add("active");
+                    const btn = row.querySelector(".btn-cancel");
+                    if (btn) btn.remove();
+                }
 
-        filterOrders("cancel");
-    })
-    .catch(err => {
-        console.error(err);
-        alert("Có lỗi xảy ra");
-    });
-}
+                // chuyển tab
+                document.querySelectorAll(".order-tab").forEach(t => t.classList.remove("active"));
+                document.querySelector('.order-tab[data-status="cancel"]').classList.add("active");
+
+                filterOrders("cancel");
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Có lỗi xảy ra");
+            });
+    }
 
 
-function filterOrders(status) {
-    const rows = document.querySelectorAll("#order-list tbody tr[data-status]");
-    let found = false;
+    function filterOrders(status) {
+        const rows = document.querySelectorAll("#order-list tbody tr[data-status]");
+        let found = false;
 
-    rows.forEach(row => {
-        if (row.dataset.status === status) {
-            row.style.display = "table-row";
-            found = true;
-        } else {
-            row.style.display = "none";
-        }
-    });
-}
-
+        rows.forEach(row => {
+            if (row.dataset.status === status) {
+                row.style.display = "table-row";
+                found = true;
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
 
 
     document.addEventListener("DOMContentLoaded", function () {
@@ -545,6 +555,7 @@ function filterOrders(status) {
         document.querySelector(".order-date strong").textContent =
             `Đơn #${order.id} - ${order.created_at}`;
 
+        updateOrderProgress(order.status);
         // ===== SẢN PHẨM =====
         const itemsBox = document.getElementById("order-items");
         itemsBox.innerHTML = "";
@@ -577,44 +588,65 @@ function filterOrders(status) {
         <p><strong>Tổng: ${order.total_price.toLocaleString()} ₫</strong></p>
         <p class="payment-note">Thanh toán khi nhận hàng</p>
     `;
+
+        function updateOrderProgress(status) {
+            const steps = document.querySelectorAll(".order-progress .step");
+
+            // reset
+            steps.forEach(step => step.classList.remove("active"));
+
+            // thứ tự chuẩn
+            const orderFlow = ["pending", "shipping", "delivered"];
+
+            const currentIndex = orderFlow.indexOf(status);
+
+            if (currentIndex === -1) return;
+
+            // 🔥 kích hoạt từ đầu tới trạng thái hiện tại
+            for (let i = 0; i <= currentIndex; i++) {
+                steps[i].classList.add("active");
+            }
+        }
+
+
     }
 
 
 </script>
 
 <script>
-function buyAgain(orderId) {
-    if (!confirm("Thêm lại sản phẩm vào giỏ hàng?")) return;
+    function buyAgain(orderId) {
+        if (!confirm("Thêm lại sản phẩm vào giỏ hàng?")) return;
 
-    fetch(`/orders/buy-again/${orderId}/`, {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": getCookie("csrftoken")
-        }
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            window.location.href = data.redirect;
-        } else {
-            alert("Không thể mua lại đơn hàng");
-        }
-    })
-    .catch(() => alert("Có lỗi xảy ra"));
-}
-
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== "") {
-        document.cookie.split(";").forEach(c => {
-            c = c.trim();
-            if (c.startsWith(name + "=")) {
-                cookieValue = decodeURIComponent(c.slice(name.length + 1));
+        fetch(`/orders/buy-again/${orderId}/`, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken")
             }
-        });
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = data.redirect;
+                } else {
+                    alert("Không thể mua lại đơn hàng");
+                }
+            })
+            .catch(() => alert("Có lỗi xảy ra"));
     }
-    return cookieValue;
-}
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+            document.cookie.split(";").forEach(c => {
+                c = c.trim();
+                if (c.startsWith(name + "=")) {
+                    cookieValue = decodeURIComponent(c.slice(name.length + 1));
+                }
+            });
+        }
+        return cookieValue;
+    }
 </script>
 
 </body>

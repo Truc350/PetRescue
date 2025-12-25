@@ -719,3 +719,18 @@ body {
     background-color: #1d3fa1 !important; /* màu hover đậm hơn */
     border-color: #1d3fa1 !important;
 }
+/* ================== CANCEL (ĐỎ) ================== */
+.order-progress.cancel .step {
+    border-color: #dc3545;
+    background: #fff;
+    color: #dc3545;
+}
+
+.order-progress.cancel .step::before {
+    background: #dc3545;
+}
+
+/* step đầu tiên không có before */
+.order-progress.cancel .step:first-child::before {
+    display: none;
+}
