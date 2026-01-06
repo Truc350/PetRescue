@@ -1,0 +1,397 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liên Hệ - PetRescue Pet Shop</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: #2c3e50;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #234bbb;
+            color: white;
+            padding: 50px 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            font-size: 1.15em;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .content {
+            padding: 50px 40px;
+        }
+
+        .section {
+            margin-bottom: 45px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e8eef5;
+        }
+
+        .section-icon {
+            background: #234bbb;
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 18px;
+            font-size: 1.4em;
+        }
+
+        .section-title h2 {
+            color: #234bbb;
+            font-size: 1.8em;
+            font-weight: 600;
+        }
+
+        .stores-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .store-item {
+            background: #f8fbff;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px 25px;
+            transition: all 0.3s ease;
+        }
+
+        .store-item:hover {
+            border-color: #234bbb;
+            box-shadow: 0 4px 15px rgba(35, 75, 187, 0.1);
+        }
+
+        .store-name {
+            color: #234bbb;
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .store-address {
+            color: #4a5568;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .store-address i {
+            color: #234bbb;
+            margin-right: 8px;
+        }
+
+        .store-hotline {
+            display: inline-flex;
+            align-items: center;
+            color: #234bbb;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+        }
+
+        .store-hotline:hover {
+            color: #1a3a8f;
+            transform: scale(1.05);
+        }
+
+        .store-hotline i {
+            margin-right: 8px;
+        }
+
+        .social-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .social-item {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            text-decoration: none;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+        }
+
+        .social-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .social-item.facebook { border-color: #1877f2; }
+        .social-item.facebook:hover { background: #1877f2; color: white; }
+
+        .social-item.instagram { border-color: #E4405F; }
+        .social-item.instagram:hover { background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); color: white; }
+
+        .social-item.tiktok { border-color: #000000; }
+        .social-item.tiktok:hover { background: #000000; color: white; }
+
+        .social-item.web { border-color: #234bbb; }
+        .social-item.web:hover { background: #234bbb; color: white; }
+
+        .social-item.shopee { border-color: #EE4D2D; }
+        .social-item.shopee:hover { background: #EE4D2D; color: white; }
+
+        .social-item.lazada { border-color: #0F156D; }
+        .social-item.lazada:hover { background: #0F156D; color: white; }
+
+        .social-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .social-item.facebook .social-icon { color: #1877f2; }
+        .social-item.facebook:hover .social-icon { color: white; }
+
+        .social-item.instagram .social-icon { color: #E4405F; }
+        .social-item.instagram:hover .social-icon { color: white; }
+
+        .social-item.tiktok .social-icon { color: #000000; }
+        .social-item.tiktok:hover .social-icon { color: white; }
+
+        .social-item.web .social-icon { color: #234bbb; }
+        .social-item.web:hover .social-icon { color: white; }
+
+        .social-item.shopee .social-icon { color: #EE4D2D; }
+        .social-item.shopee:hover .social-icon { color: white; }
+
+        .social-item.lazada .social-icon { color: #0F156D; }
+        .social-item.lazada:hover .social-icon { color: white; }
+
+        .social-name {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+
+        .social-handle {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 25px;
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.95em;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 35px 25px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .content {
+                padding: 30px 20px;
+            }
+
+            .section-title h2 {
+                font-size: 1.5em;
+            }
+
+            .social-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    {% include "frontend/header.html" %}
+        <br></br>
+    <div class="container">
+        <div class="header">
+            <h1><i class="bi bi-geo-alt-fill"></i> Liên Hệ</h1>
+            <p>PetRescue Pet Shop - Hệ thống cửa hàng thú cưng uy tín tại TP.HCM</p>
+        </div>
+
+        <div class="content">
+            <!-- Stores Section -->
+            <div class="section">
+                <div class="section-title">
+                    <div class="section-icon"><i class="bi bi-shop"></i></div>
+                    <h2>Hệ Thống Cửa Hàng</h2>
+                </div>
+
+                <div class="stores-list">
+                    <!-- Store 1 -->
+                    <div class="store-item">
+                        <div class="store-name">Cửa Hàng 1</div>
+                        <div class="store-address">
+                            <i class="bi bi-geo-alt-fill"></i>
+                            168 Trường Sa, P. Gia Định, Tp. HCM (Phường 1, Q. Bình Thạnh cũ)
+                        </div>
+                        <a href="tel:0374414142" class="store-hotline">
+                            <i class="bi bi-telephone-fill"></i>
+                            0374 414 142
+                        </a>
+                    </div>
+
+                    <!-- Store 2 -->
+                    <div class="store-item">
+                        <div class="store-name">Cửa Hàng 2</div>
+                        <div class="store-address">
+                            <i class="bi bi-geo-alt-fill"></i>
+                            412/3 Nơ Trang Long, P. Bình Lợi Trung, Tp. HCM (Phường 13, Q.Bình Thạnh)
+                        </div>
+                        <a href="tel:0867677891" class="store-hotline">
+                            <i class="bi bi-telephone-fill"></i>
+                            0867 677 891
+                        </a>
+                    </div>
+
+                    <!-- Store 3 -->
+                    <div class="store-item">
+                        <div class="store-name">Cửa Hàng 3</div>
+                        <div class="store-address">
+                            <i class="bi bi-geo-alt-fill"></i>
+                            91B Trần Não, P. An Khánh, Tp. HCM (Quận 2 cũ)
+                        </div>
+                        <a href="tel:0988686330" class="store-hotline">
+                            <i class="bi bi-telephone-fill"></i>
+                            0988 686 330
+                        </a>
+                    </div>
+
+                    <!-- Store 4 -->
+                    <div class="store-item">
+                        <div class="store-name">Cửa Hàng 4</div>
+                        <div class="store-address">
+                            <i class="bi bi-geo-alt-fill"></i>
+                            406 Nguyễn Thị Thập, P. Tân Hưng, Tp. HCM (P. Tân Quy, Q.7 cũ)
+                        </div>
+                        <a href="tel:0961401406" class="store-hotline">
+                            <i class="bi bi-telephone-fill"></i>
+                            0961 401 406
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Media Section -->
+            <div class="section">
+                <div class="section-title">
+                    <div class="section-icon"><i class="bi bi-share-fill"></i></div>
+                    <h2>Kết Nối Với Chúng Tôi</h2>
+                </div>
+
+                <div class="social-grid">
+                    <!-- Facebook -->
+                    <a href="https://facebook.com/paddypetshop" target="_blank" class="social-item facebook">
+                        <div class="social-icon">
+                            <i class="fab fa-facebook-f"></i>
+                        </div>
+                        <div class="social-name">Facebook</div>
+                        <div class="social-handle">PetRescue Pet Shop</div>
+                    </a>
+
+                    <!-- Instagram -->
+                    <a href="https://instagram.com/paddypetshop" target="_blank" class="social-item instagram">
+                        <div class="social-icon">
+                            <i class="fab fa-instagram"></i>
+                        </div>
+                        <div class="social-name">Instagram</div>
+                        <div class="social-handle">@PetRescuepetshop</div>
+                    </a>
+
+                    <!-- TikTok -->
+                    <a href="https://tiktok.com/@paddypetshop" target="_blank" class="social-item tiktok">
+                        <div class="social-icon">
+                            <i class="fab fa-tiktok"></i>
+                        </div>
+                        <div class="social-name">TikTok</div>
+                        <div class="social-handle">@PetRescuepetshop</div>
+                    </a>
+
+                    <!-- Website -->
+                    <a href="https://paddy.vn" target="_blank" class="social-item web">
+                        <div class="social-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <div class="social-name">Website</div>
+                        <div class="social-handle">PetRescue.vn</div>
+                    </a>
+
+                    <!-- Shopee -->
+                    <a href="https://shopee.vn/paddypetshop" target="_blank" class="social-item shopee">
+                        <div class="social-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <div class="social-name">Shopee</div>
+                        <div class="social-handle">PetRescuepetshop</div>
+                    </a>
+
+                    <!-- Lazada -->
+                    <a href="https://lzd.co/Paddy-Pet-Shop" target="_blank" class="social-item lazada">
+                        <div class="social-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="social-name">Lazada</div>
+                        <div class="social-handle">PetRescue Pet Shop</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 2026 PetRescue Pet Shop - Đồng hành cùng thú cưng của bạn</p>
+        </div>
+    </div>
+        <br></br>
+    {% include "frontend/footer.html" %}
+</body>
+</html>

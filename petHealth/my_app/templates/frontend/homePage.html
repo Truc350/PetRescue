@@ -66,31 +66,42 @@
     <section class="container section-spacing">
         <div class="row g-3 text-center">
             <div class="col-12 col-md-3">
-                <div class="benefit-box p-3 shadow-sm rounded bg-white">
-                    <i class="bi bi-truck fs-1 text-primary"></i>
-                    <h6 class="mt-2 fw-bold">Miễn phí vận chuyển</h6>
-                </div>
+                <a href="{% url 'VanChuyen' %}">
+                    <div class="benefit-box p-3 shadow-sm rounded bg-white">
+                        <i class="bi bi-truck fs-1 text-primary"></i>
+                        <h6 class="mt-2 fw-bold">Miễn phí vận chuyển</h6>
+                    </div>
+                </a>
             </div>
 
-            <div class="col-12 col-md-3">
-                <div class="benefit-box p-3 shadow-sm rounded bg-white">
-                    <i class="bi bi-patch-check fs-1 text-primary"></i>
-                    <h6 class="mt-2 fw-bold">Sản phẩm chính hãng</h6>
-                </div>
-            </div>
 
             <div class="col-12 col-md-3">
-                <div class="benefit-box p-3 shadow-sm rounded bg-white">
-                    <i class="bi bi-wallet2 fs-1 text-primary"></i>
-                    <h6 class="mt-2 fw-bold">Thanh toán tiện lợi</h6>
-                </div>
+                <a href="{% url 'DoiTraHang' %}">
+                    <div class="benefit-box p-3 shadow-sm rounded bg-white">
+                        <i class="bi bi-patch-check fs-1 text-primary"></i>
+                        <h6 class="mt-2 fw-bold">Sản phẩm chính hãng</h6>
+                    </div>
+                </a>
             </div>
 
+
             <div class="col-12 col-md-3">
-                <div class="benefit-box p-3 shadow-sm rounded bg-white">
-                    <i class="bi bi-headset fs-1 text-primary"></i>
-                    <h6 class="mt-2 fw-bold">Hỗ trợ chuyên nghiệp</h6>
-                </div>
+                <a href="{% url 'ThanhToanTienLoi' %}">
+                    <div class="benefit-box p-3 shadow-sm rounded bg-white">
+                        <i class="bi bi-wallet2 fs-1 text-primary"></i>
+                        <h6 class="mt-2 fw-bold">Thanh toán tiện lợi</h6>
+                    </div>
+                </a>
+            </div>
+
+
+            <div class="col-12 col-md-3">
+                <a href="{% url 'LienHe' %}">
+                    <div class="benefit-box p-3 shadow-sm rounded bg-white">
+                        <i class="bi bi-headset fs-1 text-primary"></i>
+                        <h6 class="mt-2 fw-bold">Hỗ trợ chuyên nghiệp</h6>
+                    </div>
+                </a>
             </div>
         </div>
     </section>
