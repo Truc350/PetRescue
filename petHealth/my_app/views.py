@@ -165,7 +165,7 @@ def getPromotionManage(request):
 
 
 def getStatistic(request):
-    return render(request, 'frontend/admin/order_dashboard.html')
+    return render(request, 'frontend/admin/statistics.html')
 
 
 def getDogHygiene(request):
@@ -560,7 +560,6 @@ from accounts.models import UserProfile
 from django.contrib.auth.decorators import login_required
 
 
-@login_required
 def profile_view(request):
     user = request.user
     profile, _ = UserProfile.objects.get_or_create(user=user)
@@ -676,33 +675,46 @@ from my_app.models_Product import ProductImage
 from .services.image_index import library_features, library_urls
 from .services.feature import extract_feature_from_file
 
-
 def image_search_api(request):
     if request.method != "POST":
-        return JsonResponse({"error": "Invalid method"}, status=400)
+        return JsonResponse({"success": False, "message": "Invalid method"}, status=400)
 
     file = request.FILES.get("query_image")
     if not file:
-        return JsonResponse({"error": "No image"}, status=400)
+        return JsonResponse({"success": False, "message": "No image"}, status=400)
 
     # extract feature
-    query_feat = extract_feature_from_file(file, None)
-    query_feat = query_feat.reshape(1, -1)
+    query_feat = extract_feature_from_file(file, None).reshape(1, -1)
 
     # cosine similarity
     sims = cosine_similarity(query_feat, library_features)[0]
+
     idx = int(sims.argmax())
+    best_score = float(sims[idx])
+
+    SIM_THRESHOLD = 0.75
+
+    # ❌ ẢNH KHÔNG HỢP LỆ
+    if best_score < SIM_THRESHOLD:
+        return JsonResponse({
+            "success": False,
+            "message": "Ảnh không hợp lệ hoặc không giống sản phẩm nào",
+            "score": round(best_score, 3)
+        })
+
+    # ✅ ẢNH HỢP LỆ
     best_url = library_urls[idx]
 
-    # tìm Product
     img = ProductImage.objects.filter(url=best_url).select_related("product").first()
     if not img:
-        return JsonResponse({"error": "Not found"}, status=404)
+        return JsonResponse({"success": False, "message": "Not found"}, status=404)
 
     return JsonResponse({
+        "success": True,
         "url": f"/product/{img.product.slug}/",
-        "score": float(sims[idx])
+        "score": round(best_score, 3)
     })
+
 
 
 from django.views.decorators.http import require_POST

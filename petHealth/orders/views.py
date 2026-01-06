@@ -142,35 +142,58 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse  # ✅ THÊM DÒNG NÀY
 from .models import Order
-
+from django.conf import settings
+from .models import Order
+from .vnpay import VNPay
 
 @login_required
 def complete_payment(request):
-    if request.method == "POST":
-        order_id = request.session.get("checkout_order_id")
+    if request.method != "POST":
+        return redirect("orders:checkout_payment")
 
-        if not order_id:
-            return redirect(reverse("personal-page") + "?tab=orders")
+    order_id = request.session.get("checkout_order_id")
+    if not order_id:
+        return redirect(reverse("personal-page") + "?tab=orders")
 
-        order = get_object_or_404(Order, id=order_id, user=request.user)
+    order = get_object_or_404(Order, id=order_id, user=request.user)
 
-        if order.status != "pending":
-            return redirect(reverse("personal-page") + "?tab=orders")
+    if order.status != "pending":
+        return redirect(reverse("personal-page") + "?tab=orders")
 
-        payment_method = request.POST.get("payment_method")
-        if payment_method not in ["cod", "vnpay"]:
-            return redirect("orders:checkout_payment")
+    payment_method = request.POST.get("payment_method")
+    if payment_method not in ["cod", "vnpay"]:
+        return redirect("orders:checkout_payment")
 
-        order.payment_method = payment_method
-        order.calculate_total()
+    order.payment_method = payment_method
+    order.calculate_total()
+    order.status = "pending"
+    order.save()
+    vnp_TxnRef = str(order.id)  # ✅ CHUẨN
+
+    # COD → hoàn thành ngay
+    if payment_method == "cod":
+        order.status = "paid"
         order.save()
 
         request.session.pop("checkout_order_id", None)
-
         return redirect(reverse("personal-page") + "?tab=orders")
 
-    return redirect("orders:checkout_payment")
+    # VNPAY → redirect sang cổng thanh toán
+    vnpay = VNPay(
+        settings.VNPAY_TMN_CODE,
+        settings.VNPAY_HASH_SECRET,
+        settings.VNPAY_PAYMENT_URL,
+        settings.VNPAY_RETURN_URL,
+    )
 
+    payment_url = vnpay.create_payment_url(
+        request=request,
+        order_id=vnp_TxnRef,
+        amount=int(order.total_price),
+        order_desc=f"Thanh toan don hang #{order.id}",
+    )
+
+    return redirect(payment_url)
 
 # orders/views.py
 import json
@@ -343,3 +366,54 @@ def cancel_order_api(request, order_id):
     order.save()
 
     return JsonResponse({"success": True})
+
+from django.contrib import messages
+
+def vnpay_return(request):
+    params = request.GET.dict()
+
+    if not verify_vnpay_signature(params, settings.VNPAY_HASH_SECRET):
+        messages.error(request, "Dữ liệu thanh toán không hợp lệ")
+        return redirect(reverse("personal-page") + "?tab=orders")
+
+    messages.success(request, "Đã nhận phản hồi từ VNPAY")
+    return redirect(reverse("personal-page") + "?tab=orders")
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+from .models import Order
+from .vnpay import verify_vnpay_signature
+
+
+@csrf_exempt
+def vnpay_ipn(request):
+    input_data = request.GET.dict()
+
+    order_id = input_data.get("vnp_TxnRef")
+    response_code = input_data.get("vnp_ResponseCode")
+    transaction_status = input_data.get("vnp_TransactionStatus")
+    amount = int(input_data.get("vnp_Amount", 0)) // 100  # ✅ FIX
+
+    order = Order.objects.filter(id=order_id).first()
+    if not order:
+        return JsonResponse({"RspCode": "01", "Message": "Order not found"})
+
+    # chống gọi lại
+    if order.status in ["shipping", "delivered"]:
+        return JsonResponse({"RspCode": "02", "Message": "Order already confirmed"})
+
+    # check tiền
+    if int(order.total_price) != amount:
+        return JsonResponse({"RspCode": "04", "Message": "Invalid amount"})
+
+    # thành công
+    if response_code == "00" and transaction_status == "00":
+        order.status = "shipping"
+        order.save()
+        return JsonResponse({"RspCode": "00", "Message": "Confirm Success"})
+
+    # thất bại / huỷ
+    order.status = "cancel"
+    order.save()
+    return JsonResponse({"RspCode": "00", "Message": "Confirm Success"})

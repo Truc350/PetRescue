@@ -24,7 +24,11 @@ SECRET_KEY = 'django-insecure-rv$!$rsmx@#!eut+bw4(ywrd7c6uuftgo=)9n0(mwao!c)7r1z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "paraffinoid-unarmorial-masako.ngrok-free.dev",
+]
 
 # Application definition
 
@@ -177,3 +181,12 @@ EMAIL_HOST_PASSWORD = 'iljl vfxe kfmt syqo'
 SERVER_EMAIL = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = 'PetHealth App <doghealthapp.app@gmail.com>'
 DOMAIN = '127.0.0.1:8000'
+
+
+
+VNPAY_TMN_CODE = "3GKA4RRN"
+VNPAY_HASH_SECRET = "9WYAKKV6WAVWFL3B33M5ZZYX2M4C0QGC"
+VNPAY_PAYMENT_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
+
+VNPAY_RETURN_URL = "http://127.0.0.1:8000/orders/vnpay/return/"
+# VNPAY_IPN_URL    = "https://paraffinoid-unarmorial-masako.ngrok-free.dev/orders/vnpay/ipn/"

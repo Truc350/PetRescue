@@ -55,14 +55,22 @@
             {% csrf_token %}
             <input type="hidden" name="payment_method" id="paymentMethod" value="">
             <div class="form-check mb-3">
-                <input class="form-check-input" type="radio" name="payment" id="cod" value="cod" required>
+                <input class="form-check-input" type="radio"
+                       name="payment_method"
+                       id="cod"
+                       value="cod"
+                       required>
+
                 <label class="form-check-label" for="cod">
                     <i class="bi bi-cash-coin me-2 text-success"></i> Thanh toán khi giao hàng (Tiền mặt)
                 </label>
             </div>
 
             <div class="form-check mb-4">
-                <input class="form-check-input" type="radio" name="payment" id="vnpay" value="vnpay">
+                <input class="form-check-input" type="radio"
+                       name="payment_method"
+                       id="vnpay"
+                       value="vnpay">
                 <label class="form-check-label" for="vnpay">
                     <i class="bi bi-credit-card-2-front me-2 text-primary"></i> Thanh toán qua VNPAY
                 </label>
@@ -149,23 +157,15 @@
 <script>
     const btnHoanTat = document.getElementById('btnHoanTat');
     const codPopup = document.getElementById('codPopup');
-    const confirmCOD = document.getElementById('confirmCOD');
-    const cancelCOD = document.getElementById('cancelCOD');
-
     const vnpayPopup = document.getElementById('vnpayPopup');
-    const confirmVNPAY = document.getElementById('confirmVNPAY');
-    const cancelVNPAY = document.getElementById('cancelVNPAY');
 
-    const paymentMethodInput = document.getElementById('paymentMethod');
-    const paymentForm = document.getElementById('paymentForm');
-
-    // Bấm Hoàn tất đơn hàng
     btnHoanTat.addEventListener('click', () => {
-        const payment = document.querySelector('input[name="payment"]:checked');
+        const payment = document.querySelector('input[name="payment_method"]:checked');
         if (!payment) {
             alert('Vui lòng chọn phương thức thanh toán!');
             return;
         }
+
         if (payment.value === 'cod') {
             codPopup.style.display = 'flex';
         } else if (payment.value === 'vnpay') {
@@ -173,19 +173,21 @@
         }
     });
 
-    // COD popup
-    cancelCOD.addEventListener('click', () => codPopup.style.display = 'none');
-    confirmCOD.addEventListener('click', () => {
-        paymentMethodInput.value = 'cod';
-        paymentForm.submit(); // submit form POST
-    });
+    document.getElementById('confirmCOD').onclick = () => {
+        document.getElementById('paymentForm').submit();
+    };
 
-    // VNPAY popup
-    cancelVNPAY.addEventListener('click', () => vnpayPopup.style.display = 'none');
-    confirmVNPAY.addEventListener('click', () => {
-        paymentMethodInput.value = 'vnpay';
-        paymentForm.submit(); // submit form POST
-    });
+    document.getElementById('confirmVNPAY').onclick = () => {
+        document.getElementById('paymentForm').submit();
+    };
+
+    document.getElementById('cancelCOD').onclick = () => {
+        codPopup.style.display = 'none';
+    };
+
+    document.getElementById('cancelVNPAY').onclick = () => {
+        vnpayPopup.style.display = 'none';
+    };
 </script>
 </body>
 </html>
