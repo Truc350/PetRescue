@@ -117,6 +117,55 @@
         </div>
     </section>
 
+    <!-- ===================== GỢI Ý CÁ NHÂN ===================== -->
+    <section class="container section-spacing content-padding">
+        <div class="d-flex justify-content-between align-items-center mb-3 section-header">
+            <h4 class="fw-bold mb-0 text-primary">Gợi ý cho bạn</h4>
+        </div>
+
+        <div class="product-carousel-wrapper">
+            <button class="scroll-arrow left" onclick="scrollProduct(this, -1)">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+            <button class="scroll-arrow right" onclick="scrollProduct(this, 1)">
+                <i class="bi bi-chevron-right"></i>
+            </button>
+
+            <div class="product-scroll-container">
+                {% for product in personal_products %}
+                <div class="col-6 col-md-4 col-lg-3 flex-shrink-0">
+                    <div class="product-card bg-white rounded shadow-sm overflow-hidden">
+
+                        <a href="{% url 'product_detail' product.slug %}">
+                            <img src="{{ product.image }}"
+                                 class="w-100"
+                                 style="height: 200px; object-fit: contain;">
+                        </a>
+
+                        <div class="p-3">
+                            <p class="small text-muted mb-1">{{ product.brand }}</p>
+
+                            <a href="{% url 'product_detail' product.slug %}"
+                               class="text-decoration-none text-dark">
+                                <p class="fw-medium small line-clamp-2">{{ product.name }}</p>
+                            </a>
+
+                            <p class="text-danger fw-bold">
+                                {{ product.get_final_price|intcomma }}đ
+                            </p>
+
+                            <a href="{% url 'orders:buy_now' product.id %}"
+                               class="btn btn-danger w-100 rounded-pill">
+                                Mua ngay
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
     <!-- ===================== ĐƯỢC BOSS YÊU THÍCH ===================== -->
     <section class="container section-spacing content-padding">
         <div class="position-relative w-100">
@@ -361,32 +410,32 @@
     }
 </script>
 <script>
-document.querySelectorAll(".btn-wishlist").forEach(btn => {
-    btn.addEventListener("click", function () {
-        const productId = this.dataset.id;
+    document.querySelectorAll(".btn-wishlist").forEach(btn => {
+        btn.addEventListener("click", function () {
+            const productId = this.dataset.id;
 
-        fetch(`/wishlist/toggle/${productId}/`, {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}",
-            },
-        })
-        .then(res => res.json())
-        .then(data => {
-            const icon = this.querySelector("i");
-            if (data.liked) {
-                icon.className = "bi bi-heart-fill text-danger";
-            } else {
-                icon.className = "bi bi-heart";
-            }
+            fetch(`/wishlist/toggle/${productId}/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                },
+            })
+                .then(res => res.json())
+                .then(data => {
+                    const icon = this.querySelector("i");
+                    if (data.liked) {
+                        icon.className = "bi bi-heart-fill text-danger";
+                    } else {
+                        icon.className = "bi bi-heart";
+                    }
+                });
         });
     });
-});
 </script>
 
 <script>
     document.querySelectorAll('.btn-wishlist').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             this.classList.toggle('liked');
         });
     });
