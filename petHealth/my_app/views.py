@@ -85,6 +85,7 @@ from django.shortcuts import render
 from .models_Product import Product
 from django.db import models
 from django.db.models import Count
+from .services.recommendation import get_personal_recommendations
 
 
 def getHomePage(request):
@@ -100,10 +101,25 @@ def getHomePage(request):
 
     new_products = Product.objects.all().order_by('-id')[:10]
 
+    liked_ids = []
+    personal_products = Product.objects.none()
+    if request.user.is_authenticated:
+        liked_ids = Wishlist.objects.filter(
+            user=request.user
+        ).values_list("product_id", flat=True)
+
+        # ✅ GỢI Ý CÁ NHÂN THẬT
+        personal_products = get_personal_recommendations(
+            request.user,
+            limit=10
+        )
+
     context = {
         'favorite_products': favorite_products,
         'sale_products': sale_products,
         'new_products': new_products,
+        "personal_products": personal_products,
+        "liked_ids": liked_ids,
     }
 
     return render(request, 'frontend/homePage.html', context)
