@@ -171,18 +171,23 @@
     <!-- ========== ĐÁNH GIÁ SẢN PHẨM ========== -->
     <section class="review-section">
         <h4 class="review-title">ĐÁNH GIÁ SẢN PHẨM</h4>
-        <!-- NÚT BẬT THỐNG KÊ -->
-        <button id="toggle-stats-btn" class="btn btn-outline-primary mb-3">
-            <i class="bi bi-bar-chart"></i>
-            <span class="btn-text">Thống kê đánh giá</span>
-        </button>
-        <!-- KHỐI THỐNG KÊ (ẨN MẶC ĐỊNH) -->
-        <div id="stats-box" style="display:none">
-            <h4>Thống kê đánh giá</h4>
-            <img src="{% url 'sentiment_chart' product.id %}"
-                 alt="Biểu đồ đánh giá"
-                 style="max-width:100%">
-        </div>
+<!--        <button id="toggle-stats-btn" class="btn btn-outline-primary mb-3">-->
+<!--            <i class="bi bi-bar-chart"></i>-->
+<!--            <span class="btn-text">Thống kê đánh giá</span>-->
+<!--        </button>-->
+<!--        &lt;!&ndash; KHỐI THỐNG KÊ (ẨN MẶC ĐỊNH) &ndash;&gt;-->
+<!--        <div id="stats-box" style="display:none">-->
+<!--            <h4>Thống kê đánh giá</h4>-->
+<!--            <img src="{% url 'sentiment_chart' product.id %}"-->
+<!--                 alt="Biểu đồ đánh giá"-->
+<!--                 style="max-width:100%">-->
+<!--        </div>-->
+<button id="toggle-stats-btn">Thống kê đánh giá</button>
+
+<div id="stats-box" style="display:none">
+    <p id="sentiment-text"></p>
+</div>
+
 
         <div class="rating-overview">
             <div class="rating-score">
@@ -784,7 +789,16 @@ document.getElementById("addToCartForm").addEventListener("submit", function (e)
 });
 </script>
 
-
+<script>
+document.getElementById("toggle-stats-btn").addEventListener("click", function() {
+    fetch("{% url 'sentiment_summary' product.id %}")
+        .then(response => response.text())
+        .then(text => {
+            document.getElementById("sentiment-text").textContent = text;
+            document.getElementById("stats-box").style.display = "block";
+        });
+});
+</script>
 
 {% include "frontend/footer.html" %}
 </body>

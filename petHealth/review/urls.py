@@ -6,4 +6,5 @@ urlpatterns = [
     path("product/<int:product_id>/sentiment-chart/",
          views.sentiment_chart,
          name="sentiment_chart"),
+    path('product/<int:product_id>/sentiment/', views.sentiment_summary, name='sentiment_summary'),
 ]
