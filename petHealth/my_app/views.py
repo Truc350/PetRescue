@@ -815,3 +815,15 @@ def can_apply_promotion(product, promotion):
     min_date = timezone.now().date() + timedelta(days=promotion.min_expiry_days)
 
     return product.expiry_date >= min_date
+
+def trangChinhSachVanChuyen(request):
+    return render(request, 'frontend/ChinhSachVanChuyen.html')
+
+def trangChinhSachDoiTraHang(request):
+    return render(request, 'frontend/ChinhSachDoiTraHang.html')
+
+def trangLienHe(request):
+    return render(request, 'frontend/LienHe.html')
+
+def trangThanhToanTienLoi(request):
+    return render(request, 'frontend/ThanhToanTienLoi.html')

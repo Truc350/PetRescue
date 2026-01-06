@@ -13,7 +13,10 @@ urlpatterns = [
     path('header', views.getHeader),
     path("search/suggest/", views.search_suggest, name="search-suggest"),
     path('logout/', LogoutView.as_view(), name='logout'),
-
+    path('doiTraHang/', views.trangChinhSachDoiTraHang, name='DoiTraHang'),
+    path('vanChuyen/', views.trangChinhSachVanChuyen, name='VanChuyen'),
+    path('lienHe/', views.trangLienHe, name='LienHe'),
+    path('tienLoi/', views.trangThanhToanTienLoi, name='ThanhToanTienLoi'),
     # path('login/', views.getLogin, name='login'),
     path('register', views.getRegister, name='register'),
     path('forgot-password', views.getForgotPassword),

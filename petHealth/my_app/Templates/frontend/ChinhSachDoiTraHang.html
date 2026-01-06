@@ -1,0 +1,640 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chính Sách Đổi - Trả Hàng - PetRescue</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: #2c3e50;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #234bbb;
+            color: white;
+            padding: 50px 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            font-size: 1.15em;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .content {
+            padding: 50px 40px;
+        }
+
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e8eef5;
+        }
+
+        .section-icon {
+            background: #234bbb;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 18px;
+            font-size: 1.5em;
+        }
+
+        .section-title h2 {
+            color: #234bbb;
+            font-size: 1.9em;
+            font-weight: 600;
+        }
+
+        .section-content {
+            padding-left: 15px;
+        }
+
+        .policy-card {
+            background: #f8fbff;
+            border: 2px solid #234bbb;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 25px 0;
+            transition: all 0.3s ease;
+        }
+
+        .policy-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(35, 75, 187, 0.12);
+        }
+
+        .policy-card h3 {
+            color: #234bbb;
+            margin-bottom: 18px;
+            font-size: 1.5em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .policy-card h3 .badge {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.6em;
+            margin-left: 12px;
+            font-weight: 600;
+        }
+
+        .policy-card h3 .badge.fee {
+            background: #f59e0b;
+        }
+
+        .policy-card h3 .badge.no-return {
+            background: #ef4444;
+        }
+
+        .policy-card p {
+            color: #4a5568;
+            margin: 12px 0;
+            font-size: 1.05em;
+            line-height: 1.8;
+        }
+
+        .policy-card ul {
+            list-style: none;
+            padding-left: 0;
+            margin-top: 15px;
+        }
+
+        .policy-card ul li {
+            padding: 10px 0 10px 35px;
+            position: relative;
+            color: #4a5568;
+            font-size: 1.05em;
+            line-height: 1.8;
+        }
+
+        .policy-card ul li:before {
+            content: "•";
+            position: absolute;
+            left: 12px;
+            color: #234bbb;
+            font-weight: bold;
+            font-size: 1.5em;
+        }
+
+        .highlight-box {
+            background: #234bbb;
+            color: white;
+            padding: 25px 30px;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(35, 75, 187, 0.15);
+        }
+
+        .highlight-box p {
+            color: white;
+            margin: 0;
+            font-size: 1.08em;
+            line-height: 1.8;
+        }
+
+        .highlight-box strong {
+            font-weight: 700;
+        }
+
+        .info-box {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 22px 28px;
+            border-radius: 4px;
+            margin: 25px 0;
+        }
+
+        .info-box p {
+            margin: 0;
+            color: #92400e;
+            font-weight: 500;
+        }
+
+        .warning-box {
+            background: #fee2e2;
+            border-left: 4px solid #ef4444;
+            padding: 22px 28px;
+            border-radius: 4px;
+            margin: 25px 0;
+        }
+
+        .warning-box p {
+            margin: 0;
+            color: #991b1b;
+            font-weight: 500;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 30px 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .timeline-marker {
+            width: 60px;
+            height: 60px;
+            background: #234bbb;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1em;
+            flex-shrink: 0;
+            margin-right: 25px;
+            box-shadow: 0 4px 10px rgba(35, 75, 187, 0.2);
+        }
+
+        .timeline-content {
+            flex: 1;
+            padding-top: 8px;
+        }
+
+        .timeline-content h4 {
+            color: #234bbb;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .timeline-content p {
+            color: #4a5568;
+            line-height: 1.8;
+        }
+
+        .fee-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .fee-table thead {
+            background: #234bbb;
+            color: white;
+        }
+
+        .fee-table th {
+            padding: 18px 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 1.05em;
+        }
+
+        .fee-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #4a5568;
+        }
+
+        .fee-table tbody tr:hover {
+            background: #f8fbff;
+            transition: background 0.2s ease;
+        }
+
+        .fee-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .fee-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .fee-badge.free {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .fee-badge.low {
+            background: #fed7aa;
+            color: #92400e;
+        }
+
+        .fee-badge.high {
+            background: #fecaca;
+            color: #991b1b;
+        }
+
+        .contact-box {
+            background: #234bbb;
+            color: white;
+            padding: 35px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .contact-box h3 {
+            margin-bottom: 18px;
+            font-size: 1.6em;
+            font-weight: 600;
+        }
+
+        .contact-box p {
+            margin-bottom: 20px;
+            font-size: 1.05em;
+        }
+
+        .contact-box a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.9em;
+            font-weight: 700;
+            display: inline-block;
+            padding: 12px 30px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .contact-box a:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 25px;
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.95em;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 35px 25px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .content {
+                padding: 30px 20px;
+            }
+
+            .section-title h2 {
+                font-size: 1.5em;
+            }
+
+            .section-icon {
+                width: 42px;
+                height: 42px;
+                font-size: 1.3em;
+            }
+
+            .policy-card {
+                padding: 22px;
+            }
+
+            .timeline-marker {
+                width: 50px;
+                height: 50px;
+                font-size: 1em;
+            }
+
+            .fee-table {
+                font-size: 0.9em;
+            }
+
+            .fee-table th, .fee-table td {
+                padding: 12px 14px;
+            }
+
+            .contact-box a {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+{% include "frontend/header.html" %}
+<br></br>
+<div class="container">
+    <div class="header">
+        <h1><i class="bi bi-arrow-repeat"></i> Chính Sách Đổi - Trả Hàng</h1>
+        <p>Quy định rõ ràng, minh bạch và bảo vệ quyền lợi khách hàng</p>
+    </div>
+
+    <div class="content">
+        <!-- Free Return Policy -->
+        <div class="section">
+            <div class="section-title">
+                <div class="section-icon"><i class="bi bi-check-circle-fill"></i></div>
+                <h2>Đổi - Trả Hàng Miễn Phí</h2>
+            </div>
+            <div class="section-content">
+                <div class="policy-card">
+                    <h3>
+                        Đổi - Trả Miễn Phí trong 7 ngày
+                        <span class="badge">MIỄN PHÍ</span>
+                    </h3>
+                    <p>Bên mua sẽ được đổi hàng - trả hàng <strong>MIỄN PHÍ</strong> trong thời gian <strong>07 (bảy)
+                        ngày</strong> kể từ khi nhận hàng hóa với các điều kiện sau:</p>
+                    <ul>
+                        <li>Hàng hóa chưa qua sử dụng</li>
+                        <li>Còn nguyên tem mác</li>
+                        <li>Còn nguyên kiện đóng gói</li>
+                        <li>Có đầy đủ hóa đơn mua hàng</li>
+                    </ul>
+                </div>
+
+                <div class="highlight-box">
+                    <p><strong><i class="bi bi-bullseye"></i> Lưu ý quan trọng:</strong> Để được đổi - trả miễn phí, sản
+                        phẩm phải đáp ứng đầy đủ tất cả các điều kiện trên trong vòng 7 ngày đầu tiên kể từ ngày nhận
+                        hàng.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Paid Return Policy -->
+        <div class="section">
+            <div class="section-title">
+                <div class="section-icon"><i class="bi bi-cash-coin"></i></div>
+                <h2>Đổi - Trả Hàng Có Phí</h2>
+            </div>
+            <div class="section-content">
+                <div class="policy-card">
+                    <h3>
+                        Hàng chưa qua sử dụng (Ngày 8-15)
+                        <span class="badge fee">PHÍ 15%</span>
+                    </h3>
+                    <p>Đối với hàng hóa <strong>chưa qua sử dụng, còn nguyên tem mác, nguyên kiện</strong> và có đầy đủ
+                        hóa đơn mua hàng:</p>
+                    <p>Từ <strong>ngày thứ 8 đến ngày thứ 15</strong> sau khi nhận hàng hóa, nếu bên mua có nhu cầu muốn
+                        đổi sản phẩm khác hoặc trả lại sản phẩm thì sẽ áp dụng mức phí là <strong>15% giá trị sản
+                            phẩm</strong>.</p>
+                </div>
+
+                <div class="policy-card">
+                    <h3>
+                        Hàng đã tháo bao bì (Trong 15 ngày)
+                        <span class="badge fee">PHÍ 15-30%</span>
+                    </h3>
+                    <p>Đối với hàng hóa <strong>đã tháo vỏ bao bì, tem mác</strong>, trong vòng 15 ngày:</p>
+
+                    <div class="fee-table">
+                        <thead>
+                        <tr>
+                            <th>Loại giao dịch</th>
+                            <th>Mức phí</th>
+                            <th>Ghi chú</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><strong>Đổi sản phẩm khác</strong></td>
+                            <td><span class="fee-badge low">15% giá trị</span></td>
+                            <td>Áp dụng khi đổi sang sản phẩm khác</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Trả sản phẩm</strong></td>
+                            <td><span class="fee-badge high">30% giá trị</span></td>
+                            <td>Áp dụng khi trả lại sản phẩm</td>
+                        </tr>
+                        </tbody>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <p><strong><i class="bi bi-exclamation-triangle-fill"></i> Lưu ý:</strong> Phí đổi - trả được tính
+                        dựa trên giá trị sản phẩm ghi trên hóa đơn mua hàng.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="section">
+            <div class="section-title">
+                <div class="section-icon"><i class="bi bi-calendar-check"></i></div>
+                <h2>Thời Gian & Mức Phí</h2>
+            </div>
+            <div class="section-content">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-marker">1-7<br><small style="font-size: 0.7em;">ngày</small></div>
+                        <div class="timeline-content">
+                            <h4>Miễn phí 100%</h4>
+                            <p>Đổi - trả hoàn toàn miễn phí với sản phẩm còn nguyên tem mác, chưa sử dụng.</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-marker">8-15<br><small style="font-size: 0.7em;">ngày</small></div>
+                        <div class="timeline-content">
+                            <h4>Phí 15% - 30%</h4>
+                            <p>Áp dụng phí tùy theo tình trạng sản phẩm và loại giao dịch (đổi hoặc trả).</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-marker">&gt;15<br><small style="font-size: 0.7em;">ngày</small></div>
+                        <div class="timeline-content">
+                            <h4>Không áp dụng</h4>
+                            <p>Sau 15 ngày kể từ ngày ghi trên hóa đơn, không chấp nhận đổi - trả.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- No Return Cases -->
+        <div class="section">
+            <div class="section-title">
+                <div class="section-icon"><i class="bi bi-x-circle-fill"></i></div>
+                <h2>Không Áp Dụng Đổi - Trả</h2>
+            </div>
+            <div class="section-content">
+                <div class="policy-card">
+                    <h3>
+                        Các trường hợp không được đổi - trả
+                        <span class="badge no-return">KHÔNG ÁP DỤNG</span>
+                    </h3>
+                    <ul>
+                        <li><strong>Sản phẩm khuyến mại:</strong> Sản phẩm mua trong các chương trình khuyến mại, giảm
+                            giá, sử dụng phiếu mua hàng (voucher), điểm tích lũy.
+                        </li>
+                        <li><strong>Quá thời hạn:</strong> Sản phẩm bên mua đã nhận hàng vượt quá 15 ngày kể từ ngày ghi
+                            trên hóa đơn mua hàng.
+                        </li>
+                        <li><strong>Sản phẩm đặt riêng:</strong> Sản phẩm đặt riêng theo yêu cầu (ví dụ: Thẻ tên, sản
+                            phẩm custom).
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="warning-box">
+                    <p><strong><i class="bi bi-slash-circle"></i> Quan trọng:</strong> Vui lòng kiểm tra kỹ sản phẩm
+                        trước khi mua, đặc biệt là các sản phẩm khuyến mại và đặt riêng vì những sản phẩm này không được
+                        áp dụng chính sách đổi - trả.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shipping Terms -->
+        <div class="section">
+            <div class="section-title">
+                <div class="section-icon"><i class="bi bi-truck"></i></div>
+                <h2>Điều Khoản Vận Chuyển</h2>
+            </div>
+            <div class="section-content">
+                <div class="policy-card">
+                    <h3>Vận chuyển sản phẩm đổi - trả</h3>
+                    <p>Bên mua có 2 lựa chọn:</p>
+                    <ul>
+                        <li><strong>Tự vận chuyển:</strong> Bên mua tự vận chuyển sản phẩm đổi - trả đến nơi mua hàng
+                            (cửa hàng PetRescue).
+                        </li>
+                        <li><strong>Sử dụng dịch vụ vận chuyển:</strong> Bên mua chịu toàn bộ chi phí vận chuyển sản
+                            phẩm đổi hoặc trả theo quy định của bên bán.
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="info-box">
+                    <p><strong><i class="bi bi-lightbulb-fill"></i> Gợi ý:</strong> Để tiết kiệm chi phí, quý khách nên
+                        đến trực tiếp cửa hàng PetRescue gần nhất để thực hiện đổi - trả hàng.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- VAT Invoice -->
+        <div class="section">
+            <div class="section-title">
+                <div class="section-icon"><i class="bi bi-file-earmark-text"></i></div>
+                <h2>Xuất Trả Hóa Đơn VAT</h2>
+            </div>
+            <div class="section-content">
+                <div class="policy-card">
+                    <h3>Quy định về hóa đơn VAT</h3>
+                    <p>Do bên bán sử dụng hóa đơn điện tử và xuất hóa đơn trong ngày bán hàng, chính vì vậy:</p>
+                    <p><strong>Trong mọi trường hợp đổi hàng - trả hàng</strong> nếu bên mua đã lấy hóa đơn VAT (hóa đơn
+                        giá trị gia tăng) thì bên mua có trách nhiệm <strong>xuất hóa đơn VAT hoàn trả</strong> chính
+                        xác các sản phẩm cần đổi - trả cho bên bán.</p>
+                    <div class="warning-box" style="margin-top: 20px;">
+                        <p><strong><i class="bi bi-exclamation-triangle-fill"></i> Lưu ý quan trọng:</strong> Nếu bên
+                            mua không xuất hóa đơn VAT lại cho bên bán của sản phẩm đổi - trả thì bên bán có quyền hủy
+                            hóa đơn có sản phẩm đổi - trả.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Box -->
+        <div class="contact-box">
+            <h3><i class="bi bi-chat-dots-fill"></i> Cần hỗ trợ về đổi - trả hàng?</h3>
+            <p>Liên hệ ngay với chúng tôi để được tư vấn chi tiết</p>
+            <a href="tel:0374414142"><i class="bi bi-telephone-fill"></i> 0374414142</a>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>© 2026 PetRescue - Cam kết bảo vệ quyền lợi khách hàng</p>
+    </div>
+</div>
+<br></br>
+{% include "frontend/footer.html" %}
+</body>
+</html>
