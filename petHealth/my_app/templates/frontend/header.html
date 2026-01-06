@@ -14,6 +14,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../../static/css/header.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 
@@ -379,17 +380,30 @@
                 "X-CSRFToken": "{{ csrf_token }}"
             }
         })
-        .then(res => res.json())
-        .then(data => {
-            if (data.url) {
-                window.location.href = data.url;
-            } else {
-                alert("Không tìm thấy sản phẩm phù hợp");
-            }
-        })
-        .catch(err => console.error(err));
+            .then(res => res.json())
+            .then(data => {
+                Swal.close();
+
+                if (data.success && data.url) {
+                    window.location.href = data.url;
+                } else {
+                    Swal.fire({
+                        icon: "warning",
+                        title: "Không tìm thấy sản phẩm",
+                        text: data.message || "Hình ảnh không phù hợp",
+                        confirmButtonText: "Thử ảnh khác",
+                        confirmButtonColor: "#f27474"
+                    });
+                }
+            })
+            .catch(err => {
+                Swal.close();
+                console.error(err);
+                Swal.fire("Lỗi", "Không thể xử lý hình ảnh", "error");
+            });
     });
 </script>
+
 
 <!--Xử lý chatbox-->
 <script>
@@ -420,15 +434,15 @@
                     "Content-Type": "application/json",
                     "X-CSRFToken": "{{ csrf_token }}"
                 },
-                body: JSON.stringify({ message })
+                body: JSON.stringify({message})
             })
-            .then(res => res.json())
-            .then(data => {
-                addMessage(data.answer, "bot");
-            })
-            .catch(() => {
-                addMessage("⚠️ Không thể kết nối hệ thống", "bot");
-            });
+                .then(res => res.json())
+                .then(data => {
+                    addMessage(data.answer, "bot");
+                })
+                .catch(() => {
+                    addMessage("⚠️ Không thể kết nối hệ thống", "bot");
+                });
         }
 
         sendBtn.addEventListener("click", sendMessage);
