@@ -777,3 +777,25 @@ def chat_api(request):
         return JsonResponse({
             "answer": f"⚠️ Lỗi hệ thống: {str(e)}"
         }, status=500)
+
+from django.utils import timezone
+
+Product.objects.filter(expiry_date__gte=timezone.now().date())
+
+
+from django.utils import timezone
+from datetime import timedelta
+
+def can_apply_promotion(product, promotion):
+    # 1. Promotion còn hiệu lực?
+    if not promotion.is_valid_now():
+        return False
+
+    # 2. Product có hạn sử dụng không?
+    if not product.expiry_date:
+        return False
+
+    # 3. Check số ngày còn hạn
+    min_date = timezone.now().date() + timedelta(days=promotion.min_expiry_days)
+
+    return product.expiry_date >= min_date

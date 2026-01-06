@@ -16,6 +16,11 @@ class Product(models.Model):
     brand = models.CharField(max_length=255, null=True, blank=True)
     image = models.URLField(max_length=500)
 
+    expiry_date = models.DateField(
+        verbose_name="Hạn sử dụng",
+        null=True,
+        blank=True
+    )
     price = models.IntegerField()  # giá gốc
     discount_price = models.IntegerField(  # giá sau giảm
         null=True,
@@ -41,6 +46,14 @@ class Product(models.Model):
         symmetrical=False,
         related_name="related_to"
     )
+
+    def is_expired(self):
+        if self.expiry_date:
+            return self.expiry_date < timezone.now().date()
+        return False
+
+    is_expired.boolean = True
+    is_expired.short_description = "Hết hạn?"
 
     def __str__(self):
         return self.name
@@ -197,6 +210,8 @@ class Wishlist(models.Model):
 
 # models.py
 from django.db import models
+from django.utils import timezone
+from datetime import timedelta
 from django.core.exceptions import ValidationError
 
 
@@ -213,11 +228,36 @@ class Promotion(models.Model):
         related_name="promotions"
     )
 
+    min_expiry_days = models.PositiveIntegerField(
+        verbose_name="Số ngày còn hạn tối thiểu",
+        default=0,
+        help_text="Sản phẩm phải còn hạn ít nhất X ngày để áp dụng khuyến mãi"
+    )
+
     products = models.ManyToManyField(
         Product,
         blank=True,
         related_name="promotions"
     )
 
+    def clean(self):
+        if self.min_expiry_days < 0:
+            raise ValidationError("Số ngày còn hạn không được âm")
+
+    def is_valid_now(self):
+        now = timezone.now()
+        return self.is_active and self.start_date <= now <= self.end_date
+
     def __str__(self):
         return self.name
+
+
+from django.db.models import Q
+
+def get_valid_products_for_promotion(promotion):
+    min_date = timezone.now().date() + timedelta(days=promotion.min_expiry_days)
+
+    return Product.objects.filter(
+        expiry_date__gte=min_date,
+        category__in=promotion.categories.all()
+    )
