@@ -431,14 +431,19 @@ def vnpay_ipn(request):
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render
 from django.db.models import Count, Sum, Avg, Q
+from django.db.models.functions import TruncMonth, TruncYear
 from django.utils import timezone
-from datetime import timedelta
+from datetime import timedelta, datetime
+from calendar import monthrange
 from .models import Order, OrderItem
 import json
 
 
 @staff_member_required
 def order_statistics_view(request):
+    # Lấy tham số xem theo gì (week/month/year)
+    view_type = request.GET.get('view', 'week')  # Mặc định xem theo tuần
+
     # Thống kê tổng quan đơn hàng
     total_orders = Order.objects.exclude(status='draft').count()
 
@@ -471,24 +476,93 @@ def order_statistics_view(request):
         status='delivered'
     ).aggregate(Avg('total_price'))['total_price__avg'] or 0
 
-    # Thống kê theo ngày trong 7 ngày gần nhất
-    orders_by_day = []
-    for i in range(7):
-        day = timezone.now() - timedelta(days=i)
-        count = Order.objects.filter(
-            created_at__date=day.date()
-        ).exclude(status='draft').count()
-        revenue = Order.objects.filter(
-            created_at__date=day.date(),
-            status='delivered'
-        ).aggregate(Sum('total_price'))['total_price__sum'] or 0
+    # Thống kê theo thời gian dựa vào view_type
+    orders_by_time = []
+    chart_title = ""
 
-        orders_by_day.append({
-            'date': day.strftime('%d/%m'),
-            'count': count,
-            'revenue': float(revenue)
-        })
-    orders_by_day.reverse()
+    if view_type == 'week':
+        # Thống kê theo 8 tuần gần nhất
+        chart_title = "8 Tuần Gần Đây"
+        for i in range(8):
+            # Tính ngày bắt đầu và kết thúc tuần
+            week_end = timezone.now() - timedelta(weeks=i)
+            week_start = week_end - timedelta(days=6)
+
+            count = Order.objects.filter(
+                created_at__date__gte=week_start.date(),
+                created_at__date__lte=week_end.date()
+            ).exclude(status='draft').count()
+
+            revenue = Order.objects.filter(
+                created_at__date__gte=week_start.date(),
+                created_at__date__lte=week_end.date(),
+                status='delivered'
+            ).aggregate(Sum('total_price'))['total_price__sum'] or 0
+
+            orders_by_time.append({
+                'label': f'{week_start.strftime("%d/%m")} - {week_end.strftime("%d/%m")}',
+                'count': count,
+                'revenue': float(revenue)
+            })
+        orders_by_time.reverse()
+
+    elif view_type == 'month':
+        # Thống kê theo 12 tháng trong năm hiện tại
+        chart_title = f"Theo Tháng Năm {timezone.now().year}"
+        current_year = timezone.now().year
+
+        for month in range(1, 13):
+            count = Order.objects.filter(
+                created_at__year=current_year,
+                created_at__month=month
+            ).exclude(status='draft').count()
+
+            revenue = Order.objects.filter(
+                created_at__year=current_year,
+                created_at__month=month,
+                status='delivered'
+            ).aggregate(Sum('total_price'))['total_price__sum'] or 0
+
+            orders_by_time.append({
+                'label': f'Tháng {month}',
+                'count': count,
+                'revenue': float(revenue)
+            })
+
+    elif view_type == 'year':
+        # Thống kê theo năm (5 năm gần nhất hoặc các năm có dữ liệu)
+        chart_title = "Thống Kê Theo Năm"
+        current_year = timezone.now().year
+
+        # Lấy các năm có đơn hàng
+        years_with_orders = Order.objects.dates('created_at', 'year', order='DESC')
+
+        if years_with_orders.exists():
+            for year_date in years_with_orders[:5]:  # Lấy 5 năm gần nhất
+                year = year_date.year
+
+                count = Order.objects.filter(
+                    created_at__year=year
+                ).exclude(status='draft').count()
+
+                revenue = Order.objects.filter(
+                    created_at__year=year,
+                    status='delivered'
+                ).aggregate(Sum('total_price'))['total_price__sum'] or 0
+
+                orders_by_time.append({
+                    'label': f'Năm {year}',
+                    'count': count,
+                    'revenue': float(revenue)
+                })
+            orders_by_time.reverse()
+        else:
+            # Nếu chưa có dữ liệu, hiển thị năm hiện tại
+            orders_by_time.append({
+                'label': f'Năm {current_year}',
+                'count': 0,
+                'revenue': 0
+            })
 
     # Top khách hàng (theo tổng giá trị đơn đã giao)
     top_customers = Order.objects.filter(
@@ -523,8 +597,8 @@ def order_statistics_view(request):
     completion_rate = (delivered_orders / total_processed * 100) if total_processed > 0 else 0
     cancel_rate = (cancelled_orders / total_processed * 100) if total_processed > 0 else 0
 
-    # Chuyển đổi orders_by_day sang JSON cho biểu đồ
-    orders_by_day_json = json.dumps(orders_by_day)
+    # Chuyển đổi sang JSON cho biểu đồ
+    orders_by_time_json = json.dumps(orders_by_time)
 
     context = {
         'total_orders': total_orders,
@@ -537,8 +611,10 @@ def order_statistics_view(request):
         'recent_orders': recent_orders,
         'recent_revenue': recent_revenue,
         'avg_order_value': avg_order_value,
-        'orders_by_day': orders_by_day,
-        'orders_by_day_json': orders_by_day_json,
+        'orders_by_time': orders_by_time,
+        'orders_by_time_json': orders_by_time_json,
+        'chart_title': chart_title,
+        'view_type': view_type,
         'top_customers': top_customers,
         'top_products': top_products,
         'cancel_reasons': cancel_reasons,
