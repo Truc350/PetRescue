@@ -221,6 +221,11 @@ class Promotion(models.Model):
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     is_active = models.BooleanField(default=True)
+    min_expiry_days = models.PositiveIntegerField(
+        verbose_name="Số ngày còn hạn tối thiểu",
+        default=0,
+        help_text="Sản phẩm phải còn hạn ít nhất X ngày để áp dụng khuyến mãi"
+    )
 
     categories = models.ManyToManyField(
         Category,
@@ -228,11 +233,7 @@ class Promotion(models.Model):
         related_name="promotions"
     )
 
-    min_expiry_days = models.PositiveIntegerField(
-        verbose_name="Số ngày còn hạn tối thiểu",
-        default=0,
-        help_text="Sản phẩm phải còn hạn ít nhất X ngày để áp dụng khuyến mãi"
-    )
+
 
     products = models.ManyToManyField(
         Product,
