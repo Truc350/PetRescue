@@ -45,23 +45,6 @@
             {% csrf_token %}
 
             <!-- Địa chỉ đã lưu -->
-            <div class="mb-3">
-                <select name="saved_address" id="savedAddress" class="form-select">
-                    <option value="">Thêm địa chỉ mới...</option>
-                    {% for addr in saved_addresses %}
-                    <option value="{{ addr.id }}"
-                            data-phone="{{ addr.phone }}"
-                            data-fullname="{{ addr.full_name }}"
-                            data-address="{{ addr.address }}"
-                            data-provincecode="{{ addr.province_code }}"
-                            data-provincename="{{ addr.province }}"
-                            data-wardcode="{{ addr.ward_code }}"
-                            data-wardname="{{ addr.ward }}">
-                        {{ addr.phone }} - {{ addr.address }}
-                    </option>
-                    {% endfor %}
-                </select>
-            </div>
 
             <div class="mb-3">
                 <input type="text" name="full_name"

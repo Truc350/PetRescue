@@ -148,3 +148,34 @@ def sentiment_chart(request, product_id):
     return HttpResponse(buffer.getvalue(), content_type="image/png")
 
 
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from my_app.models_Product import Product, ProductReview
+
+def sentiment_summary(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+
+    positive_count = ProductReview.objects.filter(
+        product=product,
+        sentiment="tích cực",
+        approved=True,
+        is_spam=False
+    ).count()
+
+    negative_count = ProductReview.objects.filter(
+        product=product,
+        sentiment="tiêu cực",
+        approved=True,
+        is_spam=False
+    ).count()
+
+    total = positive_count + negative_count
+    if total == 0:
+        text = "Hiện chưa có đủ đánh giá để đưa ra kết luận."
+    else:
+        positive_percent = round(positive_count / total * 100)
+        negative_percent = 100 - positive_percent
+        text = f"{positive_percent}% người dùng cảm thấy tích cực và {negative_percent}% người dùng cảm thấy tiêu cực"
+
+    return HttpResponse(text)
+

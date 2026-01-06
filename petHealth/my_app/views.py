@@ -165,7 +165,7 @@ def getPromotionManage(request):
 
 
 def getStatistic(request):
-    return render(request, 'frontend/admin/statistics.html')
+    return render(request, 'frontend/admin/order_dashboard.html')
 
 
 def getDogHygiene(request):
