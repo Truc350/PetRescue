@@ -28,10 +28,10 @@ class ProductSizeInline(admin.TabularInline):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ("name", "brand", "price", "discount_price", "final_price","expiry_date","is_expired")
+    list_display = ("name", "brand", "price", "discount_price", "final_price")
     search_fields = ("name",)
-    list_filter = ("brand", "category", "expiry_date")
-    date_hierarchy = 'expiry_date'
+    list_filter = ("brand", "category")
+
     prepopulated_fields = {"slug": ("name",)}
 
     fields = (
@@ -39,7 +39,6 @@ class ProductAdmin(admin.ModelAdmin):
         "slug",
         "brand",
         "image",
-        'expiry_date',
         "price",
         "discount_price",
         "description",
@@ -205,11 +204,9 @@ from .models_Product import Promotion
 class PromotionAdmin(admin.ModelAdmin):
     form = PromotionAdminForm
 
-    list_display = ("name", "discount_percent",  "start_date",
-        "end_date","min_expiry_days","is_active")
+    list_display = ("name", "discount_percent", "is_active")
     filter_horizontal = ("categories", "products")
-    list_filter = ("is_active","start_date",
-        "end_date",)
+    list_filter = ("is_active",)
     search_fields = ("name",)
 
 
