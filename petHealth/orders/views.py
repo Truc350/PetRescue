@@ -173,7 +173,7 @@ def complete_payment(request):
 
     # COD → hoàn thành ngay
     if payment_method == "cod":
-        order.status = "paid"
+        order.status = "pending"
         order.save()
 
         request.session.pop("checkout_order_id", None)
@@ -224,25 +224,29 @@ def checkout_from_cart(request):
     )
 
     for item in items:
-        pid = str(item["id"])
+        cart_key = str(item["id"])
         quantity = int(item["quantity"])
 
-        if pid in cart:
-            product = Product.objects.get(id=pid)
+        if cart_key not in cart:
+            continue
 
-            OrderItem.objects.create(
-                order=order,
-                product=product,
-                quantity=quantity,
-                price=cart[pid]["price"]
-            )
+        cart_item = cart[cart_key]
 
-            del cart[pid]
-        request.session["cart"] = cart
+        product = Product.objects.get(id=cart_item["product_id"])
 
-        # KHÔNG xóa cart ở đây (tùy bạn)
-        request.session["checkout_order_id"] = order.id
-        request.session.modified = True
+        OrderItem.objects.create(
+            order=order,
+            product=product,
+            quantity=quantity,
+            price=cart_item["price"]
+        )
+
+    #     del cart[pid]
+    # request.session["cart"] = cart
+
+    # KHÔNG xóa cart ở đây (tùy bạn)
+    request.session["checkout_order_id"] = order.id
+    request.session.modified = True
     return JsonResponse({"ok": True})
 
 
@@ -418,7 +422,7 @@ def vnpay_ipn(request):
 
     # thành công
     if response_code == "00" and transaction_status == "00":
-        order.status = "shipping"
+        order.status = "pending"
         order.save()
         return JsonResponse({"RspCode": "00", "Message": "Confirm Success"})
 

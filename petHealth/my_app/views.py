@@ -739,30 +739,30 @@ from django.http import JsonResponse
 import json
 
 
-@login_required
-@require_POST
-def checkout_from_cart(request):
-    data = json.loads(request.body)
-
-    # ✅ JS gửi { items: [{id, quantity}, ...] }
-    items = data.get("items", [])
-
-    cart = request.session.get("cart", {})
-    checkout_items = {}
-
-    for item in items:
-        pid = str(item.get("id"))
-        qty = int(item.get("quantity", 1))
-
-        if pid in cart:
-            checkout_items[pid] = cart[pid].copy()
-            checkout_items[pid]["quantity"] = qty  # ✅ lấy số lượng từ JS
-
-    # 👉 lưu vào session để trang shipping / payment dùng
-    request.session["checkout_items"] = checkout_items
-    request.session.modified = True
-
-    return JsonResponse({"ok": True})
+# @login_required
+# @require_POST
+# def checkout_from_cart(request):
+#     data = json.loads(request.body)
+#
+#     # ✅ JS gửi { items: [{id, quantity}, ...] }
+#     items = data.get("items", [])
+#
+#     cart = request.session.get("cart", {})
+#     checkout_items = {}
+#
+#     for item in items:
+#         pid = str(item.get("id"))
+#         qty = int(item.get("quantity", 1))
+#
+#         if pid in cart:
+#             checkout_items[pid] = cart[pid].copy()
+#             checkout_items[pid]["quantity"] = qty  # ✅ lấy số lượng từ JS
+#
+#     # 👉 lưu vào session để trang shipping / payment dùng
+#     request.session["checkout_items"] = checkout_items
+#     request.session.modified = True
+#
+#     return JsonResponse({"ok": True})
 
 from rag.rag1.rag_chain import load_rag_chain
 # load RAG LAZY (chỉ load khi cần)
