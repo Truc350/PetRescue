@@ -146,6 +146,7 @@ from django.conf import settings
 from .models import Order
 from .vnpay import VNPay
 
+
 @login_required
 def complete_payment(request):
     if request.method != "POST":
@@ -195,6 +196,7 @@ def complete_payment(request):
 
     return redirect(payment_url)
 
+
 # orders/views.py
 import json
 from django.http import JsonResponse
@@ -238,7 +240,7 @@ def checkout_from_cart(request):
             del cart[pid]
         request.session["cart"] = cart
 
-    # KHÔNG xóa cart ở đây (tùy bạn)
+        # KHÔNG xóa cart ở đây (tùy bạn)
         request.session["checkout_order_id"] = order.id
         request.session.modified = True
     return JsonResponse({"ok": True})
@@ -300,10 +302,12 @@ def order_detail_api(request, order_id):
         "shipping": shipping,
     })
 
+
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from .models import Order
+
 
 @login_required
 def buy_again(request, order_id):
@@ -311,7 +315,7 @@ def buy_again(request, order_id):
         Order,
         id=order_id,
         user=request.user,
-        status="delivered"   # ❗ chỉ cho mua lại đơn đã giao
+        status="delivered"  # ❗ chỉ cho mua lại đơn đã giao
     )
 
     cart = request.session.get("cart", {})
@@ -339,12 +343,14 @@ def buy_again(request, order_id):
         "redirect": "/shoppingcart"
     })
 
+
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 import json
+
 
 @login_required
 @require_POST
@@ -367,7 +373,9 @@ def cancel_order_api(request, order_id):
 
     return JsonResponse({"success": True})
 
+
 from django.contrib import messages
+
 
 def vnpay_return(request):
     params = request.GET.dict()
@@ -378,6 +386,7 @@ def vnpay_return(request):
 
     messages.success(request, "Đã nhận phản hồi từ VNPAY")
     return redirect(reverse("personal-page") + "?tab=orders")
+
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -417,3 +426,124 @@ def vnpay_ipn(request):
     order.status = "cancel"
     order.save()
     return JsonResponse({"RspCode": "00", "Message": "Confirm Success"})
+
+
+from django.contrib.admin.views.decorators import staff_member_required
+from django.shortcuts import render
+from django.db.models import Count, Sum, Avg, Q
+from django.utils import timezone
+from datetime import timedelta
+from .models import Order, OrderItem
+import json
+
+
+@staff_member_required
+def order_statistics_view(request):
+    # Thống kê tổng quan đơn hàng
+    total_orders = Order.objects.exclude(status='draft').count()
+
+    # Thống kê theo trạng thái
+    draft_orders = Order.objects.filter(status='draft').count()
+    pending_orders = Order.objects.filter(status='pending').count()
+    shipping_orders = Order.objects.filter(status='shipping').count()
+    delivered_orders = Order.objects.filter(status='delivered').count()
+    cancelled_orders = Order.objects.filter(status='cancel').count()
+
+    # Thống kê doanh thu (chỉ tính đơn đã giao)
+    total_revenue = Order.objects.filter(
+        status='delivered'
+    ).aggregate(Sum('total_price'))['total_price__sum'] or 0
+
+    # Đơn hàng trong 30 ngày gần đây
+    thirty_days_ago = timezone.now() - timedelta(days=30)
+    recent_orders = Order.objects.filter(
+        created_at__gte=thirty_days_ago
+    ).exclude(status='draft').count()
+
+    # Doanh thu 30 ngày gần đây
+    recent_revenue = Order.objects.filter(
+        created_at__gte=thirty_days_ago,
+        status='delivered'
+    ).aggregate(Sum('total_price'))['total_price__sum'] or 0
+
+    # Giá trị đơn hàng trung bình (đơn đã giao)
+    avg_order_value = Order.objects.filter(
+        status='delivered'
+    ).aggregate(Avg('total_price'))['total_price__avg'] or 0
+
+    # Thống kê theo ngày trong 7 ngày gần nhất
+    orders_by_day = []
+    for i in range(7):
+        day = timezone.now() - timedelta(days=i)
+        count = Order.objects.filter(
+            created_at__date=day.date()
+        ).exclude(status='draft').count()
+        revenue = Order.objects.filter(
+            created_at__date=day.date(),
+            status='delivered'
+        ).aggregate(Sum('total_price'))['total_price__sum'] or 0
+
+        orders_by_day.append({
+            'date': day.strftime('%d/%m'),
+            'count': count,
+            'revenue': float(revenue)
+        })
+    orders_by_day.reverse()
+
+    # Top khách hàng (theo tổng giá trị đơn đã giao)
+    top_customers = Order.objects.filter(
+        status='delivered'
+    ).values(
+        'user__username', 'user__email', 'user__first_name', 'user__last_name'
+    ).annotate(
+        total_orders=Count('id'),
+        total_spent=Sum('total_price')
+    ).order_by('-total_spent')[:10]
+
+    # Top sản phẩm bán chạy
+    top_products = OrderItem.objects.filter(
+        order__status='delivered'
+    ).values(
+        'product__name', 'product__id'
+    ).annotate(
+        total_quantity=Sum('quantity'),
+        total_revenue=Sum('price')
+    ).order_by('-total_quantity')[:10]
+
+    # Thống kê lý do hủy đơn
+    cancel_reasons = Order.objects.filter(
+        status='cancel',
+        cancel_reason__isnull=False
+    ).exclude(cancel_reason='').values('cancel_reason').annotate(
+        count=Count('id')
+    ).order_by('-count')[:5]
+
+    # Tỷ lệ hoàn thành đơn hàng
+    total_processed = Order.objects.exclude(status__in=['draft']).count()
+    completion_rate = (delivered_orders / total_processed * 100) if total_processed > 0 else 0
+    cancel_rate = (cancelled_orders / total_processed * 100) if total_processed > 0 else 0
+
+    # Chuyển đổi orders_by_day sang JSON cho biểu đồ
+    orders_by_day_json = json.dumps(orders_by_day)
+
+    context = {
+        'total_orders': total_orders,
+        'draft_orders': draft_orders,
+        'pending_orders': pending_orders,
+        'shipping_orders': shipping_orders,
+        'delivered_orders': delivered_orders,
+        'cancelled_orders': cancelled_orders,
+        'total_revenue': total_revenue,
+        'recent_orders': recent_orders,
+        'recent_revenue': recent_revenue,
+        'avg_order_value': avg_order_value,
+        'orders_by_day': orders_by_day,
+        'orders_by_day_json': orders_by_day_json,
+        'top_customers': top_customers,
+        'top_products': top_products,
+        'cancel_reasons': cancel_reasons,
+        'completion_rate': round(completion_rate, 1),
+        'cancel_rate': round(cancel_rate, 1),
+    }
+
+    return render(request, 'admin/orders_statistics.html', context)

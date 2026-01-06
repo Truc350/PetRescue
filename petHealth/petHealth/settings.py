@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',  # provider Google
     'review',
     'sentiment',
+
 ]
 
 MIDDLEWARE = [
@@ -181,8 +182,6 @@ EMAIL_HOST_PASSWORD = 'iljl vfxe kfmt syqo'
 SERVER_EMAIL = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = 'PetHealth App <doghealthapp.app@gmail.com>'
 DOMAIN = '127.0.0.1:8000'
-
-
 
 VNPAY_TMN_CODE = "3GKA4RRN"
 VNPAY_HASH_SECRET = "9WYAKKV6WAVWFL3B33M5ZZYX2M4C0QGC"
