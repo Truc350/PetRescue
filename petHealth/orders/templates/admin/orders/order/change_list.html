@@ -1,0 +1,10 @@
+{% extends "admin/change_list.html" %}
+
+{% block object-tools-items %}
+    {{ block.super }}
+    <li>
+        <a href="{% url 'admin:orders_order_statistics' %}" class="historylink" style="background: #417690; padding: 10px 15px; color: white; text-decoration: none; border-radius: 4px;">
+            📊 Xem Thống Kê
+        </a>
+    </li>
+{% endblock %}

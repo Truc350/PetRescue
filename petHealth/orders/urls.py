@@ -17,4 +17,5 @@ urlpatterns = [
     path("cancel/<int:order_id>/", views.cancel_order_api, name="cancel_order_api"),
     path("vnpay/return/", views.vnpay_return, name="vnpay-return"),
     path("vnpay/ipn/", views.vnpay_ipn, name="vnpay-ipn"),
+    path('statistics/', views.order_statistics_view, name='order_statistics'),
 ]
