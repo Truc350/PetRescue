@@ -150,25 +150,37 @@ def getCatToilet(request):
 
 
 from django.utils import timezone
-from .models_Product import Promotion
-
+from datetime import timedelta
+from django.db.models import Q
 
 def getPromotion(request):
     now = timezone.now()
+    today = now.date()
 
     promotions = Promotion.objects.filter(
         is_active=True,
         start_date__lte=now,
         end_date__gte=now
-    ).prefetch_related("products", "categories")
+    )
 
-    products = Product.objects.filter(
-        promotions__in=promotions
-    ).distinct()
+    promo_products = {}
 
-    return render(request, 'frontend/promotion.html', {
-        "promotions": promotions,
-        "products": products,
+    for promo in promotions:
+        min_date = today + timedelta(days=promo.min_expiry_days)
+
+        products = Product.objects.filter(
+            Q(expiry_date__isnull=True) |          # ✅ KHÔNG HẠN
+            Q(expiry_date__gte=min_date)           # ✅ CÒN ĐỦ NGÀY
+        ).filter(
+            Q(promotions=promo) |                  # ✅ GÁN RIÊNG
+            Q(category__in=promo.categories.all()) # ✅ THEO DANH MỤC
+        ).distinct()
+
+        if products.exists():
+            promo_products[promo] = products
+
+    return render(request, "frontend/promotion.html", {
+        "promo_products": promo_products
     })
 
 
@@ -182,6 +194,30 @@ def getPromotionManage(request):
 
 def getStatistic(request):
     return render(request, 'frontend/admin/statistics.html')
+from django.shortcuts import render
+from .models_Product import Product, Promotion
+
+def promotion_view(request):
+    # Lấy các chương trình khuyến mãi đang hoạt động
+    promotions = Promotion.objects.filter(active=True)
+    promo_products = {}
+
+    for promo in promotions:
+        # Lấy sản phẩm thuộc chương trình này và đang giảm giá
+        products = Product.objects.filter(
+            Q(expiry_date__isnull=True) |
+            Q(expiry_date__gte=min_date)
+        ).filter(
+            Q(promotions=promo) |
+            Q(category__in=promo.categories.all())
+        ).distinct()
+
+        promo_products[promo] = list(products)
+
+    context = {
+        'promo_products': promo_products
+    }
+    return render(request, 'frontend/promotion.html', context)
 
 
 def getDogHygiene(request):

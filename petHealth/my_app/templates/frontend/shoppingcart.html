@@ -42,7 +42,8 @@
 
             <!-- Danh sách sản phẩm -->
             <div id="danh_sach_san_pham">
-                {% for id, item in cart.items %}
+               {% for id, item in cart.items reversed %}
+
                 <div class="khung_san_pham p-3 mb-3 bg-white shadow-sm rounded d-flex align-items-center justify-content-between">
 
                     <div class="d-flex align-items-center">
