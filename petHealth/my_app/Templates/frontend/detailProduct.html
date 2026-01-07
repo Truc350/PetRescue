@@ -116,7 +116,10 @@
 
             <!-- NÚT THÊM GIỎ -->
             <div class="d-flex align-items-center gap-3 mt-3">
-                <form method="post" action="{% url 'add_to_cart' product.id %}">
+                <form method="post"
+                      action="{% url 'add_to_cart' product.id %}"
+                      id="addToCartForm">
+
                     {% csrf_token %}
                     <!-- size -->
                     <input type="hidden" name="size_id" id="sizeInput">
@@ -124,6 +127,22 @@
                     <input type="hidden" name="quantity" id="qtyInput" value="1">
                     <button type="submit" class="add-cart">Thêm Vào Giỏ Hàng</button>
                 </form>
+
+                <div id="cartToast"
+     style="
+        display:none;
+        position:fixed;
+        top:20px;
+        right:20px;
+        background:#28a745;
+        color:white;
+        padding:12px 18px;
+        border-radius:8px;
+        z-index:9999;
+        box-shadow:0 4px 12px rgba(0,0,0,.15);
+     ">
+    ✔ Đã thêm vào giỏ hàng
+</div>
 
 
                 <button
@@ -171,22 +190,22 @@
     <!-- ========== ĐÁNH GIÁ SẢN PHẨM ========== -->
     <section class="review-section">
         <h4 class="review-title">ĐÁNH GIÁ SẢN PHẨM</h4>
-<!--        <button id="toggle-stats-btn" class="btn btn-outline-primary mb-3">-->
-<!--            <i class="bi bi-bar-chart"></i>-->
-<!--            <span class="btn-text">Thống kê đánh giá</span>-->
-<!--        </button>-->
-<!--        &lt;!&ndash; KHỐI THỐNG KÊ (ẨN MẶC ĐỊNH) &ndash;&gt;-->
-<!--        <div id="stats-box" style="display:none">-->
-<!--            <h4>Thống kê đánh giá</h4>-->
-<!--            <img src="{% url 'sentiment_chart' product.id %}"-->
-<!--                 alt="Biểu đồ đánh giá"-->
-<!--                 style="max-width:100%">-->
-<!--        </div>-->
-<button id="toggle-stats-btn">Thống kê đánh giá</button>
+        <!--        <button id="toggle-stats-btn" class="btn btn-outline-primary mb-3">-->
+        <!--            <i class="bi bi-bar-chart"></i>-->
+        <!--            <span class="btn-text">Thống kê đánh giá</span>-->
+        <!--        </button>-->
+        <!--        &lt;!&ndash; KHỐI THỐNG KÊ (ẨN MẶC ĐỊNH) &ndash;&gt;-->
+        <!--        <div id="stats-box" style="display:none">-->
+        <!--            <h4>Thống kê đánh giá</h4>-->
+        <!--            <img src="{% url 'sentiment_chart' product.id %}"-->
+        <!--                 alt="Biểu đồ đánh giá"-->
+        <!--                 style="max-width:100%">-->
+        <!--        </div>-->
+        <button id="toggle-stats-btn">Thống kê đánh giá</button>
 
-<div id="stats-box" style="display:none">
-    <p id="sentiment-text"></p>
-</div>
+        <div id="stats-box" style="display:none">
+            <p id="sentiment-text"></p>
+        </div>
 
 
         <div class="rating-overview">
@@ -710,94 +729,126 @@
 </script>
 
 <script>
-let currentPrice = Number("{{ product.final_price }}");
+    let currentPrice = Number("{{ product.final_price }}");
 
-const priceBox = document.querySelector(".price");
-const totalBox = document.getElementById("total");
-const qtyBox = document.getElementById("qty");
-const sizeInput = document.getElementById("sizeInput");
+    const priceBox = document.querySelector(".price");
+    const totalBox = document.getElementById("total");
+    const qtyBox = document.getElementById("qty");
+    const sizeInput = document.getElementById("sizeInput");
 
-document.querySelectorAll(".size-btn").forEach(btn => {
-    btn.addEventListener("click", function () {
+    document.querySelectorAll(".size-btn").forEach(btn => {
+        btn.addEventListener("click", function () {
 
-        // active UI
-        document.querySelectorAll(".size-btn")
-            .forEach(b => b.classList.remove("active"));
-        this.classList.add("active");
+            // active UI
+            document.querySelectorAll(".size-btn")
+                .forEach(b => b.classList.remove("active"));
+            this.classList.add("active");
 
-        const price = Number(this.dataset.price);
-        const finalPrice = Number(this.dataset.finalPrice);
-        const discount = Number(this.dataset.discount);
+            const price = Number(this.dataset.price);
+            const finalPrice = Number(this.dataset.finalPrice);
+            const discount = Number(this.dataset.discount);
 
-        sizeInput.value = this.dataset.sizeId;
+            sizeInput.value = this.dataset.sizeId;
 
-        // ===== HIỂN THỊ GIÁ =====
-        if (finalPrice < price) {
-            priceBox.innerHTML = `
-                <span class="text-danger fw-bold" style="font-size:24px">
-                    ${finalPrice.toLocaleString("vi-VN")}đ
-                </span>
-                <span class="text-muted ms-2"
-                      style="text-decoration:line-through">
-                    ${price.toLocaleString("vi-VN")}đ
-                </span>
-                <span class="badge bg-danger ms-2">
-                    -${discount}%
-                </span>
-            `;
-            currentPrice = finalPrice;
-        } else {
-            priceBox.innerHTML = `
-                <span class="fw-bold" style="font-size:24px">
-                    ${price.toLocaleString("vi-VN")}đ
-                </span>
-            `;
-            currentPrice = price;
-        }
+            // ===== HIỂN THỊ GIÁ =====
+            if (finalPrice < price) {
+                priceBox.innerHTML = `
+                    <span class="text-danger fw-bold" style="font-size:24px">
+                        ${finalPrice.toLocaleString("vi-VN")}đ
+                    </span>
+                    <span class="text-muted ms-2"
+                          style="text-decoration:line-through">
+                        ${price.toLocaleString("vi-VN")}đ
+                    </span>
+                    <span class="badge bg-danger ms-2">
+                        -${discount}%
+                    </span>
+                `;
+                currentPrice = finalPrice;
+            } else {
+                priceBox.innerHTML = `
+                    <span class="fw-bold" style="font-size:24px">
+                        ${price.toLocaleString("vi-VN")}đ
+                    </span>
+                `;
+                currentPrice = price;
+            }
 
-        // ===== UPDATE TOTAL =====
-        const qty = Number(qtyBox.innerText);
-        totalBox.innerText =
-            (currentPrice * qty).toLocaleString("vi-VN") + "đ";
+            // ===== UPDATE TOTAL =====
+            const qty = Number(qtyBox.innerText);
+            totalBox.innerText =
+                (currentPrice * qty).toLocaleString("vi-VN") + "đ";
+        });
     });
-});
 
-function changeQty(n) {
-    let q = parseInt(qtyBox.innerText);
-    q = Math.max(1, q + n);
+    function changeQty(n) {
+        let q = parseInt(qtyBox.innerText);
+        q = Math.max(1, q + n);
 
-    qtyBox.innerText = q;
-    document.getElementById("qtyInput").value = q;
+        qtyBox.innerText = q;
+        document.getElementById("qtyInput").value = q;
 
-    totalBox.innerText =
-        (q * currentPrice).toLocaleString("vi-VN") + "đ";
-}
+        totalBox.innerText =
+            (q * currentPrice).toLocaleString("vi-VN") + "đ";
+    }
 </script>
-
 <script>
 document.getElementById("addToCartForm").addEventListener("submit", function (e) {
-    const sizeButtons = document.querySelectorAll(".size-btn");
+    e.preventDefault(); // ❌ chặn load trang
 
-    // chỉ bắt chọn size nếu có size
+    const form = this;
+    const formData = new FormData(form);
+
+    // nếu có size thì bắt chọn
+    const sizeButtons = document.querySelectorAll(".size-btn");
     if (sizeButtons.length > 0) {
         const size = document.getElementById("sizeInput").value;
         if (!size) {
-            e.preventDefault();
             alert("Vui lòng chọn size trước khi thêm vào giỏ hàng!");
+            return;
         }
     }
+
+    fetch(form.action, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": csrftoken
+        },
+        body: formData
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("Add cart failed");
+        return res.text();
+    })
+    .then(() => {
+        showCartToast();
+    })
+    .catch(() => {
+        alert("Có lỗi xảy ra, vui lòng thử lại!");
+    });
 });
+
+// ===== toast thông báo =====
+function showCartToast() {
+    const toast = document.getElementById("cartToast");
+    toast.style.display = "block";
+
+    setTimeout(() => {
+        toast.style.display = "none";
+    }, 2000);
+}
 </script>
 
+
 <script>
-document.getElementById("toggle-stats-btn").addEventListener("click", function() {
-    fetch("{% url 'sentiment_summary' product.id %}")
-        .then(response => response.text())
-        .then(text => {
-            document.getElementById("sentiment-text").textContent = text;
-            document.getElementById("stats-box").style.display = "block";
-        });
-});
+    document.getElementById("toggle-stats-btn").addEventListener("click", function() {
+        fetch("{% url 'sentiment_summary' product.id %}")
+            .then(response => response.text())
+            .then(text => {
+                document.getElementById("sentiment-text").textContent = text;
+                document.getElementById("stats-box").style.display = "block";
+            });
+    });
 </script>
 
 {% include "frontend/footer.html" %}
