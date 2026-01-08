@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="../../static/css/detailProduct.css">
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
 
 </head>
@@ -119,7 +120,6 @@
                 <form method="post"
                       action="{% url 'add_to_cart' product.id %}"
                       id="addToCartForm">
-
                     {% csrf_token %}
                     <!-- size -->
                     <input type="hidden" name="size_id" id="sizeInput">
@@ -127,9 +127,8 @@
                     <input type="hidden" name="quantity" id="qtyInput" value="1">
                     <button type="submit" class="add-cart">Thêm Vào Giỏ Hàng</button>
                 </form>
-
                 <div id="cartToast"
-     style="
+                     style="
         display:none;
         position:fixed;
         top:20px;
@@ -141,8 +140,8 @@
         z-index:9999;
         box-shadow:0 4px 12px rgba(0,0,0,.15);
      ">
-    ✔ Đã thêm vào giỏ hàng
-</div>
+                    ✔ Đã thêm vào giỏ hàng
+                </div>
 
 
                 <button
@@ -201,10 +200,13 @@
         <!--                 alt="Biểu đồ đánh giá"-->
         <!--                 style="max-width:100%">-->
         <!--        </div>-->
-        <button id="toggle-stats-btn">Thống kê đánh giá</button>
-
-        <div id="stats-box" style="display:none">
-            <p id="sentiment-text"></p>
+        <!-- Chỉ hiển thị box -->
+        <div id="stats-box">
+            <h5>
+                <i class="bi bi-chat-dots"></i>
+                Cảm nhận người dùng
+            </h5>
+            <p id="sentiment-text">Đang tải...</p>
         </div>
 
 
@@ -278,7 +280,33 @@
         <div class="pagination" id="pagination"></div>
 
 
-        <button class="write-review-btn">Viết đánh giá</button>
+        <!-- Thay thế phần này -->
+        <!-- <button class="write-review-btn">Viết đánh giá</button> -->
+
+        <!-- Bằng đoạn code sau -->
+        {% if user.is_authenticated %}
+        {% if has_purchased %}
+        <button class="write-review-btn">
+            <i class="bi bi-pencil-square"></i> Viết đánh giá
+        </button>
+        {% else %}
+        <button class="write-review-btn disabled" disabled
+                style="background-color: #ccc; cursor: not-allowed; opacity: 0.6;"
+                title="Bạn cần mua sản phẩm này trước khi đánh giá">
+            <i class="bi bi-lock-fill"></i> Viết đánh giá
+        </button>
+        <p class="text-muted small mt-2 text-center">
+            <i class="bi bi-info-circle-fill"></i>
+            Bạn cần mua sản phẩm này trước khi có thể đánh giá
+        </p>
+        {% endif %}
+        {% else %}
+        <a href="{% url 'login' %}?next={{ request.path }}"
+           class="write-review-btn"
+           style="text-decoration: none; display: inline-block;">
+            <i class="bi bi-person-circle"></i> Đăng nhập để đánh giá
+        </a>
+        {% endif %}
     </section>
 
     <section class="container section-spacing content-padding">
@@ -429,6 +457,7 @@
         return checked ? checked.value : null;
     }
 </script>
+
 <script>
     let price = Number("{{ product.final_price }}");
 
@@ -443,6 +472,7 @@
             (q * price).toLocaleString("vi-VN") + "đ";
     }
 </script>
+
 <script>
     function getCookie(name) {
         let cookieValue = null;
@@ -496,6 +526,7 @@
         });
     });
 </script>
+
 <script>
     // ====== JS lọc đánh giá theo số sao ======
     const filterButtons = document.querySelectorAll('.filter-btn');
@@ -517,14 +548,18 @@
         });
     });
 </script>
+
 <script>
     const writeReviewBtn = document.querySelector('.write-review-btn');
     const reviewPopup = document.getElementById('reviewPopup');
     const closeBtn = reviewPopup.querySelector('.close-btn');
 
-    writeReviewBtn.addEventListener('click', () => {
-        reviewPopup.classList.add('active');
-    });
+    // Chỉ thêm event listener nếu nút không bị disabled
+    if (writeReviewBtn && !writeReviewBtn.disabled) {
+        writeReviewBtn.addEventListener('click', () => {
+            reviewPopup.classList.add('active');
+        });
+    }
 
     closeBtn.addEventListener('click', () => {
         reviewPopup.classList.remove('active');
@@ -559,13 +594,6 @@
 </script>
 
 <script>
-    document.querySelectorAll('.btn-wishlist').forEach(btn => {
-        btn.addEventListener('click', function () {
-            this.classList.toggle('liked');
-        });
-    });
-</script>
-<script>
     (function () {
         const form = document.querySelector('.review-form');
         const textarea = document.getElementById('comment-popup');
@@ -596,34 +624,14 @@
                         return;
                     }
 
-                    // Thêm review mới vào danh sách
-                    const list = document.getElementById("review-list");
-                    if (list) {
-                        list.insertAdjacentHTML("afterbegin", `
-                    <div class="review" data-star="${data.rating}">
-                        <div class="review-avatar"></div>
-                        <div class="review-content">
-                            <div class="review-header">
-                                <span class="review-name">${data.username}</span>
-                                <div class="review-stars">
-                                    ${'<i class="bi bi-star-fill"></i>'.repeat(data.rating)}
-                                </div>
-                            </div>
-                            <div class="review-date">${data.created_at}</div>
-                            <p class="review-text">${data.comment}</p>
-                        </div>
-                    </div>
-                `);
-                    }
-
-                    // reset form
-                    textarea.value = "";
-                    document.getElementById("reviewPopup").classList.remove("active");
+                    // Thành công
+                    alert("Đánh giá của bạn đã được gửi thành công!");
                     location.reload();
                 });
         });
     })();
 </script>
+
 <script>
     document.querySelectorAll('.thumb img').forEach(thumb => {
         thumb.addEventListener('click', function () {
@@ -636,26 +644,7 @@
         });
     });
 </script>
-<script>
-    const btn = document.getElementById("toggle-stats-btn");
-    const box = document.getElementById("stats-box");
-    const icon = btn.querySelector("i");
-    const text = btn.querySelector(".btn-text");
 
-    btn.addEventListener("click", function () {
-        const isHidden = box.style.display === "none" || box.style.display === "";
-
-        if (isHidden) {
-            box.style.display = "block";
-            icon.className = "bi bi-x-circle";
-            text.textContent = "Ẩn thống kê đánh giá";
-        } else {
-            box.style.display = "none";
-            icon.className = "bi bi-bar-chart";
-            text.textContent = "Thống kê đánh giá";
-        }
-    });
-</script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const reviews = document.querySelectorAll("#review-list .review");
@@ -753,24 +742,24 @@
             // ===== HIỂN THỊ GIÁ =====
             if (finalPrice < price) {
                 priceBox.innerHTML = `
-                    <span class="text-danger fw-bold" style="font-size:24px">
-                        ${finalPrice.toLocaleString("vi-VN")}đ
-                    </span>
-                    <span class="text-muted ms-2"
-                          style="text-decoration:line-through">
-                        ${price.toLocaleString("vi-VN")}đ
-                    </span>
-                    <span class="badge bg-danger ms-2">
-                        -${discount}%
-                    </span>
-                `;
+                <span class="text-danger fw-bold" style="font-size:24px">
+                    ${finalPrice.toLocaleString("vi-VN")}đ
+                </span>
+                <span class="text-muted ms-2"
+                      style="text-decoration:line-through">
+                    ${price.toLocaleString("vi-VN")}đ
+                </span>
+                <span class="badge bg-danger ms-2">
+                    -${discount}%
+                </span>
+            `;
                 currentPrice = finalPrice;
             } else {
                 priceBox.innerHTML = `
-                    <span class="fw-bold" style="font-size:24px">
-                        ${price.toLocaleString("vi-VN")}đ
-                    </span>
-                `;
+                <span class="fw-bold" style="font-size:24px">
+                    ${price.toLocaleString("vi-VN")}đ
+                </span>
+            `;
                 currentPrice = price;
             }
 
@@ -792,61 +781,64 @@
             (q * currentPrice).toLocaleString("vi-VN") + "đ";
     }
 </script>
+
 <script>
-document.getElementById("addToCartForm").addEventListener("submit", function (e) {
-    e.preventDefault(); // ❌ chặn load trang
+    document.getElementById("addToCartForm").addEventListener("submit", function (e) {
+        e.preventDefault(); // Chặn load trang
 
-    const form = this;
-    const formData = new FormData(form);
-
-    // nếu có size thì bắt chọn
-    const sizeButtons = document.querySelectorAll(".size-btn");
-    if (sizeButtons.length > 0) {
-        const size = document.getElementById("sizeInput").value;
-        if (!size) {
-            alert("Vui lòng chọn size trước khi thêm vào giỏ hàng!");
-            return;
+        // Kiểm tra size nếu sản phẩm có size
+        const sizeButtons = document.querySelectorAll(".size-btn");
+        if (sizeButtons.length > 0) {
+            const size = document.getElementById("sizeInput").value;
+            if (!size) {
+                alert("Vui lòng chọn size trước khi thêm vào giỏ hàng!");
+                return; // Dừng lại, không gửi form
+            }
         }
-    }
 
-    fetch(form.action, {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": csrftoken
-        },
-        body: formData
-    })
-    .then(res => {
-        if (!res.ok) throw new Error("Add cart failed");
-        return res.text();
-    })
-    .then(() => {
-        showCartToast();
-    })
-    .catch(() => {
-        alert("Có lỗi xảy ra, vui lòng thử lại!");
+        const form = this;
+        const formData = new FormData(form);
+
+        fetch(form.action, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": csrftoken
+            },
+            body: formData
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("Add cart failed");
+                return res.text();
+            })
+            .then(() => {
+                showCartToast();
+            })
+            .catch(() => {
+                alert("Có lỗi xảy ra, vui lòng thử lại!");
+            });
     });
-});
 
-// ===== toast thông báo =====
-function showCartToast() {
-    const toast = document.getElementById("cartToast");
-    toast.style.display = "block";
+    // Toast thông báo
+    function showCartToast() {
+        const toast = document.getElementById("cartToast");
+        toast.style.display = "block";
 
-    setTimeout(() => {
-        toast.style.display = "none";
-    }, 2000);
-}
+        setTimeout(() => {
+            toast.style.display = "none";
+        }, 2000);
+    }
 </script>
 
-
 <script>
-    document.getElementById("toggle-stats-btn").addEventListener("click", function() {
+    // Tự động load khi trang tải
+    document.addEventListener("DOMContentLoaded", function () {
         fetch("{% url 'sentiment_summary' product.id %}")
             .then(response => response.text())
             .then(text => {
                 document.getElementById("sentiment-text").textContent = text;
-                document.getElementById("stats-box").style.display = "block";
+            })
+            .catch(error => {
+                document.getElementById("sentiment-text").textContent = "Không thể tải thống kê";
             });
     });
 </script>

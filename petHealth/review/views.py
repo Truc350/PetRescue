@@ -8,11 +8,26 @@ from django.shortcuts import get_object_or_404
 
 from my_app.models_Product import Product, ProductReview
 from sentiment.classifier import classify_comment
+from orders.models import Order, OrderItem  # Hoặc đường dẫn đúng của model Order
+
 
 @require_POST
 @login_required
 def add_review(request, product_id):
     product = get_object_or_404(Product, id=product_id)
+
+    # ✅ KIỂM TRA ĐÃ MUA HÀNG CHƯA
+    has_purchased = OrderItem.objects.filter(
+        order__user=request.user,
+        product=product,
+        order__status='delivered'  # Thay 'completed' bằng status đơn hàng hoàn thành của bạn
+    ).exists()
+
+    if not has_purchased:
+        return JsonResponse({
+            "success": False,
+            "message": "Bạn cần mua sản phẩm này trước khi đánh giá!"
+        })
 
     rating = request.POST.get("rating")
     comment = request.POST.get("comment")
@@ -32,7 +47,7 @@ def add_review(request, product_id):
             "message": "Bạn đã đánh giá sản phẩm này rồi."
         })
 
-    # # Phân loại comment
+    # Phân loại comment
     result = classify_comment(comment)
 
     if result["is_spam"]:
@@ -46,8 +61,8 @@ def add_review(request, product_id):
         user=request.user,
         rating=rating,
         comment=comment,
-        sentiment=result["sentiment"],  # 👈 thêm
-        is_spam=False,  # 👈 thêm
+        sentiment=result["sentiment"],
+        is_spam=False,
         approved=True
     )
 
