@@ -150,37 +150,25 @@ def getCatToilet(request):
 
 
 from django.utils import timezone
-from datetime import timedelta
-from django.db.models import Q
+from .models_Product import Promotion
+
 
 def getPromotion(request):
     now = timezone.now()
-    today = now.date()
 
     promotions = Promotion.objects.filter(
         is_active=True,
         start_date__lte=now,
         end_date__gte=now
-    )
+    ).prefetch_related("products", "categories")
 
-    promo_products = {}
+    products = Product.objects.filter(
+        promotions__in=promotions
+    ).distinct()
 
-    for promo in promotions:
-        min_date = today + timedelta(days=promo.min_expiry_days)
-
-        products = Product.objects.filter(
-            Q(expiry_date__isnull=True) |          # ✅ KHÔNG HẠN
-            Q(expiry_date__gte=min_date)           # ✅ CÒN ĐỦ NGÀY
-        ).filter(
-            Q(promotions=promo) |                  # ✅ GÁN RIÊNG
-            Q(category__in=promo.categories.all()) # ✅ THEO DANH MỤC
-        ).distinct()
-
-        if products.exists():
-            promo_products[promo] = products
-
-    return render(request, "frontend/promotion.html", {
-        "promo_products": promo_products
+    return render(request, 'frontend/promotion.html', {
+        "promotions": promotions,
+        "products": products,
     })
 
 
@@ -194,30 +182,6 @@ def getPromotionManage(request):
 
 def getStatistic(request):
     return render(request, 'frontend/admin/statistics.html')
-from django.shortcuts import render
-from .models_Product import Product, Promotion
-
-def promotion_view(request):
-    # Lấy các chương trình khuyến mãi đang hoạt động
-    promotions = Promotion.objects.filter(active=True)
-    promo_products = {}
-
-    for promo in promotions:
-        # Lấy sản phẩm thuộc chương trình này và đang giảm giá
-        products = Product.objects.filter(
-            Q(expiry_date__isnull=True) |
-            Q(expiry_date__gte=min_date)
-        ).filter(
-            Q(promotions=promo) |
-            Q(category__in=promo.categories.all())
-        ).distinct()
-
-        promo_products[promo] = list(products)
-
-    context = {
-        'promo_products': promo_products
-    }
-    return render(request, 'frontend/promotion.html', context)
 
 
 def getDogHygiene(request):
@@ -285,6 +249,7 @@ from django.shortcuts import render, get_object_or_404
 from .models_Product import Wishlist
 # from sentiment.spam_filter import is_spam
 from django.db.models import Avg, Count
+from orders.models import Order, OrderItem  # Hoặc đường dẫn đúng của model Order
 
 
 def product_detail(request, slug):
@@ -293,9 +258,8 @@ def product_detail(request, slug):
     # Lấy danh sách sản phẩm liên quan theo logic của model
     related = product.get_related_products(limit=10)
 
-    # # Lấy review đã duyệt
+    # Lấy review đã duyệt
     reviews = product.reviews.filter(approved=True, is_spam=False)
-    # reviews = product.reviews.filter(approved=True)
 
     total_reviews = reviews.count()
 
@@ -316,6 +280,15 @@ def product_detail(request, slug):
             .values_list("product_id", flat=True)
         )
 
+    # ✅ KIỂM TRA USER ĐÃ MUA SẢN PHẨM NÀY CHƯA
+    has_purchased = False
+    if request.user.is_authenticated:
+        has_purchased = OrderItem.objects.filter(
+            order__user=request.user,
+            product=product,
+            order__status='delivered'  # Thay đổi status phù hợp với hệ thống của bạn
+        ).exists()
+
     return render(request, "frontend/detailProduct.html", {
         "product": product,
         "related": related,
@@ -325,6 +298,7 @@ def product_detail(request, slug):
         "total_reviews": total_reviews,
         "rating_counts": rating_counts,
         "commented_count": commented_count,
+        "has_purchased": has_purchased,  # ✅ Thêm biến này
     })
 
 from django.shortcuts import get_object_or_404, redirect
