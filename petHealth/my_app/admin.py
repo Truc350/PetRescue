@@ -32,7 +32,7 @@ class ProductSizeInline(admin.TabularInline):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ("name", "brand", "price", "discount_price", "final_price", "expiry_date", "is_expired")
+    list_display = ("name", "brand", "price", "discount_price", "final_price", "import_date" , "expiry_date", "is_new_product", "is_expired")
     search_fields = ("name",)
     list_filter = ("brand", "category", "expiry_date")
     date_hierarchy = 'expiry_date'
@@ -43,7 +43,8 @@ class ProductAdmin(admin.ModelAdmin):
         "slug",
         "brand",
         "image",
-        'expiry_date',
+        "import_date",
+        "expiry_date",
         "price",
         "discount_price",
         "description",
@@ -52,6 +53,13 @@ class ProductAdmin(admin.ModelAdmin):
     )
 
     inlines = [ProductImageInline, ProductSizeInline]
+
+    # ===== HIỂN THỊ CỘT "SẢN PHẨM MỚI" =====
+    def is_new_product(self, obj):
+        return obj.is_new_product()
+
+    is_new_product.boolean = True
+    is_new_product.short_description = "SP Mới?"
 
     # ===== PROMOTION THEO CATEGORY =====
     def get_promotion(self, obj):

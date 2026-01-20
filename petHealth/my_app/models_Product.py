@@ -16,6 +16,14 @@ class Product(models.Model):
     brand = models.CharField(max_length=255, null=True, blank=True)
     image = models.URLField(max_length=500)
 
+    # THÊM TRƯỜNG NGÀY NHẬP HÀNG
+    import_date = models.DateField(
+        verbose_name="Ngày nhập hàng",
+        null=True,
+        blank=True,
+        help_text="Ngày sản phẩm được nhập vào kho"
+    )
+
     expiry_date = models.DateField(
         verbose_name="Hạn sử dụng",
         null=True,
@@ -54,6 +62,50 @@ class Product(models.Model):
 
     is_expired.boolean = True
     is_expired.short_description = "Hết hạn?"
+
+    # THÊM PHƯƠNG THỨC KIỂM TRA SẢN PHẨM MỚI
+    def is_new_product(self):
+        """
+        Kiểm tra sản phẩm có phải là sản phẩm mới không.
+        Sản phẩm mới: Thời gian sử dụng còn lại >= 1/2 tổng thời gian sử dụng
+        """
+        if not self.import_date or not self.expiry_date:
+            return False
+
+        today = timezone.now().date()
+
+        # Tổng thời gian sử dụng của sản phẩm
+        total_usage_time = (self.expiry_date - self.import_date).days
+
+        # Thời gian sử dụng còn lại
+        remaining_time = (self.expiry_date - today).days
+
+        # Kiểm tra: thời gian còn lại >= 1/2 tổng thời gian
+        if total_usage_time > 0:
+            return remaining_time >= (total_usage_time / 2)
+
+        return False
+
+    is_new_product.boolean = True
+    is_new_product.short_description = "Sản phẩm mới?"
+
+    # THÊM PHƯƠNG THỨC LẤY % THỜI GIAN CÒN LẠI
+    def get_freshness_percentage(self):
+        """
+        Tính % độ tươi của sản phẩm
+        """
+        if not self.import_date or not self.expiry_date:
+            return None
+
+        today = timezone.now().date()
+        total_usage_time = (self.expiry_date - self.import_date).days
+        remaining_time = (self.expiry_date - today).days
+
+        if total_usage_time > 0:
+            return int((remaining_time / total_usage_time) * 100)
+
+        return 0
+
 
     def __str__(self):
         return self.name
