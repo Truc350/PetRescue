@@ -1,0 +1,1014 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chính Sách Sản Phẩm</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom right, #e8f0ff, #ffffff, #f0f9ff);
+            min-height: 100vh;
+        }
+
+
+        /* Main Content */
+        main {
+            max-width: 1152px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        /* Tab Navigation */
+        .tab-navigation {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .tab-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+            color: #374151;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-btn:hover {
+            background: #f9fafb;
+        }
+
+        .tab-btn.active {
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transform: scale(1.05);
+        }
+
+        .tab-btn.active.new {
+            background-color: #234BBB;
+        }
+
+        .tab-btn.active.expiring {
+            background-color: #ea580c;
+        }
+
+        .tab-btn.active.expired {
+            background-color: #dc2626;
+        }
+
+        .tab-btn i {
+            font-size: 1.25rem;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Card */
+        .card {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            color: white;
+        }
+
+        .card-header.new {
+            background: linear-gradient(to right, #234BBB, #1a3a99);
+            border-top: 4px solid #234BBB;
+        }
+
+        .card-header.expiring {
+            background: linear-gradient(to right, #ea580c, #c2410c);
+            border-top: 4px solid #ea580c;
+        }
+
+        .card-header.expired {
+            background: linear-gradient(to right, #dc2626, #b91c1c);
+            border-top: 4px solid #dc2626;
+        }
+
+        .card-header-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: white;
+        }
+
+        .card-header i {
+            font-size: 2.5rem;
+        }
+
+        .card-header h2 {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .card-header p {
+            margin-top: 0.25rem;
+            opacity: 0.9;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .info-box {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-box.new {
+            background-color: #e8f0ff;
+            border-left: 4px solid #234BBB;
+        }
+
+        .info-box.expiring {
+            background-color: #ffedd5;
+            border-left: 4px solid #ea580c;
+        }
+
+        .info-box.expired {
+            background-color: #fee2e2;
+            border-left: 4px solid #dc2626;
+        }
+
+        .info-box h3 {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-box p {
+            color: #374151;
+            line-height: 1.6;
+        }
+
+        .formula-box {
+            background-color: #f9fafb;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .formula-box h4 {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.75rem;
+        }
+
+        .formula {
+            background: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #d1d5db;
+            font-family: monospace;
+            font-size: 0.875rem;
+        }
+
+        .formula-line {
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .highlight-new {
+            color: #234BBB;
+        }
+
+        .note-box {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #234BBB;
+            background-color: #e8f0ff;
+            margin-bottom: 1rem;
+        }
+
+        .note-box h4 {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .example-box {
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            background: linear-gradient(to right, #e8f0ff, #f0f5ff);
+            border: 1px solid #234BBB;
+            margin-top: 1.5rem;
+        }
+
+        .example-box h4 {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.75rem;
+            font-size: 1.125rem;
+        }
+
+        .example-content {
+            color: #374151;
+        }
+
+        .example-content p {
+            margin-bottom: 0.5rem;
+        }
+
+        .example-result {
+            padding-top: 0.5rem;
+            margin-top: 0.75rem;
+            border-top: 1px solid #234BBB;
+        }
+
+        /* Discount Levels */
+        .discount-container {
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            background: linear-gradient(to bottom right, #fee2e2, #ffedd5);
+            border: 1px solid #ea580c;
+            margin-bottom: 1rem;
+        }
+
+        .discount-container h4 {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 1rem;
+            font-size: 1.125rem;
+        }
+
+        .discount-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .discount-item.level-1 {
+            border-left: 4px solid #eab308;
+        }
+
+        .discount-item.level-2 {
+            border-left: 4px solid #ea580c;
+        }
+
+        .discount-item.level-3 {
+            border-left: 4px solid #dc2626;
+        }
+
+        .discount-info h5 {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+
+        .discount-info p {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .discount-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+        }
+
+        .discount-badge.level-1 {
+            background-color: #fef3c7;
+        }
+
+        .discount-badge.level-2 {
+            background-color: #fed7aa;
+        }
+
+        .discount-badge.level-3 {
+            background-color: #fecaca;
+        }
+
+        .discount-badge span {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .discount-badge.level-1 span {
+            color: #854d0e;
+        }
+
+        .discount-badge.level-2 span {
+            color: #9a3412;
+        }
+
+        .discount-badge.level-3 span {
+            color: #991b1b;
+        }
+
+        /* Rules Box */
+        .rules-box {
+            background-color: #eff6ff;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #60a5fa;
+            margin-bottom: 1rem;
+        }
+
+        .rules-box h4 {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .rules-box ul {
+            list-style: none;
+            margin-left: 1rem;
+        }
+
+        .rules-box li {
+            color: #374151;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: start;
+            gap: 0.5rem;
+        }
+
+        .rules-box li i {
+            color: #3b82f6;
+            margin-top: 0.25rem;
+        }
+
+        /* Strict Rules */
+        .strict-rules {
+            background-color: #fecaca;
+            border: 1px solid #f87171;
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .strict-rules h4 {
+            font-weight: bold;
+            color: #991b1b;
+            margin-bottom: 0.75rem;
+            font-size: 1.125rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .strict-rules ul {
+            list-style: none;
+        }
+
+        .strict-rules li {
+            background: white;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: start;
+            gap: 0.75rem;
+            color: #1f2937;
+        }
+
+        .strict-rules li i {
+            color: #dc2626;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: linear-gradient(to right, #fecaca, #fbcfe8);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            border: 2px solid #f87171;
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .warning-box i {
+            font-size: 4rem;
+            color: #dc2626;
+            margin-bottom: 0.75rem;
+        }
+
+        .warning-box h4 {
+            font-weight: bold;
+            color: #991b1b;
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .warning-box p {
+            color: #374151;
+            font-size: 1.125rem;
+        }
+
+        /* Mind Map - Simple Tree Structure */
+        .mindmap-section {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .mindmap-section h3 {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #1f2937;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .mindmap-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .mindmap-tree {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        /* Root Node */
+        .mindmap-root {
+            background: linear-gradient(135deg, #234BBB, #1a3a99);
+            color: white;
+            padding: 1.25rem 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 8px rgba(35, 75, 187, 0.3);
+            text-align: center;
+            width: 100%;
+        }
+
+        .mindmap-root i {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .mindmap-root h4 {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        /* Connector Line */
+        .connector-line {
+            width: 3px;
+            height: 20px;
+            background: #d1d5db;
+        }
+
+        /* Tree Node */
+        .tree-node {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .tree-node:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .tree-node h5 {
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+            font-size: 1rem;
+        }
+
+        .tree-node p {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+
+        .tree-node .discount {
+            font-weight: bold;
+            font-size: 1rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Node Colors */
+        .node-new {
+            border-color: #234BBB;
+            background: #f0f5ff;
+        }
+        .node-new h5 { color: #234BBB; }
+        .node-new .discount { color: #234BBB; }
+
+        .node-expiring-3 {
+            border-color: #eab308;
+            background: #fefce8;
+        }
+        .node-expiring-3 h5 { color: #854d0e; }
+        .node-expiring-3 .discount { color: #854d0e; }
+
+        .node-expiring-2 {
+            border-color: #ea580c;
+            background: #fff7ed;
+        }
+        .node-expiring-2 h5 { color: #9a3412; }
+        .node-expiring-2 .discount { color: #9a3412; }
+
+        .node-expiring-1 {
+            border-color: #dc2626;
+            background: #fef2f2;
+        }
+        .node-expiring-1 h5 { color: #991b1b; }
+        .node-expiring-1 .discount { color: #991b1b; }
+
+        .node-expired {
+            border-color: #991b1b;
+            background: #fef2f2;
+        }
+        .node-expired h5 { color: #7f1d1d; }
+        .node-expired .discount { color: #7f1d1d; }
+
+        /* Footer */
+        footer {
+            background-color: #234BBB;
+            color: white;
+            margin-top: 3rem;
+            padding: 1.5rem;
+        }
+
+        .footer-content {
+            max-width: 1152px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .footer-content p {
+            color: #e5e7eb;
+        }
+
+        .footer-content p:last-child {
+            color: #d0ddff;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-title h1 {
+                font-size: 1.5rem;
+            }
+
+            .tab-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+            }
+
+            .card-header h2 {
+                font-size: 1.25rem;
+            }
+
+            .mindmap-tree {
+                max-width: 100%;
+                gap: 1rem;
+            }
+
+            .mindmap-root {
+                padding: 1rem 1.5rem;
+            }
+
+            .mindmap-root i {
+                font-size: 1.5rem;
+            }
+
+            .mindmap-root h4 {
+                font-size: 1.125rem;
+            }
+
+            .tree-node {
+                padding: 0.875rem 1.25rem;
+            }
+
+            .tree-node h5 {
+                font-size: 0.9375rem;
+            }
+
+            .connector-line {
+                height: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+{% include "frontend/header.html" %}
+    <!-- Header -->
+<!--    <header>-->
+<!--        <div class="header-content">-->
+<!--            <div class="header-title">-->
+<!--                <i class="bi bi-box-seam"></i>-->
+<!--                <h1>Chính Sách Sản Phẩm</h1>-->
+<!--            </div>-->
+<!--            <p class="header-subtitle">Phân loại và khuyến mãi theo thời hạn sử dụng</p>-->
+<!--        </div>-->
+<!--    </header>-->
+
+    <!-- Main Content -->
+    <main>
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+            <button class="tab-btn active new" onclick="switchTab('new')">
+                <i class="bi bi-check-circle-fill"></i>
+                Sản phẩm mới
+            </button>
+            <button class="tab-btn expiring" onclick="switchTab('expiring')">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                Gần hết hạn
+            </button>
+            <button class="tab-btn expired" onclick="switchTab('expired')">
+                <i class="bi bi-x-circle-fill"></i>
+                Hết hạn
+            </button>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-contents">
+            <!-- New Product Tab -->
+            <div id="new-tab" class="tab-content active">
+                <div class="card">
+                    <div class="card-header new">
+                        <div class="card-header-content">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <div>
+                                <h2>Chính Sách Sản Phẩm Mới</h2>
+                                <p>Sản phẩm còn trên 50% thời hạn sử dụng</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-box new">
+                            <h3>
+                                <i class="bi bi-calendar-check" style="color: #234BBB;"></i>
+                                Điều kiện phân loại
+                            </h3>
+                            <p>
+                                Sản phẩm được xem là <strong>sản phẩm mới</strong> khi thời gian sử dụng còn lại 
+                                (tính từ ngày nhập hàng đến hạn sử dụng) <strong>≥ 1/2</strong> tổng thời gian sử dụng của sản phẩm.
+                            </p>
+                        </div>
+
+                        <div class="formula-box">
+                            <h4>Công thức tính:</h4>
+                            <div class="formula">
+                                <div class="formula-line">
+                                    <span class="highlight-new">Thời gian sử dụng còn lại</span> = HSD − Ngày nhập hàng
+                                </div>
+                                <div class="formula-line" style="margin-top: 0.5rem;">
+                                    <span class="highlight-new">Điều kiện</span>: Thời gian còn lại ≥ 1/2 × Tổng thời gian sử dụng
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="note-box">
+                            <h4>
+                                <i class="bi bi-info-circle-fill" style="color: #234BBB;"></i>
+                                Lưu ý
+                            </h4>
+                            <p>
+                                Khi sản phẩm đã vượt quá mốc 1/2 thời gian sử dụng, sản phẩm sẽ không còn được xếp vào 
+                                nhóm sản phẩm mới và có thể áp dụng chính sách khuyến mãi khác (nếu có).
+                            </p>
+                        </div>
+
+                        <div class="example-box">
+                            <h4>📋 Ví dụ minh họa:</h4>
+                            <div class="example-content">
+                                <p>• Sản phẩm có tổng thời hạn: <strong>12 tháng</strong></p>
+                                <p>• Ngày nhập hàng: <strong>01/01/2026</strong></p>
+                                <p>• Hạn sử dụng: <strong>01/01/2027</strong></p>
+                                <p>• Ngày kiểm tra: <strong>20/01/2026</strong></p>
+                                <div class="example-result">
+                                    <p>➜ Thời gian còn lại: <strong style="color: #234BBB;">346 ngày ≈ 11.4 tháng</strong></p>
+                                    <p>➜ 11.4 tháng ≥ 6 tháng (1/2 × 12) → <strong style="color: #234BBB;">✓ Sản phẩm mới</strong></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Expiring Product Tab -->
+            <div id="expiring-tab" class="tab-content">
+                <div class="card">
+                    <div class="card-header expiring">
+                        <div class="card-header-content">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            <div>
+                                <h2>Chính Sách Sản Phẩm Gần Hết Hạn</h2>
+                                <p>Khuyến mãi theo thời gian còn lại</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-box expiring">
+                            <h3>
+                                <i class="bi bi-calendar-x" style="color: #ea580c;"></i>
+                                Điều kiện phân loại
+                            </h3>
+                            <p>
+                                Sản phẩm được xem là <strong>gần hết hạn</strong> khi thời gian sử dụng còn lại 
+                                <strong>&lt; 1/2</strong> tổng thời gian sử dụng và <strong>&gt; 0</strong>.
+                            </p>
+                        </div>
+
+                        <div class="discount-container">
+                            <h4>🎯 Mức khuyến mãi:</h4>
+                            
+                            <div class="discount-item level-1">
+                                <div class="discount-info">
+                                    <h5>Thời gian còn lại ≤ 3 tháng</h5>
+                                    <p>Sản phẩm còn ít thời gian</p>
+                                </div>
+                                <div class="discount-badge level-1">
+                                    <span>10%</span>
+                                </div>
+                            </div>
+
+                            <div class="discount-item level-2">
+                                <div class="discount-info">
+                                    <h5>Thời gian còn lại ≤ 2 tháng</h5>
+                                    <p>Cần đẩy nhanh tiêu thụ</p>
+                                </div>
+                                <div class="discount-badge level-2">
+                                    <span>20%</span>
+                                </div>
+                            </div>
+
+                            <div class="discount-item level-3">
+                                <div class="discount-info">
+                                    <h5>Thời gian còn lại ≤ 1 tháng</h5>
+                                    <p>Ưu tiên tiêu thụ gấp</p>
+                                </div>
+                                <div class="discount-badge level-3">
+                                    <span>50%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rules-box">
+                            <h4>
+                                <i class="bi bi-info-circle-fill"></i>
+                                Quy tắc áp dụng
+                            </h4>
+                            <ul>
+                                <li>
+                                    <i class="bi bi-dot"></i>
+                                    <span>Mức giảm giá được áp dụng theo mốc thời gian gần nhất</span>
+                                </li>
+                                <li>
+                                    <i class="bi bi-dot"></i>
+                                    <span>Không cộng dồn nhiều mức khuyến mãi</span>
+                                </li>
+                                <li>
+                                    <i class="bi bi-dot"></i>
+                                    <span>Nhằm đẩy nhanh quá trình tiêu thụ theo thời gian sử dụng còn lại</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="example-box" style="background: linear-gradient(to right, #ffedd5, #fef3c7); border-color: #ea580c;">
+                            <h4>📋 Ví dụ minh họa:</h4>
+                            <div class="example-content">
+                                <p>• Sản phẩm có tổng thời hạn: <strong>12 tháng</strong></p>
+                                <p>• Ngày nhập hàng: <strong>01/01/2025</strong></p>
+                                <p>• Hạn sử dụng: <strong>01/01/2026</strong></p>
+                                <p>• Ngày kiểm tra: <strong>15/12/2025</strong></p>
+                                <div class="example-result" style="border-color: #ea580c;">
+                                    <p>➜ Thời gian còn lại: <strong style="color: #ea580c;">17 ngày ≈ 0.56 tháng</strong></p>
+                                    <p>➜ 0.56 tháng &lt; 1 tháng → <strong style="color: #dc2626;">Giảm giá 50%</strong></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Expired Product Tab -->
+            <div id="expired-tab" class="tab-content">
+                <div class="card">
+                    <div class="card-header expired">
+                        <div class="card-header-content">
+                            <i class="bi bi-x-circle-fill"></i>
+                            <div>
+                                <h2>Chính Sách Sản Phẩm Hết Hạn</h2>
+                                <p>Không được phép kinh doanh</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-box expired">
+                            <h3>
+                                <i class="bi bi-x-circle" style="color: #dc2626;"></i>
+                                Điều kiện phân loại
+                            </h3>
+                            <p>
+                                Sản phẩm được xem là <strong>hết hạn</strong> khi <strong>HSD ≤ Ngày hiện tại</strong>.
+                            </p>
+                        </div>
+
+                        <div class="strict-rules">
+                            <h4>
+                                <i class="bi bi-exclamation-triangle-fill"></i>
+                                Quy định nghiêm ngặt
+                            </h4>
+                            <ul>
+                                <li>
+                                    <i class="bi bi-x-circle-fill"></i>
+                                    <span><strong>Không được phép kinh doanh</strong> - Sản phẩm hết hạn không được bán ra thị trường</span>
+                                </li>
+                                <li>
+                                    <i class="bi bi-x-circle-fill"></i>
+                                    <span><strong>Không áp dụng khuyến mãi</strong> - Không có bất kỳ chương trình khuyến mãi nào</span>
+                                </li>
+                                <li>
+                                    <i class="bi bi-x-circle-fill"></i>
+                                    <span><strong>Phải loại bỏ</strong> - Sản phẩm cần được xử lý theo quy định về an toàn thực phẩm</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="rules-box" style="background-color: #fef3c7; border-color: #fbbf24;">
+                            <h4>
+                                <i class="bi bi-exclamation-circle-fill" style="color: #d97706;"></i>
+                                Khuyến cáo
+                            </h4>
+                            <p style="margin-left: 0;">
+                                Cần thường xuyên kiểm tra và theo dõi hạn sử dụng của sản phẩm để tránh tình trạng hết hạn. 
+                                Áp dụng chính sách khuyến mãi kịp thời cho sản phẩm gần hết hạn để giảm thiểu tổn thất.
+                            </p>
+                        </div>
+
+                        <div class="warning-box">
+                            <i class="bi bi-x-octagon-fill"></i>
+                            <h4>CẢNH BÁO</h4>
+                            <p>
+                                Việc kinh doanh sản phẩm hết hạn vi phạm quy định về an toàn thực phẩm 
+                                và có thể bị xử phạt theo pháp luật.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mind Map Section -->
+        <div class="mindmap-section">
+            <h3>Sơ Đồ Tư Duy - Quy Trình Phân Loại Sản Phẩm</h3>
+            <div class="mindmap-wrapper">
+                <div class="mindmap-tree">
+                    <!-- Root -->
+                    <div class="mindmap-root">
+                        <i class="bi bi-box-seam"></i>
+                        <h4>Chính Sách Sản Phẩm</h4>
+                    </div>
+
+                    <div class="connector-line"></div>
+
+                    <!-- Node 1 -->
+                    <div class="tree-node node-new">
+                        <h5>Sản Phẩm Mới</h5>
+                        <p>Thời gian còn lại ≥ 50%</p>
+                        <div class="discount">Không khuyến mãi</div>
+                    </div>
+
+                    <div class="connector-line"></div>
+
+                    <!-- Node 2 -->
+                    <div class="tree-node node-expiring-3">
+                        <h5>Gần Hết Hạn (≤ 3 tháng)</h5>
+                        <p>Sản phẩm còn ít thời gian</p>
+                        <div class="discount">Giảm giá 10%</div>
+                    </div>
+
+                    <div class="connector-line"></div>
+
+                    <!-- Node 3 -->
+                    <div class="tree-node node-expiring-2">
+                        <h5>Gần Hết Hạn (≤ 2 tháng)</h5>
+                        <p>Cần đẩy nhanh tiêu thụ</p>
+                        <div class="discount">Giảm giá 20%</div>
+                    </div>
+
+                    <div class="connector-line"></div>
+
+                    <!-- Node 4 -->
+                    <div class="tree-node node-expiring-1">
+                        <h5>Gần Hết Hạn (≤ 1 tháng)</h5>
+                        <p>Ưu tiên tiêu thụ gấp</p>
+                        <div class="discount">Giảm giá 50%</div>
+                    </div>
+
+                    <div class="connector-line"></div>
+
+                    <!-- Node 5 -->
+                    <div class="tree-node node-expired">
+                        <h5>Hết Hạn</h5>
+                        <p>HSD ≤ Ngày hiện tại</p>
+                        <div class="discount">KHÔNG KINH DOANH</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+{% include "frontend/footer.html" %}
+
+    <script>
+        function switchTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Remove active class from all buttons
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            tabButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Show selected tab content
+            const selectedTab = document.getElementById(tabName + '-tab');
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+            }
+
+            // Add active class to clicked button
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(button => {
+                if (button.textContent.includes('Sản phẩm mới') && tabName === 'new') {
+                    button.classList.add('active');
+                } else if (button.textContent.includes('Gần hết hạn') && tabName === 'expiring') {
+                    button.classList.add('active');
+                } else if (button.textContent.includes('Hết hạn') && tabName === 'expired') {
+                    button.classList.add('active');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

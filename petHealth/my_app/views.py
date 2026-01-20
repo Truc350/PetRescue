@@ -239,30 +239,8 @@ def category_view(request, slug):
 
     # ===== SORT =====
     if sort == "price_asc":
-        # ✅ Ưu tiên GIÁ trước, nếu cùng giá thì ưu tiên hạn sử dụng
         products = products.order_by(
-            "price",  # Ưu tiên 1: Giá tăng dần
-            Case(
-                When(expiry_date__isnull=True, then=Value(1)),
-                default=Value(0),
-                output_field=IntegerField()
-            ),  # Ưu tiên 2: Có HSD lên trước
-            "expiry_date"  # Ưu tiên 3: HSD gần nhất lên trước (trong cùng giá)
-        )
-    elif sort == "price_desc":
-        # ✅ Ưu tiên GIÁ trước, nếu cùng giá thì ưu tiên hạn sử dụng
-        products = products.order_by(
-            "-price",  # Ưu tiên 1: Giá giảm dần
-            Case(
-                When(expiry_date__isnull=True, then=Value(1)),
-                default=Value(0),
-                output_field=IntegerField()
-            ),  # Ưu tiên 2: Có HSD lên trước
-            "expiry_date"  # Ưu tiên 3: HSD gần nhất lên trước (trong cùng giá)
-        )
-    else:
-        # ✅ MẶC ĐỊNH: Ưu tiên hạn sử dụng
-        products = products.order_by(
+            "price",
             Case(
                 When(expiry_date__isnull=True, then=Value(1)),
                 default=Value(0),
@@ -270,13 +248,51 @@ def category_view(request, slug):
             ),
             "expiry_date"
         )
+    elif sort == "price_desc":
+        products = products.order_by(
+            "-price",
+            Case(
+                When(expiry_date__isnull=True, then=Value(1)),
+                default=Value(0),
+                output_field=IntegerField()
+            ),
+            "expiry_date"
+        )
+    else:
+        # ✅ MẶC ĐỊNH: Sắp xếp theo BADGE (Khuyến mãi → New → Còn lại)
+        products_list = list(products)
+
+        promotion_products = []
+        new_products = []
+        other_products = []
+
+        for p in products_list:
+            if p.final_price != p.price:  # Có khuyến mãi
+                promotion_products.append(p)
+            elif p.expiry_date:  # Sản phẩm mới (có expiry_date)
+                new_products.append(p)
+            else:
+                other_products.append(p)
+
+        # Sắp xếp theo expiry_date trong từng nhóm
+        promotion_products.sort(key=lambda x: x.expiry_date if x.expiry_date else timezone.now().date())
+        new_products.sort(key=lambda x: x.expiry_date if x.expiry_date else timezone.now().date())
+        other_products.sort(key=lambda x: x.expiry_date if x.expiry_date else timezone.now().date())
+
+        # Ghép lại theo thứ tự: Khuyến mãi → New → Còn lại
+        products_list = promotion_products + new_products + other_products
+        products = products_list
 
     # ✅ Thêm thông tin về trạng thái hết hạn cho từng sản phẩm
     today = timezone.now().date()
     thirty_days_later = today + timedelta(days=30)
 
     products_with_status = []
-    for product in products:
+
+    # Xử lý cho cả queryset và list
+    products_to_process = products if isinstance(products, list) else list(products)
+
+    for product in products_to_process:
         product.is_expiring_soon = False
         product.is_expired = False
         product.days_until_expiry = None
@@ -986,6 +1002,8 @@ def trangLienHe(request):
 def trangThanhToanTienLoi(request):
     return render(request, 'frontend/ThanhToanTienLoi.html')
 
+def chinhSachKhuyenMai(request):
+    return render(request, 'frontend/chinhSachKhuyenMai.html')
 
 from django.shortcuts import render
 from django.db.models import Q
