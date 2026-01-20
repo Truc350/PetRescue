@@ -739,6 +739,7 @@ def profile_view(request):
     user = request.user
     profile, _ = UserProfile.objects.get_or_create(user=user)
     orders = Order.objects.filter(user=user)
+    orders = Order.objects.filter(user=user).order_by('-created_at')
     delivered_orders = orders.filter(status="delivered")
 
     gender_options = ["Nam", "Nữ", "Khác"]
