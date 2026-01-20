@@ -846,3 +846,50 @@ def trangLienHe(request):
 
 def trangThanhToanTienLoi(request):
     return render(request, 'frontend/ThanhToanTienLoi.html')
+
+
+from django.shortcuts import render
+from django.db.models import Q
+from .models_Product import Product, Wishlist
+
+
+def new_products_view(request):
+    # Lấy tất cả sản phẩm
+    products = Product.objects.all()
+
+    # Lọc chỉ lấy sản phẩm mới
+    new_products = [p for p in products if p.is_new_product()]
+
+    # Lọc theo giá
+    selected_prices = request.GET.getlist('price')
+    if selected_prices:
+        filtered = []
+        for product in new_products:
+            for price_range in selected_prices:
+                min_price, max_price = map(int, price_range.split('-'))
+                if min_price <= product.final_price <= max_price:
+                    filtered.append(product)
+                    break
+        new_products = filtered
+
+    # Lọc theo thương hiệu
+    selected_brands = request.GET.getlist('brand')
+    if selected_brands:
+        new_products = [p for p in new_products if p.brand in selected_brands]
+
+    # Lấy danh sách ID sản phẩm yêu thích
+    liked_ids = []
+    if request.user.is_authenticated:
+        liked_ids = list(
+            Wishlist.objects.filter(user=request.user).values_list('product_id', flat=True)
+        )
+
+    context = {
+        'products': new_products,
+        'total': len(new_products),
+        'selected_prices': selected_prices,
+        'selected_brands': selected_brands,
+        'liked_ids': liked_ids,
+    }
+
+    return render(request, 'frontend/newProduct.html', context)

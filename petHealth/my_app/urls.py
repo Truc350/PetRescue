@@ -74,4 +74,5 @@ urlpatterns = [
     path("search/image/", views.image_search_api, name="image-search"),
     # path("", include("my_app.urls")),
     path("api/chat/", chat_api),
+    path('newProduct/', views.new_products_view, name='newProduct'),
 ]
