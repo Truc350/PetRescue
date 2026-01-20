@@ -200,7 +200,7 @@
                     <!--                    order.status == "cancel" %}-->
                     <tr data-status="{{ order.status }}" data-order-id="{{ order.id }}">
                         <td>#{{ order.id }}</td>
-                        <td>{{ order.created_at|date:"d/m/Y H:i" }}</td>
+                       <td>{{ order.created_at|date:"d/m/Y H:i" }}</td>
 
                         <td>
                             {% if order.status == "pending" %}
