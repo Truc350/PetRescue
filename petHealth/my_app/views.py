@@ -156,19 +156,30 @@ from .models_Product import Promotion
 def getPromotion(request):
     now = timezone.now()
 
+    # Lấy tất cả promotion đang active
     promotions = Promotion.objects.filter(
         is_active=True,
         start_date__lte=now,
         end_date__gte=now
     ).prefetch_related("products", "categories")
 
-    products = Product.objects.filter(
-        promotions__in=promotions
-    ).distinct()
+    # Tạo dict: promotion -> list products
+    promo_products = {}
+    
+    for promo in promotions:
+        products_set = set()
+        
+        # 1. Products gắn trực tiếp
+        products_set.update(promo.products.all())
+        
+        # 2. Products theo categories
+        for category in promo.categories.all():
+            products_set.update(category.product_set.all())
+        
+        promo_products[promo] = list(products_set)
 
     return render(request, 'frontend/promotion.html', {
-        "promotions": promotions,
-        "products": products,
+        "promo_products": promo_products,
     })
 
 
@@ -821,10 +832,8 @@ def can_apply_promotion(product, promotion):
     if not product.expiry_date:
         return False
 
-    # 3. Check số ngày còn hạn
-    min_date = timezone.now().date() + timedelta(days=promotion.min_expiry_days)
-
-    return product.expiry_date >= min_date
+    # 3. Product còn hạn (chưa hết hạn)
+    return product.expiry_date >= timezone.now().date()
 
 def trangChinhSachVanChuyen(request):
     return render(request, 'frontend/ChinhSachVanChuyen.html')
