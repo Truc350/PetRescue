@@ -53,6 +53,87 @@
         color: white;
     }
 
+    /* Bộ lọc tháng/năm */
+    .month-filter {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+
+    .month-filter h3 {
+        margin: 0 0 15px 0;
+        color: #333;
+    }
+
+    .filter-form {
+        display: flex;
+        gap: 15px;
+        align-items: flex-end;
+        flex-wrap: wrap;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .filter-group label {
+        font-weight: 600;
+        color: #555;
+        font-size: 14px;
+    }
+
+    .filter-group select {
+        padding: 10px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        min-width: 150px;
+        cursor: pointer;
+        transition: border-color 0.3s;
+    }
+
+    .filter-group select:focus {
+        outline: none;
+        border-color: #667eea;
+    }
+
+    .filter-btn {
+        padding: 10px 25px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: transform 0.2s;
+    }
+
+    .filter-btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .reset-btn {
+        padding: 10px 25px;
+        background: #f5f5f5;
+        color: #666;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s;
+    }
+
+    .reset-btn:hover {
+        background: #e0e0e0;
+        color: #333;
+    }
+
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -169,6 +250,24 @@
         gap: 20px;
     }
 
+    .current-filter-info {
+        background: #f0f4ff;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 4px solid #667eea;
+        margin-bottom: 20px;
+    }
+
+    .current-filter-info h4 {
+        margin: 0 0 5px 0;
+        color: #667eea;
+    }
+
+    .current-filter-info p {
+        margin: 0;
+        color: #555;
+    }
+
     @media (max-width: 768px) {
         .grid-2 {
             grid-template-columns: 1fr;
@@ -176,6 +275,13 @@
         .view-buttons {
             flex-direction: column;
             align-items: flex-start;
+        }
+        .filter-form {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .filter-group select {
+            min-width: 100%;
         }
     }
 </style>
@@ -185,17 +291,58 @@
 <div class="statistics-container">
     <h1>📊 Thống Kê Đơn Hàng</h1>
 
+    <!-- Bộ lọc theo tháng/năm cụ thể -->
+    <div class="month-filter">
+        <h3>🔍 Lọc Theo Tháng/Năm</h3>
+        <form method="get" class="filter-form">
+            <!-- Giữ lại view type khi submit form -->
+            {% if view_type %}
+            <input type="hidden" name="view" value="{{ view_type }}">
+            {% endif %}
+
+            <div class="filter-group">
+                <label for="month">Tháng:</label>
+                <select name="month" id="month">
+                    <option value="">- - -</option>
+                    {% for m in months %}
+                        <option value="{{ m.value }}" {% if m.value|stringformat:"s" == selected_month|stringformat:"s" %}selected{% endif %}>
+                            {{ m.value }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="year">Năm:</label>
+                <select name="year" id="year">
+                    <option value="">- - -</option>
+                    {% for y in years %}
+                        <option value="{{ y }}" {% if y|stringformat:"s" == selected_year|stringformat:"s" %}selected{% endif %}>
+                            {{ y }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" class="filter-btn">🔍 Lọc</button>
+            <a href="?{% if view_type %}view={{ view_type }}{% endif %}" class="reset-btn">🔄 Đặt lại</a>
+        </form>
+    </div>
+
     <!-- Bộ chọn xem theo Tuần/Tháng/Năm -->
     <div class="view-selector">
         <div class="view-buttons">
             <h3>📅 Xem theo:</h3>
-            <a href="?view=week" class="view-btn {% if view_type == 'week' %}active{% endif %}">
+            <a href="?view=week{% if selected_month %}&month={{ selected_month }}{% endif %}{% if selected_year %}&year={{ selected_year }}{% endif %}"
+               class="view-btn {% if view_type == 'week' %}active{% endif %}">
                 📅 Tuần
             </a>
-            <a href="?view=month" class="view-btn {% if view_type == 'month' %}active{% endif %}">
+            <a href="?view=month{% if selected_month %}&month={{ selected_month }}{% endif %}{% if selected_year %}&year={{ selected_year }}{% endif %}"
+               class="view-btn {% if view_type == 'month' %}active{% endif %}">
                 📆 Tháng
             </a>
-            <a href="?view=year" class="view-btn {% if view_type == 'year' %}active{% endif %}">
+            <a href="?view=year{% if selected_month %}&month={{ selected_month }}{% endif %}{% if selected_year %}&year={{ selected_year }}{% endif %}"
+               class="view-btn {% if view_type == 'year' %}active{% endif %}">
                 📊 Năm
             </a>
         </div>
