@@ -207,6 +207,12 @@ from django.shortcuts import render, get_object_or_404
 from .models_Product import Product, Category, Wishlist
 from django.db.models import Q
 
+from django.shortcuts import render, get_object_or_404
+from .models_Product import Product, Category, Wishlist
+from django.db.models import Q, Case, When, Value, IntegerField
+from django.utils import timezone
+from datetime import timedelta
+
 
 def category_view(request, slug):
     category = get_object_or_404(Category, slug=slug)
@@ -233,10 +239,59 @@ def category_view(request, slug):
 
     # ===== SORT =====
     if sort == "price_asc":
-        products = products.order_by("price")
+        # ✅ Ưu tiên GIÁ trước, nếu cùng giá thì ưu tiên hạn sử dụng
+        products = products.order_by(
+            "price",  # Ưu tiên 1: Giá tăng dần
+            Case(
+                When(expiry_date__isnull=True, then=Value(1)),
+                default=Value(0),
+                output_field=IntegerField()
+            ),  # Ưu tiên 2: Có HSD lên trước
+            "expiry_date"  # Ưu tiên 3: HSD gần nhất lên trước (trong cùng giá)
+        )
     elif sort == "price_desc":
-        products = products.order_by("-price")
+        # ✅ Ưu tiên GIÁ trước, nếu cùng giá thì ưu tiên hạn sử dụng
+        products = products.order_by(
+            "-price",  # Ưu tiên 1: Giá giảm dần
+            Case(
+                When(expiry_date__isnull=True, then=Value(1)),
+                default=Value(0),
+                output_field=IntegerField()
+            ),  # Ưu tiên 2: Có HSD lên trước
+            "expiry_date"  # Ưu tiên 3: HSD gần nhất lên trước (trong cùng giá)
+        )
+    else:
+        # ✅ MẶC ĐỊNH: Ưu tiên hạn sử dụng
+        products = products.order_by(
+            Case(
+                When(expiry_date__isnull=True, then=Value(1)),
+                default=Value(0),
+                output_field=IntegerField()
+            ),
+            "expiry_date"
+        )
 
+    # ✅ Thêm thông tin về trạng thái hết hạn cho từng sản phẩm
+    today = timezone.now().date()
+    thirty_days_later = today + timedelta(days=30)
+
+    products_with_status = []
+    for product in products:
+        product.is_expiring_soon = False
+        product.is_expired = False
+        product.days_until_expiry = None
+
+        if product.expiry_date:
+            product.days_until_expiry = (product.expiry_date - today).days
+
+            if product.expiry_date < today:
+                product.is_expired = True
+            elif product.expiry_date <= thirty_days_later:
+                product.is_expiring_soon = True
+
+        products_with_status.append(product)
+
+    # ===== LIKED IDS =====
     if request.user.is_authenticated:
         liked_ids = set(
             Wishlist.objects.filter(
@@ -248,7 +303,7 @@ def category_view(request, slug):
 
     return render(request, "frontend/DogKibbleView.html", {
         "category": category,
-        "products": products,
+        "products": products_with_status,
         "liked_ids": liked_ids,
         "selected_prices": selected_prices,
         "selected_brands": selected_brands,
@@ -504,6 +559,7 @@ def search_view(request):
 
     selected_prices = request.GET.getlist("price")
     selected_brands = request.GET.getlist("brand")
+    sort = request.GET.get("sort", "")  # ✅ Thêm sort
 
     products = Product.objects.none()
 
@@ -576,12 +632,76 @@ def search_view(request):
     if selected_brands:
         products = products.filter(brand__in=selected_brands)
 
+    # ====== SORT ======
+    if sort == "price_asc":
+        # ✅ Ưu tiên GIÁ trước, nếu cùng giá thì ưu tiên hạn sử dụng
+        products = products.order_by(
+            "price",
+            Case(
+                When(expiry_date__isnull=True, then=Value(1)),
+                default=Value(0),
+                output_field=IntegerField()
+            ),
+            "expiry_date"
+        )
+    elif sort == "price_desc":
+        # ✅ Ưu tiên GIÁ trước, nếu cùng giá thì ưu tiên hạn sử dụng
+        products = products.order_by(
+            "-price",
+            Case(
+                When(expiry_date__isnull=True, then=Value(1)),
+                default=Value(0),
+                output_field=IntegerField()
+            ),
+            "expiry_date"
+        )
+    else:
+        # ✅ MẶC ĐỊNH: Ưu tiên hạn sử dụng
+        products = products.order_by(
+            Case(
+                When(expiry_date__isnull=True, then=Value(1)),
+                default=Value(0),
+                output_field=IntegerField()
+            ),
+            "expiry_date"
+        )
+
+    # ✅ Thêm thông tin về trạng thái hết hạn cho từng sản phẩm
+    today = timezone.now().date()
+    thirty_days_later = today + timedelta(days=30)
+
+    products_with_status = []
+    for product in products:
+        product.is_expiring_soon = False
+        product.is_expired = False
+        product.days_until_expiry = None
+
+        if product.expiry_date:
+            product.days_until_expiry = (product.expiry_date - today).days
+
+            if product.expiry_date < today:
+                product.is_expired = True
+            elif product.expiry_date <= thirty_days_later:
+                product.is_expiring_soon = True
+
+        products_with_status.append(product)
+
+    # ✅ Lấy liked_ids
+    liked_ids = set()
+    if request.user.is_authenticated:
+        liked_ids = set(
+            Wishlist.objects.filter(user=request.user)
+            .values_list("product_id", flat=True)
+        )
+
     return render(request, "frontend/search.html", {
         "keyword": keyword_raw,
-        "products": products,
-        "total": products.count(),
+        "products": products_with_status,  # ✅ Đổi từ products
+        "total": len(products_with_status),  # ✅ Đổi từ products.count()
         "selected_prices": selected_prices,
         "selected_brands": selected_brands,
+        "sort": sort,  # ✅ Thêm sort
+        "liked_ids": liked_ids,  # ✅ Thêm liked_ids
     })
 
 
