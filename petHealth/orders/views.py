@@ -1,6 +1,82 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Order, ShippingAddress
+from django.contrib.admin.views.decorators import staff_member_required
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse, HttpResponseForbidden
+from django.urls import reverse
+from django.db.models import Count, Sum, Avg, Q
+from django.db.models.functions import TruncMonth, TruncYear
+from django.utils import timezone
+from django.conf import settings
+from django.contrib import messages
+from datetime import timedelta, datetime
+from calendar import monthrange
+import json
+
+from .models import Order, OrderItem, ShippingAddress
+from my_app.models_Product import Product
+from .vnpay import VNPay, verify_vnpay_signature
+
+
+# ============ CHECKOUT & BUY NOW ============
+
+@login_required
+def buy_now(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+
+    order = Order.objects.create(
+        user=request.user,
+        status="draft"
+    )
+
+    OrderItem.objects.create(
+        order=order,
+        product=product,
+        quantity=1,
+        price=product.price
+    )
+
+    request.session['checkout_order_id'] = order.id
+    return redirect("orders:checkout_shipping")
+
+
+@require_POST
+@login_required
+def checkout_from_cart(request):
+    data = json.loads(request.body)
+    items = data.get("items", [])
+
+    if not items:
+        return JsonResponse({"error": "no items"}, status=400)
+
+    cart = request.session.get("cart", {})
+
+    order = Order.objects.create(
+        user=request.user,
+        status="draft"
+    )
+
+    for item in items:
+        cart_key = str(item["id"])
+        quantity = int(item["quantity"])
+
+        if cart_key not in cart:
+            continue
+
+        cart_item = cart[cart_key]
+        product = Product.objects.get(id=cart_item["product_id"])
+
+        OrderItem.objects.create(
+            order=order,
+            product=product,
+            quantity=quantity,
+            price=cart_item["price"]
+        )
+
+    request.session["checkout_order_id"] = order.id
+    request.session.modified = True
+    return JsonResponse({"ok": True})
 
 
 @login_required
@@ -8,8 +84,7 @@ def checkout_shipping(request):
     order_id = request.session.get('checkout_order_id')
 
     if not order_id:
-        # Nếu không có order trong session → redirect về buy_now hoặc giỏ hàng
-        return redirect("shopping_cart")  # thay cart_view bằng view giỏ hàng của bạn
+        return redirect("shopping_cart")
 
     order = get_object_or_404(Order, id=order_id, user=request.user)
     items = order.items.select_related("product")
@@ -41,88 +116,6 @@ def checkout_shipping(request):
     })
 
 
-from django.shortcuts import get_object_or_404
-from my_app.models_Product import Product
-from .models import Order, OrderItem
-
-
-@login_required
-def buy_now(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-
-    order = Order.objects.create(
-        user=request.user,
-        status="draft"
-    )
-    # order = Order.objects.create(
-    #     user=request.user,
-    #     status="pending"
-    # )
-
-    OrderItem.objects.create(
-        order=order,
-        product=product,
-        quantity=1,
-        price=product.price
-    )
-
-    request.session['checkout_order_id'] = order.id
-    return redirect("orders:checkout_shipping")
-
-
-import json
-from django.views.decorators.http import require_POST
-from django.http import JsonResponse, HttpResponseForbidden
-
-
-@require_POST
-def save_checkout_items(request):
-    data = json.loads(request.body)
-    ids = data.get("ids", [])
-
-    request.session["checkout_product_ids"] = ids
-    request.session.modified = True
-
-    return JsonResponse({"ok": True})
-
-
-from my_app.models_Product import Product
-
-
-class CheckoutItem:
-    def __init__(self, product, quantity):
-        self.product = product
-        self.quantity = quantity
-        self.subtotal = product.price * quantity
-
-
-@login_required
-def delivery_info(request):
-    cart = request.session.get("cart", {})
-    selected_ids = request.session.get("checkout_product_ids", [])
-
-    items = []
-
-    for pid in selected_ids:
-        pid = str(pid)
-        if pid in cart:
-            product = Product.objects.get(id=pid)
-            quantity = cart[pid]["quantity"]
-            items.append(CheckoutItem(product, quantity))
-
-    total = sum(item.subtotal for item in items)
-
-    return render(request, "frontend/delivery-infor.html", {
-        "items": items,
-        "total": total
-    })
-
-
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from .models import Order
-
-
 @login_required
 def checkout_payment(request):
     order_id = request.session.get('checkout_order_id')
@@ -136,15 +129,6 @@ def checkout_payment(request):
         "items": items,
         "total": total
     })
-
-
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.urls import reverse  # ✅ THÊM DÒNG NÀY
-from .models import Order
-from django.conf import settings
-from .models import Order
-from .vnpay import VNPay
 
 
 @login_required
@@ -169,17 +153,14 @@ def complete_payment(request):
     order.calculate_total()
     order.status = "pending"
     order.save()
-    vnp_TxnRef = str(order.id)  # ✅ CHUẨN
+    vnp_TxnRef = str(order.id)
 
-    # COD → hoàn thành ngay
     if payment_method == "cod":
         order.status = "pending"
         order.save()
-
         request.session.pop("checkout_order_id", None)
         return redirect(reverse("personal-page") + "?tab=orders")
 
-    # VNPAY → redirect sang cổng thanh toán
     vnpay = VNPay(
         settings.VNPAY_TMN_CODE,
         settings.VNPAY_HASH_SECRET,
@@ -197,77 +178,54 @@ def complete_payment(request):
     return redirect(payment_url)
 
 
-# orders/views.py
-import json
-from django.http import JsonResponse
-from django.views.decorators.http import require_POST
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect
-from my_app.models_Product import Product
-from .models import Order, OrderItem
+# ============ VNPAY CALLBACKS ============
+
+def vnpay_return(request):
+    params = request.GET.dict()
+
+    if not verify_vnpay_signature(params, settings.VNPAY_HASH_SECRET):
+        messages.error(request, "Dữ liệu thanh toán không hợp lệ")
+        return redirect(reverse("personal-page") + "?tab=orders")
+
+    messages.success(request, "Đã nhận phản hồi từ VNPAY")
+    return redirect(reverse("personal-page") + "?tab=orders")
 
 
-@require_POST
-@login_required
-def checkout_from_cart(request):
-    data = json.loads(request.body)
-    items = data.get("items", [])
+@csrf_exempt
+def vnpay_ipn(request):
+    input_data = request.GET.dict()
 
-    if not items:
-        return JsonResponse({"error": "no items"}, status=400)
+    order_id = input_data.get("vnp_TxnRef")
+    response_code = input_data.get("vnp_ResponseCode")
+    transaction_status = input_data.get("vnp_TransactionStatus")
+    amount = int(input_data.get("vnp_Amount", 0)) // 100
 
-    cart = request.session.get("cart", {})
+    order = Order.objects.filter(id=order_id).first()
+    if not order:
+        return JsonResponse({"RspCode": "01", "Message": "Order not found"})
 
-    order = Order.objects.create(
-        user=request.user,
-        status="draft"
-    )
+    if order.status in ["shipping", "delivered"]:
+        return JsonResponse({"RspCode": "02", "Message": "Order already confirmed"})
 
-    for item in items:
-        cart_key = str(item["id"])
-        quantity = int(item["quantity"])
+    if int(order.total_price) != amount:
+        return JsonResponse({"RspCode": "04", "Message": "Invalid amount"})
 
-        if cart_key not in cart:
-            continue
+    if response_code == "00" and transaction_status == "00":
+        order.status = "pending"
+        order.save()
+        return JsonResponse({"RspCode": "00", "Message": "Confirm Success"})
 
-        cart_item = cart[cart_key]
-
-        product = Product.objects.get(id=cart_item["product_id"])
-
-        OrderItem.objects.create(
-            order=order,
-            product=product,
-            quantity=quantity,
-            price=cart_item["price"]
-        )
-
-    #     del cart[pid]
-    # request.session["cart"] = cart
-
-    # KHÔNG xóa cart ở đây (tùy bạn)
-    request.session["checkout_order_id"] = order.id
-    request.session.modified = True
-    return JsonResponse({"ok": True})
+    order.status = "cancel"
+    order.save()
+    return JsonResponse({"RspCode": "00", "Message": "Confirm Success"})
 
 
-# views.py
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-from .models import Order
-
-from django.contrib.auth.decorators import login_required
-
+# ============ ORDER MANAGEMENT ============
 
 @login_required
 def personal_page(request):
     user_orders = Order.objects.filter(user=request.user).order_by('-created_at')
     return render(request, "frontend/personal-page.html", {"orders": user_orders})
-
-
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
-from django.contrib.auth.decorators import login_required
-from .models import Order
 
 
 @login_required
@@ -307,19 +265,13 @@ def order_detail_api(request, order_id):
     })
 
 
-from django.shortcuts import get_object_or_404
-from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
-from .models import Order
-
-
 @login_required
 def buy_again(request, order_id):
     order = get_object_or_404(
         Order,
         id=order_id,
         user=request.user,
-        status="delivered"  # ❗ chỉ cho mua lại đơn đã giao
+        status="delivered"
     )
 
     cart = request.session.get("cart", {})
@@ -348,14 +300,6 @@ def buy_again(request, order_id):
     })
 
 
-from django.http import JsonResponse
-from django.views.decorators.http import require_POST
-from django.utils import timezone
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404
-import json
-
-
 @login_required
 @require_POST
 def cancel_order_api(request, order_id):
@@ -378,128 +322,67 @@ def cancel_order_api(request, order_id):
     return JsonResponse({"success": True})
 
 
-from django.contrib import messages
-
-
-def vnpay_return(request):
-    params = request.GET.dict()
-
-    if not verify_vnpay_signature(params, settings.VNPAY_HASH_SECRET):
-        messages.error(request, "Dữ liệu thanh toán không hợp lệ")
-        return redirect(reverse("personal-page") + "?tab=orders")
-
-    messages.success(request, "Đã nhận phản hồi từ VNPAY")
-    return redirect(reverse("personal-page") + "?tab=orders")
-
-
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.conf import settings
-from .models import Order
-from .vnpay import verify_vnpay_signature
-
-
-@csrf_exempt
-def vnpay_ipn(request):
-    input_data = request.GET.dict()
-
-    order_id = input_data.get("vnp_TxnRef")
-    response_code = input_data.get("vnp_ResponseCode")
-    transaction_status = input_data.get("vnp_TransactionStatus")
-    amount = int(input_data.get("vnp_Amount", 0)) // 100  # ✅ FIX
-
-    order = Order.objects.filter(id=order_id).first()
-    if not order:
-        return JsonResponse({"RspCode": "01", "Message": "Order not found"})
-
-    # chống gọi lại
-    if order.status in ["shipping", "delivered"]:
-        return JsonResponse({"RspCode": "02", "Message": "Order already confirmed"})
-
-    # check tiền
-    if int(order.total_price) != amount:
-        return JsonResponse({"RspCode": "04", "Message": "Invalid amount"})
-
-    # thành công
-    if response_code == "00" and transaction_status == "00":
-        order.status = "pending"
-        order.save()
-        return JsonResponse({"RspCode": "00", "Message": "Confirm Success"})
-
-    # thất bại / huỷ
-    order.status = "cancel"
-    order.save()
-    return JsonResponse({"RspCode": "00", "Message": "Confirm Success"})
-
-
-from django.contrib.admin.views.decorators import staff_member_required
-from django.shortcuts import render
-from django.db.models import Count, Sum, Avg, Q
-from django.db.models.functions import TruncMonth, TruncYear
-from django.utils import timezone
-from datetime import timedelta, datetime
-from calendar import monthrange
-from .models import Order, OrderItem
-import json
-
+# ============ ADMIN STATISTICS ============
 
 @staff_member_required
 def order_statistics_view(request):
-    # Lấy tham số xem theo gì (week/month/year)
-    view_type = request.GET.get('view', 'week')  # Mặc định xem theo tuần
+    # ✅ PHẢI KHAI BÁO NGAY ĐẦU TIÊN
+    selected_month = request.GET.get('month', '')
+    selected_year = request.GET.get('year', '')
+    view_type = request.GET.get('view', 'week')
 
-    # Thống kê tổng quan đơn hàng
-    total_orders = Order.objects.exclude(status='draft').count()
+    # Khởi tạo queryset cơ bản
+    base_orders = Order.objects.all()
 
-    # Thống kê theo trạng thái
-    draft_orders = Order.objects.filter(status='draft').count()
-    pending_orders = Order.objects.filter(status='pending').count()
-    shipping_orders = Order.objects.filter(status='shipping').count()
-    delivered_orders = Order.objects.filter(status='delivered').count()
-    cancelled_orders = Order.objects.filter(status='cancel').count()
+    # Áp dụng bộ lọc tháng/năm
+    if selected_month:
+        base_orders = base_orders.filter(created_at__month=int(selected_month))
+    if selected_year:
+        base_orders = base_orders.filter(created_at__year=int(selected_year))
 
-    # Thống kê doanh thu (chỉ tính đơn đã giao)
-    total_revenue = Order.objects.filter(
+    # Thống kê tổng quan
+    total_orders = base_orders.exclude(status='draft').count()
+    draft_orders = base_orders.filter(status='draft').count()
+    pending_orders = base_orders.filter(status='pending').count()
+    shipping_orders = base_orders.filter(status='shipping').count()
+    delivered_orders = base_orders.filter(status='delivered').count()
+    cancelled_orders = base_orders.filter(status='cancel').count()
+
+    total_revenue = base_orders.filter(
         status='delivered'
     ).aggregate(Sum('total_price'))['total_price__sum'] or 0
 
-    # Đơn hàng trong 30 ngày gần đây
     thirty_days_ago = timezone.now() - timedelta(days=30)
-    recent_orders = Order.objects.filter(
+    recent_orders_qs = base_orders.filter(
         created_at__gte=thirty_days_ago
-    ).exclude(status='draft').count()
+    ).exclude(status='draft')
+    recent_orders = recent_orders_qs.count()
 
-    # Doanh thu 30 ngày gần đây
-    recent_revenue = Order.objects.filter(
-        created_at__gte=thirty_days_ago,
+    recent_revenue = recent_orders_qs.filter(
         status='delivered'
     ).aggregate(Sum('total_price'))['total_price__sum'] or 0
 
-    # Giá trị đơn hàng trung bình (đơn đã giao)
-    avg_order_value = Order.objects.filter(
+    avg_order_value = base_orders.filter(
         status='delivered'
     ).aggregate(Avg('total_price'))['total_price__avg'] or 0
 
-    # Thống kê theo thời gian dựa vào view_type
+    # Thống kê theo thời gian
     orders_by_time = []
     chart_title = ""
 
     if view_type == 'week':
-        # Thống kê theo 8 tuần gần nhất
         chart_title = "8 Tuần Gần Đây"
         for i in range(8):
-            # Tính ngày bắt đầu và kết thúc tuần
             week_end = timezone.now() - timedelta(weeks=i)
             week_start = week_end - timedelta(days=6)
 
-            count = Order.objects.filter(
+            week_orders = base_orders.filter(
                 created_at__date__gte=week_start.date(),
                 created_at__date__lte=week_end.date()
-            ).exclude(status='draft').count()
+            )
 
-            revenue = Order.objects.filter(
-                created_at__date__gte=week_start.date(),
-                created_at__date__lte=week_end.date(),
+            count = week_orders.exclude(status='draft').count()
+            revenue = week_orders.filter(
                 status='delivered'
             ).aggregate(Sum('total_price'))['total_price__sum'] or 0
 
@@ -511,21 +394,27 @@ def order_statistics_view(request):
         orders_by_time.reverse()
 
     elif view_type == 'month':
-        # Thống kê theo 12 tháng trong năm hiện tại
-        chart_title = f"Theo Tháng Năm {timezone.now().year}"
-        current_year = timezone.now().year
+        if selected_year:
+            chart_title = f"Theo Tháng Năm {selected_year}"
+            target_year = int(selected_year)
+        else:
+            chart_title = f"Theo Tháng Năm {timezone.now().year}"
+            target_year = timezone.now().year
 
         for month in range(1, 13):
-            count = Order.objects.filter(
-                created_at__year=current_year,
+            month_orders = Order.objects.filter(
+                created_at__year=target_year,
                 created_at__month=month
-            ).exclude(status='draft').count()
+            )
 
-            revenue = Order.objects.filter(
-                created_at__year=current_year,
-                created_at__month=month,
-                status='delivered'
-            ).aggregate(Sum('total_price'))['total_price__sum'] or 0
+            if selected_month and int(selected_month) != month:
+                count = 0
+                revenue = 0
+            else:
+                count = month_orders.exclude(status='draft').count()
+                revenue = month_orders.filter(
+                    status='delivered'
+                ).aggregate(Sum('total_price'))['total_price__sum'] or 0
 
             orders_by_time.append({
                 'label': f'Tháng {month}',
@@ -534,23 +423,20 @@ def order_statistics_view(request):
             })
 
     elif view_type == 'year':
-        # Thống kê theo năm (5 năm gần nhất hoặc các năm có dữ liệu)
         chart_title = "Thống Kê Theo Năm"
-        current_year = timezone.now().year
-
-        # Lấy các năm có đơn hàng
         years_with_orders = Order.objects.dates('created_at', 'year', order='DESC')
 
         if years_with_orders.exists():
-            for year_date in years_with_orders[:5]:  # Lấy 5 năm gần nhất
+            for year_date in years_with_orders[:5]:
                 year = year_date.year
 
-                count = Order.objects.filter(
-                    created_at__year=year
-                ).exclude(status='draft').count()
+                year_orders = Order.objects.filter(created_at__year=year)
 
-                revenue = Order.objects.filter(
-                    created_at__year=year,
+                if selected_month:
+                    year_orders = year_orders.filter(created_at__month=int(selected_month))
+
+                count = year_orders.exclude(status='draft').count()
+                revenue = year_orders.filter(
                     status='delivered'
                 ).aggregate(Sum('total_price'))['total_price__sum'] or 0
 
@@ -561,15 +447,110 @@ def order_statistics_view(request):
                 })
             orders_by_time.reverse()
         else:
-            # Nếu chưa có dữ liệu, hiển thị năm hiện tại
+            current_year = timezone.now().year
             orders_by_time.append({
                 'label': f'Năm {current_year}',
                 'count': 0,
                 'revenue': 0
             })
 
-    # Top khách hàng (theo tổng giá trị đơn đã giao)
-    top_customers = Order.objects.filter(
+    elif view_type == 'custom':
+        # ✅ ĐÚNG VỊ TRÍ - NGANG HÀNG VỚI CÁC elif KHÁC
+        if selected_month and selected_year:
+            chart_title = f"Chi Tiết Tháng {selected_month}/{selected_year}"
+            target_year = int(selected_year)
+            target_month = int(selected_month)
+
+            _, days_in_month = monthrange(target_year, target_month)
+
+            for day in range(1, days_in_month + 1):
+                day_orders = Order.objects.filter(
+                    created_at__year=target_year,
+                    created_at__month=target_month,
+                    created_at__day=day
+                )
+
+                count = day_orders.exclude(status='draft').count()
+                revenue = day_orders.filter(
+                    status='delivered'
+                ).aggregate(Sum('total_price'))['total_price__sum'] or 0
+
+                orders_by_time.append({
+                    'label': f'{day:02d}/{target_month:02d}',
+                    'count': count,
+                    'revenue': float(revenue)
+                })
+
+        elif selected_year and not selected_month:
+            chart_title = f"12 Tháng Năm {selected_year}"
+            target_year = int(selected_year)
+
+            for month in range(1, 13):
+                month_orders = Order.objects.filter(
+                    created_at__year=target_year,
+                    created_at__month=month
+                )
+
+                count = month_orders.exclude(status='draft').count()
+                revenue = month_orders.filter(
+                    status='delivered'
+                ).aggregate(Sum('total_price'))['total_price__sum'] or 0
+
+                orders_by_time.append({
+                    'label': f'Tháng {month}',
+                    'count': count,
+                    'revenue': float(revenue)
+                })
+
+        elif selected_month and not selected_year:
+            chart_title = f"Tháng {selected_month} Qua Các Năm"
+            target_month = int(selected_month)
+
+            years_with_orders = Order.objects.dates('created_at', 'year', order='ASC')
+
+            if years_with_orders.exists():
+                for year_date in years_with_orders:
+                    year = year_date.year
+
+                    year_month_orders = Order.objects.filter(
+                        created_at__year=year,
+                        created_at__month=target_month
+                    )
+
+                    count = year_month_orders.exclude(status='draft').count()
+                    revenue = year_month_orders.filter(
+                        status='delivered'
+                    ).aggregate(Sum('total_price'))['total_price__sum'] or 0
+
+                    orders_by_time.append({
+                        'label': f'{target_month}/{year}',
+                        'count': count,
+                        'revenue': float(revenue)
+                    })
+
+        else:
+            chart_title = f"Năm {timezone.now().year}"
+            current_year = timezone.now().year
+
+            for month in range(1, 13):
+                month_orders = Order.objects.filter(
+                    created_at__year=current_year,
+                    created_at__month=month
+                )
+
+                count = month_orders.exclude(status='draft').count()
+                revenue = month_orders.filter(
+                    status='delivered'
+                ).aggregate(Sum('total_price'))['total_price__sum'] or 0
+
+                orders_by_time.append({
+                    'label': f'Tháng {month}',
+                    'count': count,
+                    'revenue': float(revenue)
+                })
+
+    # Top khách hàng
+    top_customers = base_orders.filter(
         status='delivered'
     ).values(
         'user__username', 'user__email', 'user__first_name', 'user__last_name'
@@ -578,30 +559,47 @@ def order_statistics_view(request):
         total_spent=Sum('total_price')
     ).order_by('-total_spent')[:10]
 
-    # Top sản phẩm bán chạy
-    top_products = OrderItem.objects.filter(
-        order__status='delivered'
-    ).values(
+    # Top sản phẩm
+    top_products_qs = OrderItem.objects.filter(order__status='delivered')
+
+    if selected_month:
+        top_products_qs = top_products_qs.filter(order__created_at__month=int(selected_month))
+    if selected_year:
+        top_products_qs = top_products_qs.filter(order__created_at__year=int(selected_year))
+
+    top_products = top_products_qs.values(
         'product__name', 'product__id'
     ).annotate(
         total_quantity=Sum('quantity'),
         total_revenue=Sum('price')
     ).order_by('-total_quantity')[:10]
 
-    # Thống kê lý do hủy đơn
-    cancel_reasons = Order.objects.filter(
+    # Lý do hủy
+    cancel_reasons = base_orders.filter(
         status='cancel',
         cancel_reason__isnull=False
     ).exclude(cancel_reason='').values('cancel_reason').annotate(
         count=Count('id')
     ).order_by('-count')[:5]
 
-    # Tỷ lệ hoàn thành đơn hàng
-    total_processed = Order.objects.exclude(status__in=['draft']).count()
+    # Tỷ lệ
+    total_processed = base_orders.exclude(status='draft').count()
     completion_rate = (delivered_orders / total_processed * 100) if total_processed > 0 else 0
     cancel_rate = (cancelled_orders / total_processed * 100) if total_processed > 0 else 0
 
-    # Chuyển đổi sang JSON cho biểu đồ
+    # Danh sách tháng/năm cho dropdown
+    months = [{'value': i} for i in range(1, 13)]
+
+    first_order = Order.objects.order_by('created_at').first()
+    if first_order:
+        start_year = first_order.created_at.year
+    else:
+        start_year = timezone.now().year
+
+    current_year = timezone.now().year
+    years = list(range(start_year, current_year + 1))
+    years.reverse()
+
     orders_by_time_json = json.dumps(orders_by_time)
 
     context = {
@@ -624,6 +622,49 @@ def order_statistics_view(request):
         'cancel_reasons': cancel_reasons,
         'completion_rate': round(completion_rate, 1),
         'cancel_rate': round(cancel_rate, 1),
+        'selected_month': selected_month,
+        'selected_year': selected_year,
+        'months': months,
+        'years': years,
     }
 
     return render(request, 'admin/orders_statistics.html', context)
+
+
+# ============ LEGACY / UNUSED ============
+
+@require_POST
+def save_checkout_items(request):
+    data = json.loads(request.body)
+    ids = data.get("ids", [])
+    request.session["checkout_product_ids"] = ids
+    request.session.modified = True
+    return JsonResponse({"ok": True})
+
+
+class CheckoutItem:
+    def __init__(self, product, quantity):
+        self.product = product
+        self.quantity = quantity
+        self.subtotal = product.price * quantity
+
+
+@login_required
+def delivery_info(request):
+    cart = request.session.get("cart", {})
+    selected_ids = request.session.get("checkout_product_ids", [])
+
+    items = []
+    for pid in selected_ids:
+        pid = str(pid)
+        if pid in cart:
+            product = Product.objects.get(id=pid)
+            quantity = cart[pid]["quantity"]
+            items.append(CheckoutItem(product, quantity))
+
+    total = sum(item.subtotal for item in items)
+
+    return render(request, "frontend/delivery-infor.html", {
+        "items": items,
+        "total": total
+    })
