@@ -32,11 +32,11 @@ class ProductSizeInline(admin.TabularInline):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ("name", "brand", "price", "discount_price", "final_price", "import_date" , "expiry_date", "is_new_product", "is_expired")
+    list_display = ("name", "review_group", "brand", "price", "discount_price", "final_price", "import_date" , "expiry_date", "is_new_product", "is_expired")
     search_fields = ("name",)
     list_filter = ("brand", "category", "expiry_date")
     date_hierarchy = 'expiry_date'
-    prepopulated_fields = {"slug": ("name",)}
+    prepopulated_fields = {"slug": ("name",), "review_group": ("name",)}
 
     fields = (
         "name",
@@ -50,6 +50,7 @@ class ProductAdmin(admin.ModelAdmin):
         "description",
         "category",
         "size_label",  # Nhóm size
+        "review_group", # Nhóm đánh giá
     )
 
     inlines = [ProductImageInline, ProductSizeInline]

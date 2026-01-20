@@ -259,7 +259,7 @@ def category_view(request, slug):
 from django.shortcuts import render, get_object_or_404
 from .models_Product import Wishlist
 # from sentiment.spam_filter import is_spam
-from django.db.models import Avg, Count
+from django.db.models import Avg, Count, Q
 from orders.models import Order, OrderItem  # Hoặc đường dẫn đúng của model Order
 
 
@@ -269,8 +269,26 @@ def product_detail(request, slug):
     # Lấy danh sách sản phẩm liên quan theo logic của model
     related = product.get_related_products(limit=10)
 
-    # Lấy review đã duyệt
-    reviews = product.reviews.filter(approved=True, is_spam=False)
+    # ✅ LẤY REVIEWS THEO review_group HOẶC slug
+    # Nếu sản phẩm có review_group, lấy reviews của TẤT CẢ sản phẩm cùng group
+    # Nếu không có review_group, chỉ lấy reviews của sản phẩm này
+    review_identifier = product.get_review_identifier()
+    
+    if product.review_group:
+        # Lấy tất cả sản phẩm cùng review_group
+        products_in_group = Product.objects.filter(
+            Q(review_group=review_identifier) | Q(slug=review_identifier)
+        )
+        # Lấy reviews của tất cả sản phẩm trong group
+        from my_app.models_Product import ProductReview
+        reviews = ProductReview.objects.filter(
+            product__in=products_in_group,
+            approved=True,
+            is_spam=False
+        )
+    else:
+        # Chỉ lấy reviews của sản phẩm hiện tại
+        reviews = product.reviews.filter(approved=True, is_spam=False)
 
     total_reviews = reviews.count()
 
