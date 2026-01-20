@@ -75,4 +75,5 @@ urlpatterns = [
     # path("", include("my_app.urls")),
     path("api/chat/", chat_api),
     path('newProduct/', views.new_products_view, name='newProduct'),
+    path('chinhSachKhuyenMai/', views.chinhSachKhuyenMai, name='cskm'),
 ]
