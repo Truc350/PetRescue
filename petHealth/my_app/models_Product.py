@@ -221,11 +221,7 @@ class Promotion(models.Model):
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     is_active = models.BooleanField(default=True)
-    min_expiry_days = models.PositiveIntegerField(
-        verbose_name="Số ngày còn hạn tối thiểu",
-        default=0,
-        help_text="Sản phẩm phải còn hạn ít nhất X ngày để áp dụng khuyến mãi"
-    )
+
 
     categories = models.ManyToManyField(
         Category,
@@ -242,8 +238,7 @@ class Promotion(models.Model):
     )
 
     def clean(self):
-        if self.min_expiry_days < 0:
-            raise ValidationError("Số ngày còn hạn không được âm")
+        pass
 
     def is_valid_now(self):
         now = timezone.now()
@@ -256,9 +251,9 @@ class Promotion(models.Model):
 from django.db.models import Q
 
 def get_valid_products_for_promotion(promotion):
-    min_date = timezone.now().date() + timedelta(days=promotion.min_expiry_days)
-
+    # min_date = timezone.now().date() + timedelta(days=promotion.min_expiry_days)
+    # Logic cũ dùng min_expiry_days, giờ bỏ đi -> lấy hết hoặc tùy logic mới
+    # Hiện tại chỉ return product theo category
     return Product.objects.filter(
-        expiry_date__gte=min_date,
         category__in=promotion.categories.all()
     )

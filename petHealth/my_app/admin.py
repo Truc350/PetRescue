@@ -1,10 +1,16 @@
 from django.contrib import admin
+from django import forms
+from django.utils import timezone
+from django.shortcuts import get_object_or_404
+from django.core.exceptions import ValidationError
 from .models_Product import (
     Category,
     Product,
     ProductImage,
     ProductSize,
     ProductReview,
+    Wishlist,
+    Promotion,
 )
 
 # ======================
@@ -15,12 +21,10 @@ class ProductImageInline(admin.TabularInline):
     model = ProductImage
     extra = 1
 
-
 class ProductSizeInline(admin.TabularInline):
     model = ProductSize
     extra = 1
     fields = ("size_name", "price")
-
 
 # ======================
 # PRODUCT ADMIN
@@ -109,6 +113,7 @@ class ProductAdmin(admin.ModelAdmin):
         return obj.price
 
     final_price.short_description = "Giá sau KM"
+
 # ======================
 # CATEGORY ADMIN
 # ======================
@@ -118,7 +123,6 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ("name", "slug")
     prepopulated_fields = {"slug": ("name",)}
 
-
 # ======================
 # PRODUCT IMAGE ADMIN
 # ======================
@@ -127,7 +131,6 @@ class CategoryAdmin(admin.ModelAdmin):
 class ProductImageAdmin(admin.ModelAdmin):
     list_display = ("product", "url")
 
-
 # ======================
 # PRODUCT SIZE ADMIN
 # ======================
@@ -135,7 +138,6 @@ class ProductImageAdmin(admin.ModelAdmin):
 @admin.register(ProductSize)
 class ProductSizeAdmin(admin.ModelAdmin):
     list_display = ("product", "size_name", "price")
-
 
 # ======================
 # PRODUCT REVIEW ADMIN
@@ -158,20 +160,12 @@ class ProductReviewAdmin(admin.ModelAdmin):
         queryset.update(approved=False)
     disapprove_reviews.short_description = "Bỏ duyệt đánh giá đã chọn"
 
-from django.contrib import admin
-from .models_Product import Wishlist
-
 @admin.register(Wishlist)
 class WishlistAdmin(admin.ModelAdmin):
     list_display = ("user", "product", "created_at")
     search_fields = ("user__username", "product__name")
     ordering = ("-created_at",)
 
-
-from django.contrib import admin
-from django import forms
-from django.core.exceptions import ValidationError
-from .models_Product import Promotion, Product
 
 class PromotionAdminForm(forms.ModelForm):
     class Meta:
@@ -195,22 +189,16 @@ class PromotionAdminForm(forms.ModelForm):
 
         return cleaned_data
 
-
-# admin.py
-from django.contrib import admin
-from django.utils import timezone
-from .models_Product import Promotion
-
 @admin.register(Promotion)
 class PromotionAdmin(admin.ModelAdmin):
     form = PromotionAdminForm
 
     list_display = ("name", "discount_percent", "start_date",
-                    "end_date", "min_expiry_days", "is_active")
+                    "end_date", "is_active")
     filter_horizontal = ("categories", "products")
     list_filter = ("is_active", "start_date",
                    "end_date",)
     search_fields = ("name",)
 
-
-
+    class Media:
+        js = ("my_app/js/promotion_admin.js",)
