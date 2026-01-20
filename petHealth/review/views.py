@@ -8,13 +8,15 @@ from django.shortcuts import get_object_or_404
 
 from my_app.models_Product import Product, ProductReview
 from sentiment.classifier import classify_comment
-from orders.models import Order, OrderItem  # Hoặc đường dẫn đúng của model Order
+from orders.models import Order, OrderItem
+from django.db.models import Q, Avg
 
 
 @require_POST
 @login_required
-def add_review(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
+def add_review(request, slug):
+    # Dùng slug cụ thể của sản phẩm để tránh MultipleObjectsReturned
+    product = get_object_or_404(Product, slug=slug)
 
     # ✅ KIỂM TRA ĐÃ MUA HÀNG CHƯA
     has_purchased = OrderItem.objects.filter(
@@ -100,22 +102,16 @@ def get_product_conclusion(positive, negative):
     else:
         return "Sản phẩm đang nhận nhiều phản hồi chưa tích cực, bạn nên cân nhắc kỹ trước khi mua."
 
-def sentiment_chart(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-
-    positive_count = ProductReview.objects.filter(
-        product=product,
-        sentiment="tích cực",
+def sentiment_chart(request, slug):
+    # Aggregate reviews for the entire group or specific product
+    reviews_qs = ProductReview.objects.filter(
+        Q(product__review_group=slug) | Q(product__slug=slug),
         approved=True,
         is_spam=False
-    ).count()
+    )
 
-    negative_count = ProductReview.objects.filter(
-        product=product,
-        sentiment="tiêu cực",
-        approved=True,
-        is_spam=False
-    ).count()
+    positive_count = reviews_qs.filter(sentiment="tích cực").count()
+    negative_count = reviews_qs.filter(sentiment="tiêu cực").count()
 
     labels = ["Tích cực", "Tiêu cực"]
     values = [positive_count, negative_count]
@@ -167,22 +163,16 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from my_app.models_Product import Product, ProductReview
 
-def sentiment_summary(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-
-    positive_count = ProductReview.objects.filter(
-        product=product,
-        sentiment="tích cực",
+def sentiment_summary(request, slug):
+    # Aggregate reviews for the entire group or specific product
+    reviews_qs = ProductReview.objects.filter(
+        Q(product__review_group=slug) | Q(product__slug=slug),
         approved=True,
         is_spam=False
-    ).count()
+    )
 
-    negative_count = ProductReview.objects.filter(
-        product=product,
-        sentiment="tiêu cực",
-        approved=True,
-        is_spam=False
-    ).count()
+    positive_count = reviews_qs.filter(sentiment="tích cực").count()
+    negative_count = reviews_qs.filter(sentiment="tiêu cực").count()
 
     total = positive_count + negative_count
     if total == 0:

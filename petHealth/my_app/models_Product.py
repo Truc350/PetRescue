@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
+from django.utils.text import slugify
 
 
 class Category(models.Model):
@@ -40,6 +41,15 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     slug = models.SlugField(unique=True, null=True, blank=True)
 
+    # Nhóm đánh giá: các sản phẩm cùng review_group sẽ chia sẻ chung đánh giá
+    review_group = models.SlugField(
+        max_length=255,
+        null=True,
+        blank=True,
+        db_index=True,
+        help_text="Các sản phẩm có cùng review_group sẽ chia sẻ chung đánh giá. VD: 'royal-canin-cho-cho'"
+    )
+
     size_label = models.CharField(
         max_length=50,
         blank=True,
@@ -54,6 +64,17 @@ class Product(models.Model):
         symmetrical=False,
         related_name="related_to"
     )
+
+    def __str__(self):
+        return self.name
+
+    def get_review_identifier(self):
+        """
+        Trả về identifier dùng cho review.
+        Nếu có review_group thì dùng review_group (để nhiều sản phẩm chia sẻ chung review)
+        Nếu không có thì dùng slug của chính nó
+        """
+        return self.review_group if self.review_group else self.slug
 
     def is_expired(self):
         if self.expiry_date:
@@ -109,6 +130,12 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        # Tự động tạo review_group từ tên nếu chưa có
+        if not self.review_group and self.name:
+            self.review_group = slugify(self.name)
+        super().save(*args, **kwargs)
 
     @property
     def final_price(self):

@@ -158,7 +158,18 @@ def complete_payment(request):
     if payment_method == "cod":
         order.status = "pending"
         order.save()
+        
+        # ✅ XÓA SẢN PHẨM ĐÃ ĐẶT KHỎI GIỎ HÀNG
+        cart = request.session.get("cart", {})
+        ordered_product_ids = set(str(item.product.id) for item in order.items.all())
+        
+        # Xóa các items đã đặt (bao gồm cả các size khác nhau của cùng sản phẩm)
+        cart = {k: v for k, v in cart.items() if k.split('_')[0] not in ordered_product_ids}
+        
+        request.session["cart"] = cart
         request.session.pop("checkout_order_id", None)
+        request.session.modified = True
+        
         return redirect(reverse("personal-page") + "?tab=orders")
 
     vnpay = VNPay(
@@ -186,6 +197,25 @@ def vnpay_return(request):
     if not verify_vnpay_signature(params, settings.VNPAY_HASH_SECRET):
         messages.error(request, "Dữ liệu thanh toán không hợp lệ")
         return redirect(reverse("personal-page") + "?tab=orders")
+
+    # ✅ XÓA SẢN PHẨM ĐÃ ĐẶT KHỎI GIỎ HÀNG SAU THANH TOÁN VNPAY
+    response_code = params.get("vnp_ResponseCode")
+    order_id = params.get("vnp_TxnRef")
+    
+    if response_code == "00" and order_id:
+        try:
+            order = Order.objects.get(id=order_id, user=request.user)
+            cart = request.session.get("cart", {})
+            ordered_product_ids = set(str(item.product.id) for item in order.items.all())
+            
+            # Xóa các items đã đặt khỏi giỏ hàng
+            cart = {k: v for k, v in cart.items() if k.split('_')[0] not in ordered_product_ids}
+            
+            request.session["cart"] = cart
+            request.session.pop("checkout_order_id", None)
+            request.session.modified = True
+        except Order.DoesNotExist:
+            pass
 
     messages.success(request, "Đã nhận phản hồi từ VNPAY")
     return redirect(reverse("personal-page") + "?tab=orders")

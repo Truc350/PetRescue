@@ -3,6 +3,7 @@
 {% load humanize %}
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,58 +11,57 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="../../static/css/detailProduct.css">
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
 
 </head>
+
 <body>
-{% include "frontend/header.html" %}
-<div class="container product-page">
-    <div class="row g-4">
+    {% include "frontend/header.html" %}
+    <div class="container product-page">
+        <div class="row g-4">
 
-        <!-- CỘT 1: THUMBNAILS -->
-        <div class="col-lg-1 gallery-col">
-            <div class="thumbs">
+            <!-- CỘT 1: THUMBNAILS -->
+            <div class="col-lg-1 gallery-col">
+                <div class="thumbs">
 
-                <!-- Ảnh chính -->
-                <div class="thumb active">
-                    <img src="{{ product.image }}" data-src="{{ product.image }}" alt="">
+                    <!-- Ảnh chính -->
+                    <div class="thumb active">
+                        <img src="{{ product.image }}" data-src="{{ product.image }}" alt="">
+                    </div>
+
+                    <!-- Ảnh phụ -->
+                    {% for img in product.images.all %}
+                    <div class="thumb">
+                        <img src="{{ img.url }}" data-src="{{ img.url }}" alt="">
+                    </div>
+                    {% endfor %}
+
                 </div>
+            </div>
 
-                <!-- Ảnh phụ -->
-                {% for img in product.images.all %}
-                <div class="thumb">
-                    <img src="{{ img.url }}" data-src="{{ img.url }}" alt="">
+            <!-- CỘT 2: ẢNH CHÍNH -->
+            <div class="col-lg-5 position-relative main-image">
+                <div class="img-wrap">
+                    <img id="mainProductImage" src="{{ product.image }}" alt="{{ product.name }}">
                 </div>
-                {% endfor %}
-
             </div>
-        </div>
 
-        <!-- CỘT 2: ẢNH CHÍNH -->
-        <div class="col-lg-5 position-relative main-image">
-            <div class="img-wrap">
-                <img id="mainProductImage" src="{{ product.image }}" alt="{{ product.name }}">
-            </div>
-        </div>
+            <!-- CỘT 3: THÔNG TIN -->
+            <div class="col-lg-6 product-info">
+                <h1>{{ product.name }}</h1>
 
-        <!-- CỘT 3: THÔNG TIN -->
-        <div class="col-lg-6 product-info">
-            <h1>{{ product.name }}</h1>
-
-            <div class="brand">Thương hiệu: {{ product.brand }}</div>
-            {% with final=product.final_price original=product.price %}
-            {% if final < original %}
-            <div class="price text-danger fw-bold" style="font-size:24px">
-                {{ final|intcomma }}đ
-                <span class="text-muted old-price" style="text-decoration: line-through;">
-                {{ original|intcomma }}đ
-            </span>
-                <span class="badge bg-danger ms-2">
-                -{{ product.discount_percent }}%
-            </span>
+                <div class="brand">Thương hiệu: {{ product.brand }}</div>
+                {% with final=product.final_price original=product.price %}
+                {% if final < original %} <div class="price text-danger fw-bold" style="font-size:24px">
+                    {{ final|intcomma }}đ
+                    <span class="text-muted old-price" style="text-decoration: line-through;">
+                        {{ original|intcomma }}đ
+                    </span>
+                    <span class="badge bg-danger ms-2">
+                        -{{ product.discount_percent }}%
+                    </span>
             </div>
             {% else %}
             <div class="price fw-bold" style="font-size:24px">
@@ -79,12 +79,9 @@
                 </div>
                 <div class="btn-group size-buttons" role="group">
                     {% for s in product.sizes.all %}
-                    <button type="button"
-                            class="btn btn-outline-secondary size-btn"
-                            data-price="{{ s.price }}"
-                            data-final-price="{{ s.get_final_price }}"
-                            data-discount="{{ product.discount_percent|default:0 }}"
-                            data-size-id="{{ s.id }}">
+                    <button type="button" class="btn btn-outline-secondary size-btn" data-price="{{ s.price }}"
+                        data-final-price="{{ s.get_final_price }}"
+                        data-discount="{{ product.discount_percent|default:0 }}" data-size-id="{{ s.id }}">
                         {{ s.size_name }}
                     </button>
                     {% endfor %}
@@ -92,6 +89,26 @@
             </div>
             {% endif %}
 
+            <!-- HẠN SỬ DỤNG -->
+            <div class="mt-3">
+                <div class="fw-semibold mb-1">
+                    <i class="bi bi-calendar-check"></i> Hạn sử dụng:
+                </div>
+                {% if product.expiry_date %}
+                {% if product.is_expired %}
+                <span class="badge bg-danger">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    Đã hết hạn: {{ product.expiry_date|date:"d/m/Y" }}
+                </span>
+                {% else %}
+                <span class="text-success">
+                    {{ product.expiry_date|date:"d/m/Y" }}
+                </span>
+                {% endif %}
+                {% else %}
+                <span class="text-muted">Không có thông tin</span>
+                {% endif %}
+            </div>
 
             <!-- SỐ LƯỢNG -->
             <div class="mt-3">
@@ -117,9 +134,7 @@
 
             <!-- NÚT THÊM GIỎ -->
             <div class="d-flex align-items-center gap-3 mt-3">
-                <form method="post"
-                      action="{% url 'add_to_cart' product.id %}"
-                      id="addToCartForm">
+                <form method="post" action="{% url 'add_to_cart' product.id %}" id="addToCartForm">
                     {% csrf_token %}
                     <!-- size -->
                     <input type="hidden" name="size_id" id="sizeInput">
@@ -127,8 +142,7 @@
                     <input type="hidden" name="quantity" id="qtyInput" value="1">
                     <button type="submit" class="add-cart">Thêm Vào Giỏ Hàng</button>
                 </form>
-                <div id="cartToast"
-                     style="
+                <div id="cartToast" style="
         display:none;
         position:fixed;
         top:20px;
@@ -144,11 +158,8 @@
                 </div>
 
 
-                <button
-                        class="btn btn-outline-secondary rounded-circle btn-wishlist"
-                        style="width:50px;height:50px"
-                        data-id="{{ product.id }}"
-                >
+                <button class="btn btn-outline-secondary rounded-circle btn-wishlist" style="width:50px;height:50px"
+                    data-id="{{ product.id }}">
                     {% if product.id in liked_ids %}
                     <i class="bi bi-heart-fill text-danger"></i>
                     {% else %}
@@ -284,29 +295,30 @@
         <!-- <button class="write-review-btn">Viết đánh giá</button> -->
 
         <!-- Bằng đoạn code sau -->
-        {% if user.is_authenticated %}
-        {% if has_purchased %}
-        <button class="write-review-btn">
-            <i class="bi bi-pencil-square"></i> Viết đánh giá
-        </button>
-        {% else %}
-        <button class="write-review-btn disabled" disabled
+        <div class="text-center mt-4">
+            {% if user.is_authenticated %}
+            {% if has_purchased %}
+            <button class="write-review-btn">
+                <i class="bi bi-pencil-square"></i> Viết đánh giá
+            </button>
+            {% else %}
+            <button class="write-review-btn disabled" disabled
                 style="background-color: #ccc; cursor: not-allowed; opacity: 0.6;"
                 title="Bạn cần mua sản phẩm này trước khi đánh giá">
-            <i class="bi bi-lock-fill"></i> Viết đánh giá
-        </button>
-        <p class="text-muted small mt-2 text-center">
-            <i class="bi bi-info-circle-fill"></i>
-            Bạn cần mua sản phẩm này trước khi có thể đánh giá
-        </p>
-        {% endif %}
-        {% else %}
-        <a href="{% url 'login' %}?next={{ request.path }}"
-           class="write-review-btn"
-           style="text-decoration: none; display: inline-block;">
-            <i class="bi bi-person-circle"></i> Đăng nhập để đánh giá
-        </a>
-        {% endif %}
+                <i class="bi bi-lock-fill"></i> Viết đánh giá
+            </button>
+            <p class="text-muted small mt-2">
+                <i class="bi bi-info-circle-fill"></i>
+                Bạn cần mua sản phẩm này trước khi có thể đánh giá
+            </p>
+            {% endif %}
+            {% else %}
+            <a href="{% url 'login' %}?next={{ request.path }}" class="write-review-btn"
+                style="text-decoration: none; display: inline-block;">
+                <i class="bi bi-person-circle"></i> Đăng nhập để đánh giá
+            </a>
+            {% endif %}
+        </div>
     </section>
 
     <section class="container section-spacing content-padding">
@@ -336,20 +348,15 @@
                     <div class="product-card bg-white rounded shadow-sm overflow-hidden">
                         <a href="{% url 'product_detail' p.slug %}">
                             <!-- Ảnh -->
-                            <img src="{{ p.image }}"
-                                 class="w-100"
-                                 style="height:200px; object-fit:contain;"
-                                 alt="{{ p.name }}">
+                            <img src="{{ p.image }}" class="w-100" style="height:200px; object-fit:contain;"
+                                alt="{{ p.name }}">
                         </a>
                         <div class="p-3">
 
                             <div class="product-header d-flex justify-content-between align-items-center mb-2">
                                 <p class="small text-muted mb-0 brand-name">{{ p.brand }}</p>
 
-                                <button
-                                        class="btn-wishlist"
-                                        data-id="{{ p.id }}"
-                                >
+                                <button class="btn-wishlist" data-id="{{ p.id }}">
                                     {% if p.id in liked_ids %}
                                     <i class="bi bi-heart-fill text-danger"></i>
                                     {% else %}
@@ -368,7 +375,7 @@
 
                             <!-- Link -->
                             <a href="{% url 'orders:buy_now' p.id %}"
-                               class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
+                                class="btn btn-danger w-100 rounded-pill py-2 mt-auto shadow-sm hover-lift">
                                 <i class="bi bi-cart-plus me-1"></i>
                                 Mua ngay
                             </a>
@@ -383,365 +390,363 @@
     </section>
 
 
-</div>
-
-
-<!-- POPUP REVIEW -->
-<div class="review-popup" id="reviewPopup">
-    <div class="popup-content">
-        <span class="close-btn">&times;</span>
-        <h2>Thêm một đánh giá</h2>
-        <p class="note">
-            Tài khoản email của bạn sẽ được công bố.
-            Trường bắt buộc được đánh dấu <span>*</span>
-        </p>
-
-        <form class="review-form" method="post">
-            <div class="rating-group">
-                <label>
-                    <input type="radio" name="rating" value="1">
-                    <div class="stars">
-                        <i class="bi bi-star-fill"></i>
-                    </div>
-                    <div>(1)</div>
-                </label>
-                <label>
-                    <input type="radio" name="rating" value="2">
-                    <div class="stars">
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                    </div>
-                    <div>(2)</div>
-                </label>
-                <label>
-                    <input type="radio" name="rating" value="3" checked>
-                    <div class="stars">
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                    </div>
-                    <div>(3)</div>
-                </label>
-                <label>
-                    <input type="radio" name="rating" value="4">
-                    <div class="stars">
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                            class="bi bi-star-fill"></i>
-                    </div>
-                    <div>(4)</div>
-                </label>
-                <label>
-                    <input type="radio" name="rating" value="5">
-                    <div class="stars">
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                            class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                    </div>
-                    <div>(5)</div>
-                </label>
-            </div>
-
-            <div class="comment-group">
-                <label for="comment-popup">Nhận xét của bạn <span>*</span></label>
-                <textarea
-                        id="comment-popup"
-                        name="comment"
-                        placeholder="Viết nhận xét tại đây..."
-                ></textarea>
-
-            </div>
-
-            <button type="submit" class="submit-btn">Xác Nhận</button>
-        </form>
     </div>
-</div>
-<script>
-    function getSelectedRating() {
-        const checked = document.querySelector('input[name="rating"]:checked');
-        return checked ? checked.value : null;
-    }
-</script>
 
-<script>
-    let price = Number("{{ product.final_price }}");
 
-    function changeQty(n) {
-        let q = parseInt(document.getElementById("qty").innerText);
-        q = Math.max(1, q + n);
+    <!-- POPUP REVIEW -->
+    <div class="review-popup" id="reviewPopup">
+        <div class="popup-content">
+            <span class="close-btn">&times;</span>
+            <h2>Thêm một đánh giá</h2>
+            <p class="note">
+                Tài khoản email của bạn sẽ được công bố.
+                Trường bắt buộc được đánh dấu <span>*</span>
+            </p>
 
-        document.getElementById("qty").innerText = q;
-        document.getElementById("qtyInput").value = q;
+            <form class="review-form" method="post">
+                <div class="rating-group">
+                    <label>
+                        <input type="radio" name="rating" value="1">
+                        <div class="stars">
+                            <i class="bi bi-star-fill"></i>
+                        </div>
+                        <div>(1)</div>
+                    </label>
+                    <label>
+                        <input type="radio" name="rating" value="2">
+                        <div class="stars">
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                        </div>
+                        <div>(2)</div>
+                    </label>
+                    <label>
+                        <input type="radio" name="rating" value="3" checked>
+                        <div class="stars">
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                                class="bi bi-star-fill"></i>
+                        </div>
+                        <div>(3)</div>
+                    </label>
+                    <label>
+                        <input type="radio" name="rating" value="4">
+                        <div class="stars">
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                                class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                        </div>
+                        <div>(4)</div>
+                    </label>
+                    <label>
+                        <input type="radio" name="rating" value="5">
+                        <div class="stars">
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                                class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                                class="bi bi-star-fill"></i>
+                        </div>
+                        <div>(5)</div>
+                    </label>
+                </div>
 
-        document.getElementById("total").innerText =
-            (q * price).toLocaleString("vi-VN") + "đ";
-    }
-</script>
+                <div class="comment-group">
+                    <label for="comment-popup">Nhận xét của bạn <span>*</span></label>
+                    <textarea id="comment-popup" name="comment" placeholder="Viết nhận xét tại đây..."></textarea>
 
-<script>
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== "") {
-            document.cookie.split(";").forEach(cookie => {
-                cookie = cookie.trim();
-                if (cookie.startsWith(name + "=")) {
-                    cookieValue = decodeURIComponent(cookie.slice(name.length + 1));
-                }
-            });
+                </div>
+
+                <button type="submit" class="submit-btn">Xác Nhận</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        function getSelectedRating() {
+            const checked = document.querySelector('input[name="rating"]:checked');
+            return checked ? checked.value : null;
         }
-        return cookieValue;
-    }
+    </script>
 
-    const csrftoken = getCookie("csrftoken");
+    <script>
+        let price = Number("{{ product.final_price }}");
 
-    document.querySelectorAll(".btn-wishlist").forEach(btn => {
-        btn.addEventListener("click", function () {
-            const productId = this.dataset.id;
-            const icon = this.querySelector("i");
+        function changeQty(n) {
+            let q = parseInt(document.getElementById("qty").innerText);
+            q = Math.max(1, q + n);
 
-            fetch(`/wishlist/toggle/${productId}/`, {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": csrftoken,
-                },
-            })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.liked) {
-                        icon.className = "bi bi-heart-fill text-danger";
+            document.getElementById("qty").innerText = q;
+            document.getElementById("qtyInput").value = q;
+
+            document.getElementById("total").innerText =
+                (q * price).toLocaleString("vi-VN") + "đ";
+        }
+    </script>
+
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== "") {
+                document.cookie.split(";").forEach(cookie => {
+                    cookie = cookie.trim();
+                    if (cookie.startsWith(name + "=")) {
+                        cookieValue = decodeURIComponent(cookie.slice(name.length + 1));
+                    }
+                });
+            }
+            return cookieValue;
+        }
+
+        const csrftoken = getCookie("csrftoken");
+
+        document.querySelectorAll(".btn-wishlist").forEach(btn => {
+            btn.addEventListener("click", function () {
+                const productId = this.dataset.id;
+                const icon = this.querySelector("i");
+
+                fetch(`/wishlist/toggle/${productId}/`, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": csrftoken,
+                    },
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.liked) {
+                            icon.className = "bi bi-heart-fill text-danger";
+                        } else {
+                            icon.className = "bi bi-heart";
+                        }
+                    });
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#header").load("header.html");
+            $("#footer").load("footer.html");
+        });
+    </script>
+
+    <script>
+        document.querySelectorAll('.btn-outline-secondary').forEach(btn => {
+            btn.addEventListener('click', function () {
+                this.classList.toggle('liked');
+            });
+        });
+    </script>
+
+    <script>
+        // ====== JS lọc đánh giá theo số sao ======
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const reviews = document.querySelectorAll('.review');
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                const star = button.getAttribute('data-star');
+                reviews.forEach(review => {
+                    if (star === 'all' || review.getAttribute('data-star') === star) {
+                        review.style.display = 'flex';
                     } else {
-                        icon.className = "bi bi-heart";
+                        review.style.display = 'none';
                     }
                 });
-        });
-    });
-</script>
-
-<script>
-    $(document).ready(function () {
-        $("#header").load("header.html");
-        $("#footer").load("footer.html");
-    });
-</script>
-
-<script>
-    document.querySelectorAll('.btn-outline-secondary').forEach(btn => {
-        btn.addEventListener('click', function () {
-            this.classList.toggle('liked');
-        });
-    });
-</script>
-
-<script>
-    // ====== JS lọc đánh giá theo số sao ======
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    const reviews = document.querySelectorAll('.review');
-
-    filterButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-
-            const star = button.getAttribute('data-star');
-            reviews.forEach(review => {
-                if (star === 'all' || review.getAttribute('data-star') === star) {
-                    review.style.display = 'flex';
-                } else {
-                    review.style.display = 'none';
-                }
             });
         });
-    });
-</script>
+    </script>
 
-<script>
-    const writeReviewBtn = document.querySelector('.write-review-btn');
-    const reviewPopup = document.getElementById('reviewPopup');
-    const closeBtn = reviewPopup.querySelector('.close-btn');
+    <script>
+        const writeReviewBtn = document.querySelector('.write-review-btn');
+        const reviewPopup = document.getElementById('reviewPopup');
+        const closeBtn = reviewPopup.querySelector('.close-btn');
 
-    // Chỉ thêm event listener nếu nút không bị disabled
-    if (writeReviewBtn && !writeReviewBtn.disabled) {
-        writeReviewBtn.addEventListener('click', () => {
-            reviewPopup.classList.add('active');
-        });
-    }
+        // Chỉ thêm event listener nếu nút không bị disabled
+        if (writeReviewBtn && !writeReviewBtn.disabled) {
+            writeReviewBtn.addEventListener('click', () => {
+                reviewPopup.classList.add('active');
+            });
+        }
 
-    closeBtn.addEventListener('click', () => {
-        reviewPopup.classList.remove('active');
-    });
-
-    // Ấn bên ngoài popup cũng tắt
-    window.addEventListener('click', (e) => {
-        if (e.target === reviewPopup) {
+        closeBtn.addEventListener('click', () => {
             reviewPopup.classList.remove('active');
-        }
-    });
-</script>
-
-<script>
-    function scrollProduct(button, direction) {
-        const container = button.parentElement.querySelector('.product-scroll-container');
-        const scrollAmount = window.innerWidth < 768 ? 240 : 380;
-
-        container.scrollBy({
-            left: direction * scrollAmount,
-            behavior: 'smooth'
         });
 
-        // Ngăn kéo cả trang khi đang cuộn ngang
-        container.addEventListener('wheel', (e) => {
-            if (e.deltaY !== 0) {
-                e.preventDefault();
-                container.scrollLeft += e.deltaY;
+        // Ấn bên ngoài popup cũng tắt
+        window.addEventListener('click', (e) => {
+            if (e.target === reviewPopup) {
+                reviewPopup.classList.remove('active');
             }
-        }, {passive: false});
-    }
-</script>
-
-<script>
-    (function () {
-        const form = document.querySelector('.review-form');
-        const textarea = document.getElementById('comment-popup');
-
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            const rating = window.getSelectedRating();
-            const comment = textarea.value.trim();
-
-            if (!comment) {
-                alert("Vui lòng nhập nhận xét.");
-                return;
-            }
-
-            fetch("{% url 'add_review' product.id %}", {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": csrftoken,
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: `rating=${rating}&comment=${encodeURIComponent(comment)}`
-            })
-                .then(res => res.json())
-                .then(data => {
-                    if (!data.success) {
-                        alert(data.message);
-                        return;
-                    }
-
-                    // Thành công
-                    alert("Đánh giá của bạn đã được gửi thành công!");
-                    location.reload();
-                });
         });
-    })();
-</script>
+    </script>
 
-<script>
-    document.querySelectorAll('.thumb img').forEach(thumb => {
-        thumb.addEventListener('click', function () {
-            const mainImg = document.getElementById('mainProductImage');
-            mainImg.src = this.dataset.src;
+    <script>
+        function scrollProduct(button, direction) {
+            const container = button.parentElement.querySelector('.product-scroll-container');
+            const scrollAmount = window.innerWidth < 768 ? 240 : 380;
 
-            // active thumbnail
-            document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
-            this.parentElement.classList.add('active');
-        });
-    });
-</script>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const reviews = document.querySelectorAll("#review-list .review");
-        const pagination = document.getElementById("pagination");
-
-        const reviewsPerPage = 5;
-        let currentPage = 1;
-
-        function renderPage(page) {
-            currentPage = page;
-
-            const start = (page - 1) * reviewsPerPage;
-            const end = start + reviewsPerPage;
-
-            reviews.forEach((review, index) => {
-                review.style.display =
-                    index >= start && index < end ? "flex" : "none";
+            container.scrollBy({
+                left: direction * scrollAmount,
+                behavior: 'smooth'
             });
 
-            renderPagination();
+            // Ngăn kéo cả trang khi đang cuộn ngang
+            container.addEventListener('wheel', (e) => {
+                if (e.deltaY !== 0) {
+                    e.preventDefault();
+                    container.scrollLeft += e.deltaY;
+                }
+            }, { passive: false });
         }
+    </script>
 
-        function renderPagination() {
-            pagination.innerHTML = "";
+    <script>
+        (function () {
+            const form = document.querySelector('.review-form');
+            const textarea = document.getElementById('comment-popup');
 
-            const totalPages = Math.ceil(reviews.length / reviewsPerPage);
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
 
-            if (totalPages <= 1) return;
+                const rating = window.getSelectedRating();
+                const comment = textarea.value.trim();
 
-            // ←
-            if (currentPage > 1) {
-                pagination.innerHTML += `
+                if (!comment) {
+                    alert("Vui lòng nhập nhận xét.");
+                    return;
+                }
+
+                fetch("{% url 'add_review' product.slug %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": csrftoken,
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: `rating=${rating}&comment=${encodeURIComponent(comment)}`
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (!data.success) {
+                            alert(data.message);
+                            return;
+                        }
+
+                        // Thành công
+                        alert("Đánh giá của bạn đã được gửi thành công!");
+                        location.reload();
+                    });
+            });
+        })();
+    </script>
+
+    <script>
+        document.querySelectorAll('.thumb img').forEach(thumb => {
+            thumb.addEventListener('click', function () {
+                const mainImg = document.getElementById('mainProductImage');
+                mainImg.src = this.dataset.src;
+
+                // active thumbnail
+                document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+                this.parentElement.classList.add('active');
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const reviews = document.querySelectorAll("#review-list .review");
+            const pagination = document.getElementById("pagination");
+
+            const reviewsPerPage = 5;
+            let currentPage = 1;
+
+            function renderPage(page) {
+                currentPage = page;
+
+                const start = (page - 1) * reviewsPerPage;
+                const end = start + reviewsPerPage;
+
+                reviews.forEach((review, index) => {
+                    review.style.display =
+                        index >= start && index < end ? "flex" : "none";
+                });
+
+                renderPagination();
+            }
+
+            function renderPagination() {
+                pagination.innerHTML = "";
+
+                const totalPages = Math.ceil(reviews.length / reviewsPerPage);
+
+                if (totalPages <= 1) return;
+
+                // ←
+                if (currentPage > 1) {
+                    pagination.innerHTML += `
                 <button class="page-btn" data-page="${currentPage - 1}">
                     &laquo;
                 </button>`;
-            }
+                }
 
-            for (let i = 1; i <= totalPages; i++) {
-                if (i >= currentPage - 2 && i <= currentPage + 2) {
-                    pagination.innerHTML += `
+                for (let i = 1; i <= totalPages; i++) {
+                    if (i >= currentPage - 2 && i <= currentPage + 2) {
+                        pagination.innerHTML += `
                     <button class="page-btn ${i === currentPage ? 'active' : ''}"
                             data-page="${i}">
                         ${i}
                     </button>`;
+                    }
                 }
-            }
 
-            // →
-            if (currentPage < totalPages) {
-                pagination.innerHTML += `
+                // →
+                if (currentPage < totalPages) {
+                    pagination.innerHTML += `
                 <button class="page-btn" data-page="${currentPage + 1}">
                     &raquo;
                 </button>`;
-            }
+                }
 
-            // click event
-            document.querySelectorAll(".page-btn").forEach(btn => {
-                btn.addEventListener("click", function () {
-                    renderPage(parseInt(this.dataset.page));
-                    window.scrollTo({
-                        top: document.querySelector(".review-section").offsetTop - 80,
-                        behavior: "smooth"
+                // click event
+                document.querySelectorAll(".page-btn").forEach(btn => {
+                    btn.addEventListener("click", function () {
+                        renderPage(parseInt(this.dataset.page));
+                        window.scrollTo({
+                            top: document.querySelector(".review-section").offsetTop - 80,
+                            behavior: "smooth"
+                        });
                     });
                 });
-            });
-        }
+            }
 
-        // INIT
-        renderPage(1);
-    });
-</script>
+            // INIT
+            renderPage(1);
+        });
+    </script>
 
-<script>
-    let currentPrice = Number("{{ product.final_price }}");
+    <script>
+        let currentPrice = Number("{{ product.final_price }}");
 
-    const priceBox = document.querySelector(".price");
-    const totalBox = document.getElementById("total");
-    const qtyBox = document.getElementById("qty");
-    const sizeInput = document.getElementById("sizeInput");
+        const priceBox = document.querySelector(".price");
+        const totalBox = document.getElementById("total");
+        const qtyBox = document.getElementById("qty");
+        const sizeInput = document.getElementById("sizeInput");
 
-    document.querySelectorAll(".size-btn").forEach(btn => {
-        btn.addEventListener("click", function () {
+        document.querySelectorAll(".size-btn").forEach(btn => {
+            btn.addEventListener("click", function () {
 
-            // active UI
-            document.querySelectorAll(".size-btn")
-                .forEach(b => b.classList.remove("active"));
-            this.classList.add("active");
+                // active UI
+                document.querySelectorAll(".size-btn")
+                    .forEach(b => b.classList.remove("active"));
+                this.classList.add("active");
 
-            const price = Number(this.dataset.price);
-            const finalPrice = Number(this.dataset.finalPrice);
-            const discount = Number(this.dataset.discount);
+                const price = Number(this.dataset.price);
+                const finalPrice = Number(this.dataset.finalPrice);
+                const discount = Number(this.dataset.discount);
 
-            sizeInput.value = this.dataset.sizeId;
+                sizeInput.value = this.dataset.sizeId;
 
-            // ===== HIỂN THỊ GIÁ =====
-            if (finalPrice < price) {
-                priceBox.innerHTML = `
+                // ===== HIỂN THỊ GIÁ =====
+                if (finalPrice < price) {
+                    priceBox.innerHTML = `
                 <span class="text-danger fw-bold" style="font-size:24px">
                     ${finalPrice.toLocaleString("vi-VN")}đ
                 </span>
@@ -753,96 +758,97 @@
                     -${discount}%
                 </span>
             `;
-                currentPrice = finalPrice;
-            } else {
-                priceBox.innerHTML = `
+                    currentPrice = finalPrice;
+                } else {
+                    priceBox.innerHTML = `
                 <span class="fw-bold" style="font-size:24px">
                     ${price.toLocaleString("vi-VN")}đ
                 </span>
             `;
-                currentPrice = price;
-            }
+                    currentPrice = price;
+                }
 
-            // ===== UPDATE TOTAL =====
-            const qty = Number(qtyBox.innerText);
-            totalBox.innerText =
-                (currentPrice * qty).toLocaleString("vi-VN") + "đ";
+                // ===== UPDATE TOTAL =====
+                const qty = Number(qtyBox.innerText);
+                totalBox.innerText =
+                    (currentPrice * qty).toLocaleString("vi-VN") + "đ";
+            });
         });
-    });
 
-    function changeQty(n) {
-        let q = parseInt(qtyBox.innerText);
-        q = Math.max(1, q + n);
+        function changeQty(n) {
+            let q = parseInt(qtyBox.innerText);
+            q = Math.max(1, q + n);
 
-        qtyBox.innerText = q;
-        document.getElementById("qtyInput").value = q;
+            qtyBox.innerText = q;
+            document.getElementById("qtyInput").value = q;
 
-        totalBox.innerText =
-            (q * currentPrice).toLocaleString("vi-VN") + "đ";
-    }
-</script>
-
-<script>
-    document.getElementById("addToCartForm").addEventListener("submit", function (e) {
-        e.preventDefault(); // Chặn load trang
-
-        // Kiểm tra size nếu sản phẩm có size
-        const sizeButtons = document.querySelectorAll(".size-btn");
-        if (sizeButtons.length > 0) {
-            const size = document.getElementById("sizeInput").value;
-            if (!size) {
-                alert("Vui lòng chọn size trước khi thêm vào giỏ hàng!");
-                return; // Dừng lại, không gửi form
-            }
+            totalBox.innerText =
+                (q * currentPrice).toLocaleString("vi-VN") + "đ";
         }
+    </script>
 
-        const form = this;
-        const formData = new FormData(form);
+    <script>
+        document.getElementById("addToCartForm").addEventListener("submit", function (e) {
+            e.preventDefault(); // Chặn load trang
 
-        fetch(form.action, {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": csrftoken
-            },
-            body: formData
-        })
-            .then(res => {
-                if (!res.ok) throw new Error("Add cart failed");
-                return res.text();
+            // Kiểm tra size nếu sản phẩm có size
+            const sizeButtons = document.querySelectorAll(".size-btn");
+            if (sizeButtons.length > 0) {
+                const size = document.getElementById("sizeInput").value;
+                if (!size) {
+                    alert("Vui lòng chọn size trước khi thêm vào giỏ hàng!");
+                    return; // Dừng lại, không gửi form
+                }
+            }
+
+            const form = this;
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrftoken
+                },
+                body: formData
             })
-            .then(() => {
-                showCartToast();
-            })
-            .catch(() => {
-                alert("Có lỗi xảy ra, vui lòng thử lại!");
-            });
-    });
+                .then(res => {
+                    if (!res.ok) throw new Error("Add cart failed");
+                    return res.text();
+                })
+                .then(() => {
+                    showCartToast();
+                })
+                .catch(() => {
+                    alert("Có lỗi xảy ra, vui lòng thử lại!");
+                });
+        });
 
-    // Toast thông báo
-    function showCartToast() {
-        const toast = document.getElementById("cartToast");
-        toast.style.display = "block";
+        // Toast thông báo
+        function showCartToast() {
+            const toast = document.getElementById("cartToast");
+            toast.style.display = "block";
 
-        setTimeout(() => {
-            toast.style.display = "none";
-        }, 2000);
-    }
-</script>
+            setTimeout(() => {
+                toast.style.display = "none";
+            }, 2000);
+        }
+    </script>
 
-<script>
-    // Tự động load khi trang tải
-    document.addEventListener("DOMContentLoaded", function () {
-        fetch("{% url 'sentiment_summary' product.id %}")
-            .then(response => response.text())
-            .then(text => {
-                document.getElementById("sentiment-text").textContent = text;
-            })
-            .catch(error => {
-                document.getElementById("sentiment-text").textContent = "Không thể tải thống kê";
-            });
-    });
-</script>
+    <script>
+        // Tự động load khi trang tải
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch("{% url 'sentiment_summary' product.get_review_identifier %}")
+                .then(response => response.text())
+                .then(text => {
+                    document.getElementById("sentiment-text").textContent = text;
+                })
+                .catch(error => {
+                    document.getElementById("sentiment-text").textContent = "Không thể tải thống kê";
+                });
+        });
+    </script>
 
-{% include "frontend/footer.html" %}
+    {% include "frontend/footer.html" %}
 </body>
+
 </html>
