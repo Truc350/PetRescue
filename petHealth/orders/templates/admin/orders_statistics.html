@@ -3,17 +3,17 @@
 {% load humanize %}
 
 {% block extrahead %}
-<style>
+<style xmlns:selected_year xmlns:y>
     .statistics-container {
         padding: 20px;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
-    
+
     .view-selector {
         background: white;
         padding: 20px;
         border-radius: 12px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         margin-bottom: 20px;
     }
 
@@ -58,7 +58,7 @@
         background: white;
         padding: 20px;
         border-radius: 12px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         margin-bottom: 20px;
     }
 
@@ -146,7 +146,7 @@
         color: white;
         padding: 25px;
         border-radius: 12px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         transition: transform 0.2s;
     }
 
@@ -187,7 +187,7 @@
         background: white;
         padding: 25px;
         border-radius: 12px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         margin: 20px 0;
     }
 
@@ -272,14 +272,17 @@
         .grid-2 {
             grid-template-columns: 1fr;
         }
+
         .view-buttons {
             flex-direction: column;
             align-items: flex-start;
         }
+
         .filter-form {
             flex-direction: column;
             align-items: stretch;
         }
+
         .filter-group select {
             min-width: 100%;
         }
@@ -295,19 +298,16 @@
     <div class="month-filter">
         <h3>🔍 Lọc Theo Tháng/Năm</h3>
         <form method="get" class="filter-form">
-            <!-- Giữ lại view type khi submit form -->
-            {% if view_type %}
-            <input type="hidden" name="view" value="{{ view_type }}">
-            {% endif %}
+            <!-- Bỏ hidden view để backend tự quyết định view tối ưu khi lọc -->
 
             <div class="filter-group">
                 <label for="month">Tháng:</label>
                 <select name="month" id="month">
-                    <option value="">- - -</option>
+                    <option value="">Tất cả các tháng</option>
                     {% for m in months %}
-                        <option value="{{ m.value }}" {% if m.value|stringformat:"s" == selected_month|stringformat:"s" %}selected{% endif %}>
-                            {{ m.value }}
-                        </option>
+                    <option value="{{ m.value }}" {% if m.value == selected_month %}selected{% endif %}>
+                        Tháng {{ m.value }}
+                    </option>
                     {% endfor %}
                 </select>
             </div>
@@ -315,19 +315,37 @@
             <div class="filter-group">
                 <label for="year">Năm:</label>
                 <select name="year" id="year">
-                    <option value="">- - -</option>
+                    <option value="">Tất cả các năm</option>
                     {% for y in years %}
-                        <option value="{{ y }}" {% if y|stringformat:"s" == selected_year|stringformat:"s" %}selected{% endif %}>
-                            {{ y }}
-                        </option>
+                    <option value="{{ y }}" {% if y == selected_year %}selected{% endif %}>
+                        Năm {{ y }}
+                    </option>
                     {% endfor %}
                 </select>
             </div>
 
-            <button type="submit" class="filter-btn">🔍 Lọc</button>
-            <a href="?{% if view_type %}view={{ view_type }}{% endif %}" class="reset-btn">🔄 Đặt lại</a>
+            <button type="submit" class="filter-btn">🔍 Lọc dữ liệu</button>
+            <a href="?" class="reset-btn">🔄 Xem mặc định</a>
         </form>
     </div>
+
+    <!-- Thông tin bộ lọc hiện tại -->
+    {% if filter_applied %}
+    <div class="current-filter-info">
+        <h4>📌 Đang áp dụng bộ lọc:</h4>
+        <p>
+            {% if selected_month %}Tháng {{ selected_month }}{% endif %}
+            {% if selected_month and selected_year %}/{% endif %}
+            {% if selected_year %}Năm {{ selected_year }}{% endif %}
+            — Chế độ xem:
+            {% if view_type == 'week' %}Tuần (8 tuần gần đây)
+            {% elif view_type == 'month' %}Tháng (Trong năm)
+            {% elif view_type == 'year' %}Năm
+            {% elif view_type == 'custom' %}Chi tiết (Theo ngày/tháng)
+            {% endif %}
+        </p>
+    </div>
+    {% endif %}
 
     <!-- Bộ chọn xem theo Tuần/Tháng/Năm -->
     <div class="view-selector">
@@ -415,24 +433,24 @@
             <div class="table-container">
                 <table>
                     <thead>
-                        <tr>
-                            <th>Sản Phẩm</th>
-                            <th style="text-align: center;">Số Lượng</th>
-                            <th style="text-align: right;">Doanh Thu</th>
-                        </tr>
+                    <tr>
+                        <th>Sản Phẩm</th>
+                        <th style="text-align: center;">Số Lượng</th>
+                        <th style="text-align: right;">Doanh Thu</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        {% for product in top_products %}
-                        <tr>
-                            <td>{{ product.product__name }}</td>
-                            <td style="text-align: center;"><strong>{{ product.total_quantity }}</strong></td>
-                            <td style="text-align: right;">{{ product.total_revenue|floatformat:0|intcomma }}₫</td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="3" style="text-align: center;">Chưa có dữ liệu</td>
-                        </tr>
-                        {% endfor %}
+                    {% for product in top_products %}
+                    <tr>
+                        <td>{{ product.product__name }}</td>
+                        <td style="text-align: center;"><strong>{{ product.total_quantity }}</strong></td>
+                        <td style="text-align: right;">{{ product.total_revenue|floatformat:0|intcomma }}₫</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" style="text-align: center;">Chưa có dữ liệu</td>
+                    </tr>
+                    {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -444,22 +462,22 @@
             <div class="table-container">
                 <table>
                     <thead>
-                        <tr>
-                            <th>Lý Do</th>
-                            <th style="text-align: center;">Số Lượng</th>
-                        </tr>
+                    <tr>
+                        <th>Lý Do</th>
+                        <th style="text-align: center;">Số Lượng</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        {% for reason in cancel_reasons %}
-                        <tr>
-                            <td>{{ reason.cancel_reason|truncatewords:10 }}</td>
-                            <td style="text-align: center;"><strong>{{ reason.count }}</strong></td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="2" style="text-align: center;">Không có đơn hủy với lý do</td>
-                        </tr>
-                        {% endfor %}
+                    {% for reason in cancel_reasons %}
+                    <tr>
+                        <td>{{ reason.cancel_reason|truncatewords:10 }}</td>
+                        <td style="text-align: center;"><strong>{{ reason.count }}</strong></td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="2" style="text-align: center;">Không có đơn hủy với lý do</td>
+                    </tr>
+                    {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -472,32 +490,32 @@
         <div class="table-container">
             <table>
                 <thead>
-                    <tr>
-                        <th>Khách Hàng</th>
-                        <th>Email</th>
-                        <th style="text-align: center;">Số Đơn</th>
-                        <th style="text-align: right;">Tổng Chi Tiêu</th>
-                    </tr>
+                <tr>
+                    <th>Khách Hàng</th>
+                    <th>Email</th>
+                    <th style="text-align: center;">Số Đơn</th>
+                    <th style="text-align: right;">Tổng Chi Tiêu</th>
+                </tr>
                 </thead>
                 <tbody>
-                    {% for customer in top_customers %}
-                    <tr>
-                        <td>
-                            {% if customer.user__first_name %}
-                                {{ customer.user__first_name }} {{ customer.user__last_name }}
-                            {% else %}
-                                {{ customer.user__username }}
-                            {% endif %}
-                        </td>
-                        <td>{{ customer.user__email }}</td>
-                        <td style="text-align: center;"><strong>{{ customer.total_orders }}</strong></td>
-                        <td style="text-align: right;">{{ customer.total_spent|intcomma }}₫</td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="4" style="text-align: center;">Chưa có dữ liệu</td>
-                    </tr>
-                    {% endfor %}
+                {% for customer in top_customers %}
+                <tr>
+                    <td>
+                        {% if customer.user__first_name %}
+                        {{ customer.user__first_name }} {{ customer.user__last_name }}
+                        {% else %}
+                        {{ customer.user__username }}
+                        {% endif %}
+                    </td>
+                    <td>{{ customer.user__email }}</td>
+                    <td style="text-align: center;"><strong>{{ customer.total_orders }}</strong></td>
+                    <td style="text-align: right;">{{ customer.total_spent|intcomma }}₫</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align: center;">Chưa có dữ liệu</td>
+                </tr>
+                {% endfor %}
                 </tbody>
             </table>
         </div>
@@ -508,7 +526,7 @@
 <script>
     // Biểu đồ đơn hàng và doanh thu
     const ctx = document.getElementById('ordersChart').getContext('2d');
-    const ordersData = {{ orders_by_time_json|safe }};
+    const ordersData = {{ orders_by_time_json| safe }};
 
     new Chart(ctx, {
         type: 'bar',
@@ -549,7 +567,7 @@
                 },
                 tooltip: {
                     callbacks: {
-                        label: function(context) {
+                        label: function (context) {
                             let label = context.dataset.label || '';
                             if (label) {
                                 label += ': ';
@@ -593,7 +611,7 @@
                         text: 'Doanh thu (₫)'
                     },
                     ticks: {
-                        callback: function(value) {
+                        callback: function (value) {
                             return new Intl.NumberFormat('vi-VN', {
                                 notation: 'compact',
                                 compactDisplay: 'short'
