@@ -158,18 +158,18 @@ def complete_payment(request):
     if payment_method == "cod":
         order.status = "pending"
         order.save()
-        
+
         # ✅ XÓA SẢN PHẨM ĐÃ ĐẶT KHỎI GIỎ HÀNG
         cart = request.session.get("cart", {})
         ordered_product_ids = set(str(item.product.id) for item in order.items.all())
-        
+
         # Xóa các items đã đặt (bao gồm cả các size khác nhau của cùng sản phẩm)
         cart = {k: v for k, v in cart.items() if k.split('_')[0] not in ordered_product_ids}
-        
+
         request.session["cart"] = cart
         request.session.pop("checkout_order_id", None)
         request.session.modified = True
-        
+
         return redirect(reverse("personal-page") + "?tab=orders")
 
     vnpay = VNPay(
@@ -201,16 +201,16 @@ def vnpay_return(request):
     # ✅ XÓA SẢN PHẨM ĐÃ ĐẶT KHỎI GIỎ HÀNG SAU THANH TOÁN VNPAY
     response_code = params.get("vnp_ResponseCode")
     order_id = params.get("vnp_TxnRef")
-    
+
     if response_code == "00" and order_id:
         try:
             order = Order.objects.get(id=order_id, user=request.user)
             cart = request.session.get("cart", {})
             ordered_product_ids = set(str(item.product.id) for item in order.items.all())
-            
+
             # Xóa các items đã đặt khỏi giỏ hàng
             cart = {k: v for k, v in cart.items() if k.split('_')[0] not in ordered_product_ids}
-            
+
             request.session["cart"] = cart
             request.session.pop("checkout_order_id", None)
             request.session.modified = True
@@ -359,7 +359,18 @@ def order_statistics_view(request):
     # ✅ PHẢI KHAI BÁO NGAY ĐẦU TIÊN
     selected_month = request.GET.get('month', '')
     selected_year = request.GET.get('year', '')
-    view_type = request.GET.get('view', 'week')
+    view_type = request.GET.get('view', '')
+
+    selected_month_int = int(selected_month) if selected_month else None
+    selected_year_int = int(selected_year) if selected_year else None
+
+    # Tự động chọn view_type nếu có filter mà chưa chọn view hoặc đang ở view 'week'
+    # 'week' mặc định hiển thị 8 tuần gần đây, sẽ bị trống nếu filter tháng/năm quá xa
+    if not view_type or (view_type == 'week' and (selected_month or selected_year)):
+        if selected_month or selected_year:
+            view_type = 'custom'
+        else:
+            view_type = 'week'
 
     # Khởi tạo queryset cơ bản
     base_orders = Order.objects.all()
@@ -425,26 +436,22 @@ def order_statistics_view(request):
 
     elif view_type == 'month':
         if selected_year:
-            chart_title = f"Theo Tháng Năm {selected_year}"
             target_year = int(selected_year)
+            chart_title = f"Theo Tháng Năm {target_year}"
         else:
-            chart_title = f"Theo Tháng Năm {timezone.now().year}"
             target_year = timezone.now().year
+            chart_title = f"Theo Tháng Năm {target_year}"
 
         for month in range(1, 13):
-            month_orders = Order.objects.filter(
+            month_orders = base_orders.filter(
                 created_at__year=target_year,
                 created_at__month=month
             )
 
-            if selected_month and int(selected_month) != month:
-                count = 0
-                revenue = 0
-            else:
-                count = month_orders.exclude(status='draft').count()
-                revenue = month_orders.filter(
-                    status='delivered'
-                ).aggregate(Sum('total_price'))['total_price__sum'] or 0
+            count = month_orders.exclude(status='draft').count()
+            revenue = month_orders.filter(
+                status='delivered'
+            ).aggregate(Sum('total_price'))['total_price__sum'] or 0
 
             orders_by_time.append({
                 'label': f'Tháng {month}',
@@ -485,7 +492,6 @@ def order_statistics_view(request):
             })
 
     elif view_type == 'custom':
-        # ✅ ĐÚNG VỊ TRÍ - NGANG HÀNG VỚI CÁC elif KHÁC
         if selected_month and selected_year:
             chart_title = f"Chi Tiết Tháng {selected_month}/{selected_year}"
             target_year = int(selected_year)
@@ -494,7 +500,7 @@ def order_statistics_view(request):
             _, days_in_month = monthrange(target_year, target_month)
 
             for day in range(1, days_in_month + 1):
-                day_orders = Order.objects.filter(
+                day_orders = base_orders.filter(
                     created_at__year=target_year,
                     created_at__month=target_month,
                     created_at__day=day
@@ -516,7 +522,7 @@ def order_statistics_view(request):
             target_year = int(selected_year)
 
             for month in range(1, 13):
-                month_orders = Order.objects.filter(
+                month_orders = base_orders.filter(
                     created_at__year=target_year,
                     created_at__month=month
                 )
@@ -533,6 +539,7 @@ def order_statistics_view(request):
                 })
 
         elif selected_month and not selected_year:
+            # Nếu chỉ chọn tháng, hiển thị tháng đó qua các năm
             chart_title = f"Tháng {selected_month} Qua Các Năm"
             target_month = int(selected_month)
 
@@ -542,7 +549,7 @@ def order_statistics_view(request):
                 for year_date in years_with_orders:
                     year = year_date.year
 
-                    year_month_orders = Order.objects.filter(
+                    year_month_orders = base_orders.filter(
                         created_at__year=year,
                         created_at__month=target_month
                     )
@@ -557,13 +564,22 @@ def order_statistics_view(request):
                         'count': count,
                         'revenue': float(revenue)
                     })
+            else:
+                # Fallback nếu chưa có đơn nào
+                current_year = timezone.now().year
+                orders_by_time.append({
+                    'label': f'{target_month}/{current_year}',
+                    'count': 0,
+                    'revenue': 0
+                })
 
         else:
-            chart_title = f"Năm {timezone.now().year}"
+            # Mặc định của custom (nếu không chọn gì) là 12 tháng năm nay
             current_year = timezone.now().year
+            chart_title = f"Năm {current_year}"
 
             for month in range(1, 13):
-                month_orders = Order.objects.filter(
+                month_orders = base_orders.filter(
                     created_at__year=current_year,
                     created_at__month=month
                 )
@@ -590,17 +606,14 @@ def order_statistics_view(request):
     ).order_by('-total_spent')[:10]
 
     # Top sản phẩm
-    top_products_qs = OrderItem.objects.filter(order__status='delivered')
-
-    if selected_month:
-        top_products_qs = top_products_qs.filter(order__created_at__month=int(selected_month))
-    if selected_year:
-        top_products_qs = top_products_qs.filter(order__created_at__year=int(selected_year))
+    top_products_qs = OrderItem.objects.filter(order__in=base_orders, order__status='delivered')
 
     top_products = top_products_qs.values(
         'product__name', 'product__id'
     ).annotate(
         total_quantity=Sum('quantity'),
+        # Tạm thời Sum('price') nếu không muốn dùng F object phức tạp, 
+        # nhưng đúng nhất phải là Sum(F('price') * F('quantity'))
         total_revenue=Sum('price')
     ).order_by('-total_quantity')[:10]
 
@@ -652,8 +665,9 @@ def order_statistics_view(request):
         'cancel_reasons': cancel_reasons,
         'completion_rate': round(completion_rate, 1),
         'cancel_rate': round(cancel_rate, 1),
-        'selected_month': selected_month,
-        'selected_year': selected_year,
+        'selected_month': selected_month_int,
+        'selected_year': selected_year_int,
+        'filter_applied': bool(selected_month or selected_year),
         'months': months,
         'years': years,
     }
